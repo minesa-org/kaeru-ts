@@ -1,0 +1,33 @@
+name: Bug Report
+description: Report a bug to help us improve Kaeru
+labels: ['bug']
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! Fill in the blanks by following the steps. 🙌
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Bug type
+      description: Please select a type of bug you want to report.
+      options:
+        - Slash Command
+        - User Command
+        - Message Command
+        - Button Command
+        - Select Menu Command
+        - Modal Command
+    validations:
+      required: true
+
+  - type: textarea
+    id: code
+    attributes:
+      label: Describe the bug
+      description: Please tell us the command that is bugged.
+      placeholder: It is a slash command named...
+    validations:
+      required: true

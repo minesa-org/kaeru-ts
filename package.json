@@ -1,0 +1,41 @@
+{
+	"name": "kaeru",
+	"version": "1.0.0",
+	"description": "A modular Discord bot with AI, moderation, and ticketing capabilities.",
+	"main": "src/index.js",
+	"type": "module",
+	"scripts": {
+		"dev": "node --watch src/index.js",
+		"start": "node src/index.js",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
+		"test": "echo \"No tests yet\" && exit 0"
+	},
+	"keywords": [
+		"discord",
+		"discordjs",
+		"bot",
+		"moderation",
+		"tickets",
+		"ai",
+		"kaeru"
+	],
+	"author": "Neodevils",
+	"license": "MIT",
+	"dependencies": {
+		"discord.js": "^14.21.0",
+		"dotenv": "^16.6.1"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.32.0",
+		"eslint": "^8.57.1",
+		"globals": "^16.3.0",
+		"prettier": "^3.6.2"
+	},
+	"engines": {
+		"node": ">=18.0.0"
+	},
+	"directories": {
+		"test": "tests"
+	}
+}

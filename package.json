@@ -2,14 +2,16 @@
 	"name": "kaeru",
 	"version": "1.0.0",
 	"description": "A modular Discord bot with AI, moderation, and ticketing capabilities.",
-	"main": "src/index.js",
 	"type": "module",
+	"main": "dist/index.js",
 	"scripts": {
-		"dev": "node --watch src/index.js",
-		"start": "node src/index.js",
-		"lint": "eslint .",
-		"lint:fix": "eslint . --fix",
-		"test": "echo \"No tests yet\" && exit 0"
+		"dev": "tsx watch src/index.ts",
+		"start": "node dist/index.js",
+		"build": "tsc",
+		"lint": "eslint . --ext .ts",
+		"lint:fix": "eslint . --ext .ts --fix",
+		"format": "prettier --write .",
+		"check": "tsc --noEmit"
 	},
 	"keywords": [
 		"discord",
@@ -28,9 +30,14 @@
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.32.0",
+		"@types/node": "^20.11.30",
 		"eslint": "^8.57.1",
-		"globals": "^16.3.0",
-		"prettier": "^3.6.2"
+		"eslint-config-prettier": "^9.1.0",
+		"eslint-plugin-import": "^2.29.1",
+		"eslint-plugin-prettier": "^5.5.3",
+		"prettier": "^3.6.2",
+		"tsx": "^4.7.0",
+		"typescript": "^5.4.5"
 	},
 	"engines": {
 		"node": ">=18.0.0"

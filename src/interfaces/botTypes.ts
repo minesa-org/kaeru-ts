@@ -1,5 +1,4 @@
 import type {
-	CommandInteraction,
 	ButtonInteraction,
 	StringSelectMenuInteraction,
 	ModalSubmitInteraction,
@@ -9,7 +8,7 @@ import type {
 	UserContextMenuCommandInteraction,
 	ContextMenuCommandBuilder,
 	SlashCommandBuilder,
-	SlashCommandOptionsOnlyBuilder,
+	SlashCommandSubcommandsOnlyBuilder,
 	ChatInputCommandInteraction,
 } from "discord.js";
 
@@ -19,7 +18,10 @@ interface BaseCommand<I, D> {
 	execute: (interaction: I) => Promise<any>;
 }
 
-export type SlashCommand = BaseCommand<ChatInputCommandInteraction, SlashCommandBuilder>;
+// Destekleyen iki builder türünü birleştir
+type SlashBuilder = SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder;
+
+export type SlashCommand = BaseCommand<ChatInputCommandInteraction, SlashBuilder>;
 
 export type MessageContextMenuCommand = BaseCommand<
 	MessageContextMenuCommandInteraction,

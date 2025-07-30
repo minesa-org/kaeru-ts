@@ -1,5 +1,6 @@
 import { karu } from "@config/karu.js";
 import type { BotCommand } from "@interfaces/botTypes.js";
+import { log } from "@utils/colors.js";
 import { emojis } from "@utils/emojis.js";
 import { langMap } from "@utils/languageMap.js";
 import {
@@ -119,7 +120,7 @@ Do NOT add anything else.
 				allowedMentions: { parse: [] },
 			});
 		} catch (err) {
-			console.error(err);
+			log("error", "Failed to translate the message:", err);
 			await interaction.editReply({
 				content: `${emojis.error} Failed to translate the message. The system might be confused — try again in a moment.`,
 			});

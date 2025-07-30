@@ -1,6 +1,4 @@
-import { EmojiConfig } from "@interfaces/EmojiConfig.js";
-
-export const emojis: EmojiConfig = {
+export const emojis = {
 	ticket: {
 		create: "<:ticket:1331654460325498931>",
 		created: "<:ticket_created:1331655022357905419>",

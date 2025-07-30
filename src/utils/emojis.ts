@@ -73,4 +73,61 @@ export const emojis = {
 	magic: { id: "1375436613856788550", name: "wand" },
 	text_append: { id: "1375448596509495366", name: "text_append" },
 	list_bullet: { id: "1375468308022951966", name: "list_bullet" },
-};
+} as const;
+
+/**
+ * Recursively gets the keys of an object, including nested keys.
+ */
+type RecursiveKeyOf<TObj extends object> = {
+	[TKey in keyof TObj & string]: TObj[TKey] extends { id: string; name: string }
+		? TKey
+		: TObj[TKey] extends object
+			? `${TKey}` | `${TKey}.${RecursiveKeyOf<TObj[TKey]>}`
+			: never;
+}[keyof TObj & string];
+
+/**
+ * Gets the emoji string for a given path.
+ * @param path The path to the emoji, e.g. "ticket.create"
+ * @returns The emoji string, e.g. "<:ticket:1331654460325498931>"
+ */
+export function getEmoji(path: RecursiveKeyOf<typeof emojis>): string {
+	const parts = path.split(".");
+	let current: any = emojis;
+
+	for (const part of parts) {
+		if (!current[part]) {
+			throw new Error(`Emoji path '${path}' not found.`);
+		}
+		current = current[part];
+	}
+
+	if (!("id" in current && "name" in current)) {
+		throw new Error(`Emoji path '${path}' does not resolve to an emoji.`);
+	}
+
+	return `<:${current.name}:${current.id}>`;
+}
+
+/**
+ * Lists all emoji paths.
+ * @returns An array of all emoji paths.
+ */
+export function listAllEmojiPaths(obj: any = emojis, prefix = ""): string[] {
+	let paths: string[] = [];
+
+	for (const key in obj) {
+		const val = obj[key];
+		const newPath = prefix ? `${prefix}.${key}` : key;
+
+		if (val && typeof val === "object") {
+			if ("id" in val && "name" in val) {
+				paths.push(newPath);
+			} else {
+				paths = paths.concat(listAllEmojiPaths(val, newPath));
+			}
+		}
+	}
+
+	return paths;
+}

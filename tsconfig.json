@@ -1,0 +1,30 @@
+{
+	"compilerOptions": {
+		"module": "NodeNext",
+		"target": "ES2020",
+		"moduleResolution": "NodeNext",
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"outDir": "./dist",
+		"rootDir": "./src",
+		"resolveJsonModule": true,
+		"strict": true,
+		"skipLibCheck": true,
+		"baseUrl": "./src",
+		"paths": {
+			"@events/*": ["events/*"],
+			"@commands/*": ["commands/*"],
+			"@handlers/*": ["handlers/*"],
+			"@interfaces/*": ["interfaces/*"],
+			"@components/*": ["components/*"],
+			"@utils/*": ["utils/*"]
+		}
+	},
+	"include": ["src"],
+	"exclude": ["node_modules", "dist"],
+	"typeRoots": ["./node_modules/@types", "./src/@types"],
+	"ts-node": {
+		"esm": true,
+		"experimentalSpecifierResolution": "node"
+	}
+}

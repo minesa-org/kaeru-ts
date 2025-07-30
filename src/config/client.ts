@@ -12,15 +12,21 @@ import { printLogo } from "@utils/colors.js";
 const client = new Client({
 	intents: [
 		GatewayIntentBits.Guilds,
-		GatewayIntentBits.GuildMessages,
-		GatewayIntentBits.MessageContent,
 		GatewayIntentBits.GuildMembers,
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.GuildScheduledEvents,
 	],
-	partials: [Partials.Message, Partials.Channel],
+	partials: [Partials.GuildMember, Partials.Message, Partials.Channel],
 	presence: {
-		activities: [{ name: "with fire", type: ActivityType.Playing, state: "too hot to handle 🔥" }],
 		status: PresenceUpdateStatus.Idle,
-		afk: false,
+		activities: [
+			{
+				name: "Pro & A.I. features for free",
+				type: ActivityType.Watching,
+				state: "Serving free pro features for your community.",
+			},
+		],
 	},
 });
 

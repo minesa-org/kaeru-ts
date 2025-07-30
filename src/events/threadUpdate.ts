@@ -30,6 +30,11 @@ const threadUpdateEvent: BotEventHandler<Events.ThreadUpdate> = {
 
 		const formattedTime = time(new Date(), "R");
 
+		/**
+		 * Send a message to the thread
+		 * @param emoji The emoji to use
+		 * @param text The text to send
+		 */
 		const sendMessage = async (emoji: keyof typeof emojis, text: string) => {
 			await newThread.send({
 				components: [

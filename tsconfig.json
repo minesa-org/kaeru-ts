@@ -16,7 +16,8 @@
 			"@commands/*": ["commands/*"],
 			"@handlers/*": ["handlers/*"],
 			"@interfaces/*": ["interfaces/*"],
-			"@components/*": ["components/*"]
+			"@components/*": ["components/*"],
+			"@utils/*": ["utils/*"]
 		}
 	},
 	"include": ["src"],

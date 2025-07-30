@@ -6,6 +6,7 @@ import {
 	PresenceUpdateStatus,
 } from "discord.js";
 import { loadCommands, loadEvents, registerCommandsGlobally } from "./export.js";
+import { printLogo } from "@utils/colors.js";
 
 const client = new Client({
 	intents: [
@@ -33,5 +34,7 @@ async function initialize() {
 }
 
 initialize();
+
+printLogo();
 
 export default client;

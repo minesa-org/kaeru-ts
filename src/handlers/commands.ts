@@ -10,6 +10,7 @@ import {
 	REST,
 	Routes,
 } from "discord.js";
+import { log, separator, header } from "@utils/colors.js";
 import type { BotCommand, BotComponent } from "@interfaces/botTypes.js";
 
 export type BotInteraction =
@@ -18,9 +19,6 @@ export type BotInteraction =
 	| StringSelectMenuInteraction
 	| ModalSubmitInteraction;
 
-/**
- * Recursively get all files in a directory
- */
 export async function getFiles(dir: string): Promise<string[]> {
 	let results: string[] = [];
 	const list = fs.readdirSync(dir);
@@ -38,16 +36,13 @@ export async function getFiles(dir: string): Promise<string[]> {
 	return results;
 }
 
-/**
- * Load all commands and components
- */
 export async function loadCommands(client: Client) {
 	client.commands = new Collection();
 	client.buttons = new Collection();
 	client.selectMenus = new Collection();
 	client.modals = new Collection();
 
-	// Loading commands
+	// Slash komutları
 	const commandsPath = path.join(process.cwd(), "src", "commands");
 	const commandFiles = await getFiles(commandsPath);
 
@@ -58,18 +53,17 @@ export async function loadCommands(client: Client) {
 
 			if ("data" in component && "execute" in component) {
 				client.commands.set(component.data.name, component);
-				console.log(`[COMMAND LOADED] : ${component.data.name}`);
+				log("command", `		${component.data.name}`);
 			} else {
-				console.warn(`[SKIP] Invalid command at ${filePath}`);
+				log("warning", `Invalid command at ${filePath}`);
 			}
 		} catch (err) {
-			console.error(`[ERROR] Failed to load command at ${filePath}`, err);
-		} finally {
-			console.log(`------------------------------------------`);
+			log("error", `Failed to load command at ${filePath}`, err);
 		}
 	}
+	separator();
 
-	// Loading components - Buttons
+	// Butonlar
 	const buttonPath = path.join(process.cwd(), "src", "components", "button");
 	const buttonFiles = await getFiles(buttonPath);
 
@@ -80,18 +74,17 @@ export async function loadCommands(client: Client) {
 
 			if ("customId" in component && "execute" in component) {
 				client.buttons.set(component.customId, component);
-				console.log(`[COMPONENT LOADED] Button: ${component.customId}`);
+				log("button", `		${component.customId}`);
 			} else {
-				console.warn(`[SKIP] Invalid button at ${filePath}`);
+				log("warning", `Invalid button at ${filePath}`);
 			}
 		} catch (err) {
-			console.error(`[ERROR] Failed to load button at ${filePath}`, err);
-		} finally {
-			console.log(`------------------------------------------`);
+			log("error", `Failed to load button at ${filePath}`, err);
 		}
 	}
+	separator();
 
-	// Loading components - modals
+	// Modallar
 	const modalPath = path.join(process.cwd(), "src", "components", "modal");
 	const modalFiles = await getFiles(modalPath);
 
@@ -102,18 +95,17 @@ export async function loadCommands(client: Client) {
 
 			if ("customId" in component && "execute" in component) {
 				client.modals.set(component.customId, component);
-				console.log(`[COMPONENT LOADED] Modal: ${component.customId}`);
+				log("modal", `		${component.customId}`);
 			} else {
-				console.warn(`[SKIP] Invalid modal at ${filePath}`);
+				log("warning", `Invalid modal at ${filePath}`);
 			}
 		} catch (err) {
-			console.error(`[ERROR] Failed to load modal at ${filePath}`, err);
-		} finally {
-			console.log(`------------------------------------------`);
+			log("error", `Failed to load modal at ${filePath}`, err);
 		}
 	}
+	separator();
 
-	// Loading components - select menus
+	// Select menüler
 	const selectMenuPath = path.join(process.cwd(), "src", "components", "select-menu");
 	const selectMenuFiles = await getFiles(selectMenuPath);
 
@@ -124,21 +116,16 @@ export async function loadCommands(client: Client) {
 
 			if ("customId" in component && "execute" in component) {
 				client.selectMenus.set(component.customId, component);
-				console.log(`[COMPONENT LOADED] Select Menu: ${component.customId}`);
+				log("selectMenu", `	${component.customId}`);
 			} else {
-				console.warn(`[SKIP] Invalid select menu at ${filePath}`);
+				log("warning", `Invalid select menu at ${filePath}`);
 			}
 		} catch (err) {
-			console.error(`[ERROR] Failed to load select menu at ${filePath}`, err);
-		} finally {
-			console.log(`------------------------------------------`);
+			log("error", `Failed to load select menu at ${filePath}`, err);
 		}
 	}
 }
 
-/**
- * Register all commands globally
- */
 export async function registerCommandsGlobally(client: Client, token: string, clientId: string) {
 	if (!client.commands) throw new Error("client.commands not initialized");
 
@@ -146,10 +133,11 @@ export async function registerCommandsGlobally(client: Client, token: string, cl
 	const payload = client.commands.map(cmd => cmd.data.toJSON());
 
 	try {
-		console.log("Registering global commands...");
 		await rest.put(Routes.applicationCommands(clientId), { body: payload });
-		console.log("Successfully registered all global commands.");
+		log("info", "Successfully registered all global commands.");
 	} catch (err) {
-		console.error("[ERROR] Failed to register global commands:", err);
+		log("error", "Failed to register global commands", err);
 	}
+
+	separator();
 }

@@ -14,7 +14,9 @@
 		"paths": {
 			"@events/*": ["events/*"],
 			"@commands/*": ["commands/*"],
-			"@handlers/*": ["handlers/*"]
+			"@handlers/*": ["handlers/*"],
+			"@interfaces/*": ["interfaces/*"],
+			"@components/*": ["components/*"]
 		}
 	},
 	"include": ["src"],

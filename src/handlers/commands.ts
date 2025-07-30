@@ -7,27 +7,21 @@ import {
 	ButtonInteraction,
 	StringSelectMenuInteraction,
 	ModalSubmitInteraction,
-	Interaction,
 	REST,
 	Routes,
 } from "discord.js";
+import type { BotCommand, BotComponent } from "@interfaces/botTypes.js";
 
 export type BotInteraction =
 	| CommandInteraction
 	| ButtonInteraction
 	| StringSelectMenuInteraction
-	| ModalSubmitInteraction
-	| Interaction;
-
-export interface BotCommand {
-	data: { name: string; toJSON: () => any };
-	execute: (interaction: BotInteraction) => Promise<void>;
-}
+	| ModalSubmitInteraction;
 
 /**
- * Recursively get all files in a directory.
+ * Recursively get all files in a directory
  */
-async function getCommandFiles(dir: string): Promise<string[]> {
+export async function getFiles(dir: string): Promise<string[]> {
 	let results: string[] = [];
 	const list = fs.readdirSync(dir);
 
@@ -36,62 +30,126 @@ async function getCommandFiles(dir: string): Promise<string[]> {
 		const stat = fs.statSync(filePath);
 
 		if (stat.isDirectory()) {
-			const nestedFiles = await getCommandFiles(filePath);
-			results = results.concat(nestedFiles);
+			results = results.concat(await getFiles(filePath));
 		} else if (file.endsWith(".ts") || file.endsWith(".js")) {
 			results.push(filePath);
 		}
 	}
-
 	return results;
 }
 
 /**
- * Load all commands from the `src/commands` directory and store them in the client's `commands` collection.
+ * Load all commands and components
  */
-export async function loadCommands(client: Client & { commands?: Collection<string, BotCommand> }) {
-	client.commands = new Collection<string, BotCommand>();
+export async function loadCommands(client: Client) {
+	client.commands = new Collection();
+	client.buttons = new Collection();
+	client.selectMenus = new Collection();
+	client.modals = new Collection();
 
+	// Loading commands
 	const commandsPath = path.join(process.cwd(), "src", "commands");
-	const commandFiles = await getCommandFiles(commandsPath);
+	const commandFiles = await getFiles(commandsPath);
 
 	for (const filePath of commandFiles) {
 		try {
-			const commandModule = await import(filePath);
-			const command: BotCommand = commandModule.default ?? commandModule;
+			const module = await import(filePath);
+			const component: BotCommand | BotComponent = module.default ?? module;
 
-			if ("data" in command && "execute" in command) {
-				client.commands.set(command.data.name, command);
-				console.log(`[COMMAND LOADED] ${command.data.name} from ${filePath}`);
+			if ("data" in component && "execute" in component) {
+				client.commands.set(component.data.name, component);
+				console.log(`[COMMAND LOADED] : ${component.data.name}`);
 			} else {
-				console.warn(`[WARNING] Invalid command at ${filePath}`);
+				console.warn(`[SKIP] Invalid command at ${filePath}`);
 			}
-		} catch (error) {
-			console.error(`[ERROR] Failed to load command at ${filePath}`, error);
+		} catch (err) {
+			console.error(`[ERROR] Failed to load command at ${filePath}`, err);
+		} finally {
+			console.log(`------------------------------------------`);
+		}
+	}
+
+	// Loading components - Buttons
+	const buttonPath = path.join(process.cwd(), "src", "components", "button");
+	const buttonFiles = await getFiles(buttonPath);
+
+	for (const filePath of buttonFiles) {
+		try {
+			const module = await import(filePath);
+			const component: BotComponent = module.default ?? module;
+
+			if ("customId" in component && "execute" in component) {
+				client.buttons.set(component.customId, component);
+				console.log(`[COMPONENT LOADED] Button: ${component.customId}`);
+			} else {
+				console.warn(`[SKIP] Invalid button at ${filePath}`);
+			}
+		} catch (err) {
+			console.error(`[ERROR] Failed to load button at ${filePath}`, err);
+		} finally {
+			console.log(`------------------------------------------`);
+		}
+	}
+
+	// Loading components - modals
+	const modalPath = path.join(process.cwd(), "src", "components", "modal");
+	const modalFiles = await getFiles(modalPath);
+
+	for (const filePath of modalFiles) {
+		try {
+			const module = await import(filePath);
+			const component: BotComponent = module.default ?? module;
+
+			if ("customId" in component && "execute" in component) {
+				client.modals.set(component.customId, component);
+				console.log(`[COMPONENT LOADED] Modal: ${component.customId}`);
+			} else {
+				console.warn(`[SKIP] Invalid modal at ${filePath}`);
+			}
+		} catch (err) {
+			console.error(`[ERROR] Failed to load modal at ${filePath}`, err);
+		} finally {
+			console.log(`------------------------------------------`);
+		}
+	}
+
+	// Loading components - select menus
+	const selectMenuPath = path.join(process.cwd(), "src", "components", "select-menu");
+	const selectMenuFiles = await getFiles(selectMenuPath);
+
+	for (const filePath of selectMenuFiles) {
+		try {
+			const module = await import(filePath);
+			const component: BotComponent = module.default ?? module;
+
+			if ("customId" in component && "execute" in component) {
+				client.selectMenus.set(component.customId, component);
+				console.log(`[COMPONENT LOADED] Select Menu: ${component.customId}`);
+			} else {
+				console.warn(`[SKIP] Invalid select menu at ${filePath}`);
+			}
+		} catch (err) {
+			console.error(`[ERROR] Failed to load select menu at ${filePath}`, err);
+		} finally {
+			console.log(`------------------------------------------`);
 		}
 	}
 }
 
 /**
- * Register all commands globally.
+ * Register all commands globally
  */
-export async function registerCommandsGlobally(
-	client: Client & { commands?: Collection<string, BotCommand> },
-	token: string,
-	clientId: string,
-) {
-	if (!client.commands) {
-		throw new Error("Commands not loaded yet.");
-	}
+export async function registerCommandsGlobally(client: Client, token: string, clientId: string) {
+	if (!client.commands) throw new Error("client.commands not initialized");
 
 	const rest = new REST({ version: "10" }).setToken(token);
-	const commandsPayload = client.commands.map(cmd => cmd.data.toJSON());
+	const payload = client.commands.map(cmd => cmd.data.toJSON());
 
 	try {
 		console.log("Registering global commands...");
-		await rest.put(Routes.applicationCommands(clientId), { body: commandsPayload });
+		await rest.put(Routes.applicationCommands(clientId), { body: payload });
 		console.log("Successfully registered all global commands.");
-	} catch (error) {
-		console.error("Failed to register commands:", error);
+	} catch (err) {
+		console.error("[ERROR] Failed to register global commands:", err);
 	}
 }

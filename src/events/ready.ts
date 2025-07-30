@@ -1,8 +1,12 @@
 import { Events, Client } from "discord.js";
+import type { BotEventHandler } from "@interfaces/botTypes.js";
 
-export const name = Events.ClientReady;
-export const once = true;
+const readyEvent: BotEventHandler<Events.ClientReady> = {
+	name: Events.ClientReady,
+	once: true,
+	async execute(client: Client) {
+		console.log(`${client.user?.tag} hazır!`);
+	},
+};
 
-export function execute(client: Client) {
-	console.log(`Kaeru is online as ${client.user?.tag}!`);
-}
+export default readyEvent;

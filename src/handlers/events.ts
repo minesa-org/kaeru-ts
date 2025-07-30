@@ -1,12 +1,7 @@
 import fs from "fs";
 import path from "path";
-import type { Client, Awaitable } from "discord.js";
-
-interface EventModule {
-	name: string;
-	once: boolean;
-	execute: (...args: any[]) => Awaitable<void>;
-}
+import type { Client, ClientEvents } from "discord.js";
+import type { EventModule } from "@interfaces/botTypes.js";
 
 export async function loadEvents(client: Client) {
 	const eventsPath = path.join(process.cwd(), "src", "events");
@@ -16,27 +11,31 @@ export async function loadEvents(client: Client) {
 
 	for (const file of files) {
 		const filePath = path.join(eventsPath, file);
-		const eventModule: EventModule = (await import(filePath)).default ?? (await import(filePath));
+		const eventModule = (await import(filePath)).default as EventModule;
 
-		if (!eventModule.name || typeof eventModule.execute !== "function") {
+		if (!eventModule || typeof eventModule.execute !== "function") {
 			console.warn(`[SKIP] Invalid event module: ${file}`);
 			continue;
 		}
 
-		const listener = (...args: any[]) => {
-			if (eventModule.name === "interactionCreate") {
-				eventModule.execute({ interaction: args[0] });
-			} else {
-				eventModule.execute(...args);
+		const eventName = eventModule.name as keyof ClientEvents;
+
+		const handler = async (...args: ClientEvents[typeof eventName]) => {
+			try {
+				await eventModule.execute(...args);
+			} catch (error) {
+				console.error(`Error in event ${eventName}:`, error);
 			}
 		};
 
 		if (eventModule.once) {
-			client.once(eventModule.name, listener);
+			client.once(eventName, handler);
 		} else {
-			client.on(eventModule.name, listener);
+			client.on(eventName, handler);
 		}
 
-		console.log(`[EVENT LOADED] ${eventModule.name}`);
+		console.log(`[EVENT LOADED] ${eventName}`);
 	}
+
+	console.log(`------------------------------------------`);
 }

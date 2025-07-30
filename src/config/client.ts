@@ -32,6 +32,8 @@ const client = new Client({
 	},
 });
 
+printLogo();
+
 (async () => {
 	try {
 		await initializeMongoose();
@@ -46,7 +48,5 @@ const client = new Client({
 		log("error", "Failed to initialize client:", error);
 	}
 })();
-
-printLogo();
 
 export default client;

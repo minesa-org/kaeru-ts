@@ -1,4 +1,4 @@
 import "dotenv/config";
-import client from "./client.js";
+import client from "@config/client.js";
 
 client.login(process.env.DISCORD_CLIENT_TOKEN);

@@ -17,7 +17,8 @@
 			"@handlers/*": ["handlers/*"],
 			"@interfaces/*": ["interfaces/*"],
 			"@components/*": ["components/*"],
-			"@utils/*": ["utils/*"]
+			"@utils/*": ["utils/*"],
+			"@config/*": ["config/*"]
 		}
 	},
 	"include": ["src"],

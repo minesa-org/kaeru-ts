@@ -5,7 +5,8 @@ import {
 	Partials,
 	PresenceUpdateStatus,
 } from "discord.js";
-import { loadCommands, loadEvents, registerCommandsGlobally } from "./export.js";
+import { loadCommands, registerCommandsGlobally } from "@handlers/commands.js";
+import { loadEvents } from "@handlers/events.js";
 import { printLogo } from "@utils/colors.js";
 
 const client = new Client({

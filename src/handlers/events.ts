@@ -31,7 +31,6 @@ export async function loadEvents(client: Client) {
 			const handler = async (...args: ClientEvents[typeof eventName]) => {
 				try {
 					await eventModule.execute(...args);
-					log("warning", `${eventName.toLocaleUpperCase()} event has been executed.`);
 				} catch (error) {
 					log("error", `Failed to execute event ${eventName}`, error);
 				}
@@ -39,10 +38,10 @@ export async function loadEvents(client: Client) {
 
 			if (eventModule.once) {
 				client.once(eventName, handler);
-				log("event", `${chalk.dim.underline("one-time")}	${eventName}`);
+				log("event", `${chalk.dim.underline("once")}		${eventName}`);
 			} else {
 				client.on(eventName, handler);
-				log("event", `${chalk.dim.underline("recurring")}	${eventName}`);
+				log("event", `${chalk.dim.underline("on")}		${eventName}`);
 			}
 			loadedEvents.push({ type: "event", name: eventName, path: filePath });
 		} catch (error) {

@@ -1,7 +1,18 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
-const chatThreadSchema = new Schema({
+interface IChatThread {
+	threadId: string;
+	messages: Array<{
+		role: "user" | "model";
+		content: string;
+		timestamp: Date;
+	}>;
+	createdAt: Date;
+	updatedAt: Date;
+}
+
+const chatThreadSchema = new Schema<IChatThread>({
 	threadId: { type: String, required: true, unique: true },
 	messages: [
 		{
@@ -21,6 +32,6 @@ chatThreadSchema.pre("save", function (next) {
 	next();
 });
 
-const ChatThread = mongoose.model("ChatThread", chatThreadSchema);
+const ChatThread = mongoose.model<IChatThread>("ChatThread", chatThreadSchema, "chatThreads");
 
 export default ChatThread;

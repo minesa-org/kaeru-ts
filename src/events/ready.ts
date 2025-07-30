@@ -7,8 +7,8 @@ import { log } from "@utils/colors.js";
 const readyEvent: BotEventHandler<Events.ClientReady> = {
 	name: Events.ClientReady,
 	once: true,
-	async execute(client: Client) {
-		chalk.hex("#A1887F").bold(`Kaeru is ready! Logged in as ${client.user?.tag}`);
+	execute: async (client: Client) => {
+		log("info", chalk.hex("#A1887F").bold(`Kāru is ready! Logged in as ${client.user?.tag}`));
 
 		const connection = getMongooseConnection();
 		if (connection) {

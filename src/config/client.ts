@@ -8,6 +8,8 @@ import {
 import { loadCommands, registerCommandsGlobally } from "@handlers/commands.js";
 import { loadEvents } from "@handlers/events.js";
 import { printLogo } from "@utils/colors.js";
+import { initializeMongoose } from "@database/mongoose.js";
+import { log } from "@utils/colors.js";
 
 const client = new Client({
 	intents: [
@@ -30,17 +32,20 @@ const client = new Client({
 	},
 });
 
-async function initialize() {
-	await loadCommands(client);
-	await loadEvents(client);
-	await registerCommandsGlobally(
-		client,
-		process.env.DISCORD_CLIENT_TOKEN!,
-		process.env.DISCORD_CLIENT_ID!,
-	);
-}
-
-initialize();
+(async () => {
+	try {
+		await initializeMongoose();
+		await loadCommands(client);
+		await loadEvents(client);
+		await registerCommandsGlobally(
+			client,
+			process.env.DISCORD_CLIENT_TOKEN!,
+			process.env.DISCORD_CLIENT_ID!,
+		);
+	} catch (error) {
+		log("error", "Failed to initialize client:", error);
+	}
+})();
 
 printLogo();
 

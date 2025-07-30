@@ -31,7 +31,6 @@ export async function loadEvents(client: Client) {
 			const handler = async (...args: ClientEvents[typeof eventName]) => {
 				try {
 					await eventModule.execute(...args);
-					log("warning", `${eventName.toLocaleUpperCase()} event has been executed.`);
 				} catch (error) {
 					log("error", `Failed to execute event ${eventName}`, error);
 				}

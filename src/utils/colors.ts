@@ -63,6 +63,4 @@ export function printLogo(): void {
   ╚═══════════════════════════════════════╝
   `),
 	);
-
-	header("Loading Commands and Components");
 }

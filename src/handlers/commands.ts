@@ -10,7 +10,7 @@ import {
 	REST,
 	Routes,
 } from "discord.js";
-import { log, separator, header } from "@utils/colors.js";
+import { header, log, separator } from "@utils/colors.js";
 import type { BotCommand, BotComponent } from "@interfaces/botTypes.js";
 
 export type BotInteraction =
@@ -42,6 +42,7 @@ export async function loadCommands(client: Client) {
 	client.selectMenus = new Collection();
 	client.modals = new Collection();
 
+	header("Loading Commands and Components");
 	// Slash komutları
 	const commandsPath = path.join(process.cwd(), "src", "commands");
 	const commandFiles = await getFiles(commandsPath);

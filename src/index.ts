@@ -1,4 +1,14 @@
 import "dotenv/config";
 import client from "@config/client.js";
+import { log } from "@utils/colors.js";
 
-client.login(process.env.DISCORD_CLIENT_TOKEN);
+async function startBot() {
+	try {
+		await client.login(process.env.DISCORD_CLIENT_TOKEN);
+	} catch (error) {
+		log("error", "Failed to login:", error);
+		process.exit(1);
+	}
+}
+
+startBot();

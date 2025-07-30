@@ -12,13 +12,16 @@
 		"skipLibCheck": true,
 		"baseUrl": "./src",
 		"paths": {
+			"@types/*": ["@types/*"],
 			"@events/*": ["events/*"],
 			"@commands/*": ["commands/*"],
 			"@handlers/*": ["handlers/*"],
 			"@interfaces/*": ["interfaces/*"],
 			"@components/*": ["components/*"],
 			"@utils/*": ["utils/*"],
-			"@config/*": ["config/*"]
+			"@config/*": ["config/*"],
+			"@models/*": ["models/*"],
+			"@database/*": ["database/*"]
 		}
 	},
 	"include": ["src"],

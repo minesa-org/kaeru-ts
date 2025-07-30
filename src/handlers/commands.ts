@@ -43,7 +43,7 @@ export async function loadCommands(client: Client) {
 	client.modals = new Collection();
 
 	header("Loading Commands and Components");
-	// Slash komutları
+	// Slash commands
 	const commandsPath = path.join(process.cwd(), "src", "commands");
 	const commandFiles = await getFiles(commandsPath);
 
@@ -54,7 +54,7 @@ export async function loadCommands(client: Client) {
 
 			if ("data" in component && "execute" in component) {
 				client.commands.set(component.data.name, component);
-				log("command", `		${component.data.name}`);
+				log("command", `		${component.data.name.toLowerCase()}`);
 			} else {
 				log("warning", `Invalid command at ${filePath}`);
 			}
@@ -64,7 +64,7 @@ export async function loadCommands(client: Client) {
 	}
 	separator();
 
-	// Butonlar
+	// Buttons
 	const buttonPath = path.join(process.cwd(), "src", "components", "button");
 	const buttonFiles = await getFiles(buttonPath);
 
@@ -85,7 +85,7 @@ export async function loadCommands(client: Client) {
 	}
 	separator();
 
-	// Modallar
+	// Modals
 	const modalPath = path.join(process.cwd(), "src", "components", "modal");
 	const modalFiles = await getFiles(modalPath);
 
@@ -106,7 +106,7 @@ export async function loadCommands(client: Client) {
 	}
 	separator();
 
-	// Select menüler
+	// Select menus
 	const selectMenuPath = path.join(process.cwd(), "src", "components", "select-menu");
 	const selectMenuFiles = await getFiles(selectMenuPath);
 
@@ -127,6 +127,9 @@ export async function loadCommands(client: Client) {
 	}
 }
 
+/**
+ * Register all global commands
+ */
 export async function registerCommandsGlobally(client: Client, token: string, clientId: string) {
 	if (!client.commands) throw new Error("client.commands not initialized");
 

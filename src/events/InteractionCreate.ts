@@ -7,11 +7,22 @@ const interactionCreate: BotEventHandler<"interactionCreate"> = {
 	once: false,
 	execute: async (interaction: Interaction) => {
 		try {
+			if (interaction.isContextMenuCommand()) {
+				// Context menu commands handler
+				const command = interaction.client.commands?.get(interaction.commandName);
+				if (!command) {
+					log("warning", `No context menu command handler found for: ${interaction.commandName}`);
+					return;
+				}
+				await command.execute(interaction);
+				return;
+			}
+
 			if (interaction.isCommand()) {
 				// Slash commands handler
 				const command = interaction.client.commands?.get(interaction.commandName);
 				if (!command) {
-					log("warning", `No command handler found for command: ${interaction.commandName}`);
+					log("warning", `No slash command handler found for: ${interaction.commandName}`);
 					return;
 				}
 				await command.execute(interaction);

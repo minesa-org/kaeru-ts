@@ -5,21 +5,29 @@ import type {
 	ModalSubmitInteraction,
 	ClientEvents,
 	Awaitable,
+	MessageContextMenuCommandInteraction,
+	UserContextMenuCommandInteraction,
+	ContextMenuCommandBuilder,
+	SlashCommandBuilder,
 } from "discord.js";
 
 // Command Interfaces
-interface BaseCommand {
-	data: {
-		name: string;
-		description?: string;
-		toJSON: () => any;
-	};
-	execute: (interaction: CommandInteraction) => Promise<void>;
+interface BaseCommand<I, D> {
+	data: D;
+	execute: (interaction: I) => Promise<any>;
 }
 
-interface SlashCommand extends BaseCommand {}
-interface UserCommand extends BaseCommand {}
-interface MessageCommand extends BaseCommand {}
+export type SlashCommand = BaseCommand<CommandInteraction, SlashCommandBuilder>;
+export type MessageContextMenuCommand = BaseCommand<
+	MessageContextMenuCommandInteraction,
+	ContextMenuCommandBuilder
+>;
+export type UserContextMenuCommand = BaseCommand<
+	UserContextMenuCommandInteraction,
+	ContextMenuCommandBuilder
+>;
+
+export type BotCommand = SlashCommand | MessageContextMenuCommand | UserContextMenuCommand;
 
 // Component Interfaces
 interface BaseComponent<TInteraction> {
@@ -38,6 +46,5 @@ export interface EventModule<K extends keyof ClientEvents = keyof ClientEvents> 
 	execute: (...args: ClientEvents[K]) => Awaitable<void>;
 }
 
-export type BotCommand = SlashCommand | UserCommand | MessageCommand;
 export type BotComponent = ButtonCommand | SelectMenuCommand | ModalCommand;
 export type BotEventHandler<K extends keyof ClientEvents> = EventModule<K>;

@@ -15,6 +15,6 @@ const karuButton = new ButtonBuilder()
 	.setDisabled(false)
 	.setEmoji(emojis.intelligence);
 
-const ticketButtonRow = new ActionRowBuilder().addComponents(lockButton, karuButton);
+const ticketButtonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(lockButton, karuButton);
 
 export { ticketButtonRow };

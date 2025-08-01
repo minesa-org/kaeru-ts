@@ -23,7 +23,7 @@ export const emojis = {
 			question: { id: "1375482334232444988", name: "label_question" },
 			discussion: { id: "1375482386183356446", name: "label_discussion" },
 			help: { id: "1375482474280255539", name: "label_help" },
-		},
+		} satisfies Record<string, { id: string; name: string }>,
 	},
 	reactions: {
 		kaeru: {
@@ -73,7 +73,7 @@ export const emojis = {
 	magic: { id: "1375436613856788550", name: "wand" },
 	text_append: { id: "1375448596509495366", name: "text_append" },
 	list_bullet: { id: "1375468308022951966", name: "list_bullet" },
-} as const;
+};
 
 /**
  * Recursively gets the keys of an object, including nested keys.

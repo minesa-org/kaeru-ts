@@ -10,15 +10,15 @@ import type {
 	SlashCommandBuilder,
 	SlashCommandSubcommandsOnlyBuilder,
 	ChatInputCommandInteraction,
+	InteractionResponse,
 } from "discord.js";
 
-// Command Interfaces
+// === Command Interfaces ===
 interface BaseCommand<I, D> {
 	data: D;
 	execute: (interaction: I) => Promise<any>;
 }
 
-// Destekleyen iki builder türünü birleştir
 type SlashBuilder = SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder;
 
 export type SlashCommand = BaseCommand<ChatInputCommandInteraction, SlashBuilder>;
@@ -34,22 +34,27 @@ export type UserContextMenuCommand = BaseCommand<
 
 export type BotCommand = SlashCommand | MessageContextMenuCommand | UserContextMenuCommand;
 
-// Component Interfaces
+// === Component Interfaces ===
+
+type ComponentExecuteReturn = void | Promise<void> | Promise<InteractionResponse<boolean> | void>;
+
 interface BaseComponent<TInteraction> {
-	customId: string;
-	execute: (interaction: TInteraction) => Promise<void>;
+	customId: string | RegExp;
+	execute: (interaction: TInteraction) => ComponentExecuteReturn;
 }
 
-interface ButtonCommand extends BaseComponent<ButtonInteraction> {}
-interface SelectMenuCommand extends BaseComponent<StringSelectMenuInteraction> {}
-interface ModalCommand extends BaseComponent<ModalSubmitInteraction> {}
+export interface ButtonCommand extends BaseComponent<ButtonInteraction> {}
+export interface SelectMenuCommand extends BaseComponent<StringSelectMenuInteraction> {}
+export interface ModalCommand extends BaseComponent<ModalSubmitInteraction> {}
 
-// Event Handler Interface
+export type BotComponent = ButtonCommand | SelectMenuCommand | ModalCommand;
+
+// === Event Handler Interface ===
+
 export interface EventModule<K extends keyof ClientEvents = keyof ClientEvents> {
-	name: K extends keyof ClientEvents ? K : keyof ClientEvents;
+	name: K;
 	once?: boolean;
 	execute: (...args: ClientEvents[K]) => Awaitable<void>;
 }
 
-export type BotComponent = ButtonCommand | SelectMenuCommand | ModalCommand;
 export type BotEventHandler<K extends keyof ClientEvents> = EventModule<K>;

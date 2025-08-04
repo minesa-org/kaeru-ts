@@ -26,6 +26,7 @@
 		"chalk": "^5.4.1",
 		"discord.js": "^14.21.0",
 		"dotenv": "^16.6.1",
+		"moment-timezone": "^0.6.0",
 		"mongoose": "^8.17.0",
 		"tsconfig-paths": "^4.2.0"
 	},

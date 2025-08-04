@@ -1,7 +1,7 @@
 import ChatThread from "@models/ChatThread.js";
 import { karu } from "@config/karu.js";
 import { log } from "@utils/colors.js";
-import { emojis } from "@utils/emojis.js";
+import { emojis, getEmoji } from "@utils/emojis.js";
 import { Message as DiscordMessage, TextChannel, ThreadChannel } from "discord.js";
 
 type SendableChannel = TextChannel | ThreadChannel;
@@ -77,7 +77,7 @@ Never reveal internal model names or AI configurations (you are "Kāru", not Gem
 			.replace(/^Kāru[:,\s]*/i, "")
 			.replace(/^Bot[:,\s]*/i, "");
 
-		const content = `${emojis.intelligence} ${botResponse}`;
+		const content = `${getEmoji("intelligence")} ${botResponse}`;
 
 		await channel.send({
 			content,

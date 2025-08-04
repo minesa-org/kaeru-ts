@@ -11,7 +11,13 @@ import {
 	Routes,
 } from "discord.js";
 import { header, log, separator } from "@utils/colors.js";
-import type { BotCommand, BotComponent } from "@interfaces/botTypes.js";
+import type {
+	BotCommand,
+	BotComponent,
+	ButtonCommand,
+	ModalCommand,
+	SelectMenuCommand,
+} from "@interfaces/botTypes.js";
 
 export type BotInteraction =
 	| CommandInteraction
@@ -71,11 +77,16 @@ export async function loadCommands(client: Client) {
 	for (const filePath of buttonFiles) {
 		try {
 			const module = await import(filePath);
-			const component: BotComponent = module.default ?? module;
+			const component = module.default ?? module;
 
 			if ("customId" in component && "execute" in component) {
-				client.buttons.set(component.customId, component);
-				log("button", `		${component.customId}`);
+				const buttonComponent = component as ButtonCommand;
+				const customId =
+					buttonComponent.customId instanceof RegExp
+						? buttonComponent.customId.source
+						: buttonComponent.customId;
+				client.buttons.set(customId, buttonComponent);
+				log("button", `		${customId}`);
 			} else {
 				log("warning", `Invalid button at ${filePath}`);
 			}
@@ -92,11 +103,16 @@ export async function loadCommands(client: Client) {
 	for (const filePath of modalFiles) {
 		try {
 			const module = await import(filePath);
-			const component: BotComponent = module.default ?? module;
+			const component = module.default ?? module;
 
 			if ("customId" in component && "execute" in component) {
-				client.modals.set(component.customId, component);
-				log("modal", `		${component.customId}`);
+				const modalComponent = component as ModalCommand;
+				const customId =
+					modalComponent.customId instanceof RegExp
+						? modalComponent.customId.source
+						: modalComponent.customId;
+				client.modals.set(customId, modalComponent);
+				log("modal", `		${customId}`);
 			} else {
 				log("warning", `Invalid modal at ${filePath}`);
 			}
@@ -113,11 +129,16 @@ export async function loadCommands(client: Client) {
 	for (const filePath of selectMenuFiles) {
 		try {
 			const module = await import(filePath);
-			const component: BotComponent = module.default ?? module;
+			const component = module.default ?? module;
 
 			if ("customId" in component && "execute" in component) {
-				client.selectMenus.set(component.customId, component);
-				log("selectMenu", `	${component.customId}`);
+				const menuComponent = component as SelectMenuCommand;
+				const customId =
+					menuComponent.customId instanceof RegExp
+						? menuComponent.customId.source
+						: menuComponent.customId;
+				client.selectMenus.set(customId, menuComponent);
+				log("selectMenu", `	${customId}`);
 			} else {
 				log("warning", `Invalid select menu at ${filePath}`);
 			}

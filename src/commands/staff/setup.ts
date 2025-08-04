@@ -1,6 +1,8 @@
 import { BotCommand } from "@interfaces/botTypes.js";
 import { emojis, getEmoji } from "@utils/emojis.js";
+import { formatMultiline } from "@utils/formatMultiline.js";
 import { saveStaffRoleId } from "@utils/saveStaffRole.js";
+import { isValidImageUrl } from "@utils/isValidImageUrl.js";
 import {
 	ActionRowBuilder,
 	ApplicationIntegrationType,
@@ -141,16 +143,18 @@ const setupCommand: BotCommand = {
 							de: "beschreibung",
 							ru: "описание",
 						})
-						.setDescription("Set description of message (it supports markdown)")
+						.setDescription(
+							"Set message description (markdown supported, use two spaces for a new line).",
+						)
 						.setDescriptionLocalizations({
-							it: "Setta la descrizione del messaggio (supporta markdown)",
-							tr: "Mesajın açıklamasını ayarla (markdown destekli)",
-							"zh-CN": "设置消息描述（支持 markdown）",
-							"pt-BR": "Defina a descrição da mensagem (suporta markdown)",
-							ro: "Setați descrierea mesajului (acceptă markdown)",
-							el: "Ρύθμιση περιγραφής μηνύματος (οικονομικός υποστηρίζει markdown)",
-							de: "Beschreibung der Nachricht festlegen (unterstützt Markdown)",
-							ru: "Установите описание сообщения (поддерживает markdown)",
+							it: "Imposta la descrizione (markdown supportato, vai a capo con due spazi).",
+							tr: "Açıklamayı ayarla (markdown destekli, yeni satır için iki boşluk kullan).",
+							"zh-CN": "设置描述（支持markdown，使用两个空格换行）",
+							"pt-BR": "Defina a descrição (suporta markdown, nova linha com dois espaços).",
+							ro: "Setați descrierea (acceptă markdown, două spații pentru rând nou).",
+							el: "Ρύθμιση περιγραφής (υποστηρίζει markdown, δύο κενά για νέα γραμμή).",
+							de: "Beschreibung festlegen (Markdown unterstützt, zwei Leerzeichen für neue Zeile).",
+							ru: "Укажите описание (поддерживает markdown, два пробела — новая строка).",
 						})
 						.setRequired(false),
 				)
@@ -243,7 +247,7 @@ const setupCommand: BotCommand = {
 				.setAccentColor(0xa2845e)
 				.addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						containerDescription ||
+						formatMultiline(containerDescription) ||
 							[
 								`# ${getEmoji("button")} Create a Ticket`,
 								`If you're experiencing an issue with our product or service, please use the "Create ticket" button to report it.`,
@@ -319,25 +323,6 @@ const setupCommand: BotCommand = {
 				break;
 		}
 	},
-};
-
-/**
- * Check if the provided URL is a valid image URL
- * @param url
- * @returns
- */
-const isValidImageUrl = (url: string) => {
-	if (!url) return false;
-	try {
-		new URL(url);
-
-		return (
-			/\.(jpg|jpeg|png|gif|webp|bmp|svg)(\?.*)?$/i.test(url) ||
-			/discord|imgur|gyazo|prnt\.sc|i\.redd\.it|media\.tenor|giphy/i.test(url)
-		);
-	} catch {
-		return false;
-	}
 };
 
 export default setupCommand;

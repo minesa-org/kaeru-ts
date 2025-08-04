@@ -6,10 +6,12 @@ const ticketKaruButton: BotComponent = {
 	customId: "ticket-karu-button",
 
 	execute: async (interaction: ButtonInteraction) => {
-		if (interaction.guild?.members.me?.permissions.has(PermissionFlagsBits.ManageThreads)) {
+		if (!interaction.guild?.members.me?.permissions.has(PermissionFlagsBits.ManageThreads)) {
 			await interaction.reply({
-				content: `${getEmoji("danger")}\n#- It seems like I don't have permission to manage threads to change it is name...`,
+				content: `# ${getEmoji("danger")}\n-# It seems like I don't have permission to manage threads to change it is name...`,
+				flags: MessageFlags.Ephemeral,
 			});
+			return;
 		}
 
 		if (!interaction.channel?.isThread()) {

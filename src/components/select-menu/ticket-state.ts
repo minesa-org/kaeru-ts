@@ -16,6 +16,7 @@ import {
 	SeparatorSpacingSize,
 	StringSelectMenuInteraction,
 	GuildMember,
+	APIInteractionGuildMember,
 } from "discord.js";
 
 const menu3 = new StringSelectMenuBuilder()
@@ -45,10 +46,6 @@ const menu3 = new StringSelectMenuBuilder()
 
 export const row3 = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(menu3);
 
-function isGuildMember(member: any): member is GuildMember {
-	return member && typeof member.displayName === "string";
-}
-
 const ticketState: BotComponent = {
 	customId: "ticket-select-menu",
 
@@ -61,9 +58,8 @@ const ticketState: BotComponent = {
 			throw new Error();
 		}
 
-		const displayName = isGuildMember(interaction.member)
-			? interaction.member.displayName
-			: interaction.user.username;
+		const member = interaction.member as GuildMember | APIInteractionGuildMember;
+		const displayName = "displayName" in member ? member.displayName : interaction.user.username;
 
 		switch (selectedValue) {
 			case "ticket-menu-close": {
@@ -92,7 +88,7 @@ const ticketState: BotComponent = {
 					.setPlaceholder("What do you want to do?")
 					.addOptions(
 						new StringSelectMenuOptionBuilder()
-							.setLabel("Done")
+							.setLabel("Close as completed")
 							.setValue("ticket-menu-done")
 							.setDescription("Done, closed, fixed, resolved")
 							.setEmoji(emojis.ticket.circle.done)

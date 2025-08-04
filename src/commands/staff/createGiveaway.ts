@@ -4,7 +4,6 @@ import {
 	GuildScheduledEventPrivacyLevel,
 	PermissionFlagsBits,
 	SlashCommandBuilder,
-	bold,
 	MessageFlags,
 	userMention,
 	ApplicationIntegrationType,
@@ -15,7 +14,7 @@ import {
 	User,
 } from "discord.js";
 import { timezoneChecking, timeChecking } from "@utils/timeChecking.js";
-import { emojis, getEmoji } from "@utils/emojis.js";
+import { getEmoji } from "@utils/emojis.js";
 import { BotCommand } from "@interfaces/botTypes.js";
 
 const createGiveaway: BotCommand = {

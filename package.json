@@ -8,6 +8,10 @@
 		"dev": "tsx watch src/index.ts",
 		"start": "node dist/index.js",
 		"build": "tsc",
+		"pm2:start": "pm2 start dist/index.js --name kaeru",
+		"pm2:stop": "pm2 stop kaeru",
+		"pm2:restart": "pm2 restart kaeru",
+		"pm2:logs": "pm2 logs kaeru",
 		"format": "prettier --write ."
 	},
 	"keywords": [
@@ -34,6 +38,7 @@
 		"@types/chalk": "^0.4.31",
 		"@types/mongoose": "^5.11.96",
 		"@types/node": "^20.11.30",
+		"pm2": "^6.0.8",
 		"prettier": "^3.6.2",
 		"tsx": "^4.20.3",
 		"typescript": "^5.4.5"

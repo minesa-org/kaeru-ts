@@ -337,11 +337,11 @@ const createGiveaway: BotCommand = {
 		}
 
 		await interaction.editReply({
-			content: emojis.giftCard + " Creating the giveaway...",
+			content: `${getEmoji("giftCard")} Creating the giveaway...`,
 		});
 
 		await interaction.editReply({
-			content: `# ${emojis.giftCard} Giveaway Created: ${underline(giveawayName)}
+			content: `# ${getEmoji("giftCard")} Giveaway Created: ${underline(giveawayName)}
 Giveaway will be triggered when the time arrives. Winner will be revealed automatically.\n
 🔗 Invite Link: ${inviteLink}`,
 		});
@@ -364,7 +364,7 @@ Giveaway will be triggered when the time arrives. Winner will be revealed automa
 						const shuffled = shuffleSubscribers([...subscribers.values()].map(sub => sub.user));
 						const winner = shuffled[0];
 
-						resultMessage = `**${giveawayName}** giveaway has a winner! ${emojis.giftCard}
+						resultMessage = `**${giveawayName}** giveaway has a winner! ${getEmoji("giftCard")}
 ${userMention(winner.id)} please create a ticket to contact with us! <:ita_happy:1170847735008739408>`;
 					} else {
 						resultMessage = `**${giveawayName}** giveaway ended, but no one joined. <:ita_happy:1170847735008739408>`;

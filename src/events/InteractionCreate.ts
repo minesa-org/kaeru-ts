@@ -1,9 +1,10 @@
 import { MessageFlags, type Interaction } from "discord.js";
 import type { BotEventHandler } from "@interfaces/botTypes.js";
 import { log } from "@utils/colors.js";
+import { Events } from "discord.js";
 
-const interactionCreate: BotEventHandler<"interactionCreate"> = {
-	name: "interactionCreate",
+const interactionCreateEvent: BotEventHandler<Events.InteractionCreate> = {
+	name: Events.InteractionCreate,
 	once: false,
 	execute: async (interaction: Interaction) => {
 		try {
@@ -78,4 +79,4 @@ const interactionCreate: BotEventHandler<"interactionCreate"> = {
 	},
 };
 
-export default interactionCreate;
+export default interactionCreateEvent;

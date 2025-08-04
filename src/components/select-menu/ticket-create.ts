@@ -8,13 +8,13 @@ import {
 import type { BotComponent } from "@interfaces/botTypes.js";
 
 const createTicketSelectMenu: BotComponent = {
-	customId: "create-ticket",
+	customId: "ticket-create",
 
 	execute: async (interaction: StringSelectMenuInteraction): Promise<void> => {
 		const label = interaction.values[0] || "bug";
 
 		const modal = new ModalBuilder()
-			.setCustomId(`create-ticket-modal|label-${label}`)
+			.setCustomId(`ticket-create-modal|label-${label}`)
 			.setTitle("Ticket creation");
 
 		const messageInput = new TextInputBuilder()

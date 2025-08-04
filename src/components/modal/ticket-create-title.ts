@@ -20,7 +20,7 @@ interface WebhookData {
 const webhookStorage = new Map<string, WebhookData>();
 
 const createTicketModal: BotComponent = {
-	customId: /^create-ticket-modal\|/,
+	customId: /^ticket-create-modal\|/,
 
 	execute: async (interaction: ModalSubmitInteraction): Promise<void> => {
 		const [, rawLabel] = interaction.customId.split("|");

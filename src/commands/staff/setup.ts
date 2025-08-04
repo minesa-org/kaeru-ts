@@ -259,7 +259,7 @@ const setupCommand: BotCommand = {
 				);
 
 			const createTicketMenu = new StringSelectMenuBuilder()
-				.setCustomId("create-ticket")
+				.setCustomId("ticket-create")
 				.setMaxValues(1)
 				.setPlaceholder("Create a ticket about...")
 				.addOptions([

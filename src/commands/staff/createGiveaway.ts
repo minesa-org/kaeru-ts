@@ -313,7 +313,7 @@ const createGiveaway: BotCommand = {
 			description: giveawayDescription,
 			image:
 				giveawayImage?.url ??
-				"https://cdn.discordapp.com/attachments/736571695170584576/1365836550813777980/Giveaway_Card.png?ex=680ec1e9&is=680d7069&hm=468879c6d466c8fc339a99850935acb3e9aaa1eef2f64bbee4d529abb0767a24&",
+				"https://cdn.discordapp.com/attachments/736571695170584576/1365836550813777980/Giveaway_Card.png?ex=6891ef29&is=68909da9&hm=82a0d8991c4e15e9bd0d3191472b8fece077994cdace525828dfc7079a015ac8&",
 			scheduledStartTime: scheduledStartTime.toDate(),
 			scheduledEndTime: scheduledEndTime.toDate(),
 			privacyLevel: GuildScheduledEventPrivacyLevel.GuildOnly,

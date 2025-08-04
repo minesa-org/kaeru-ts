@@ -9,10 +9,11 @@ import {
 import { getEmoji } from "@utils/emojis.js";
 
 export async function setLockedAndUpdateMessage(interaction: any, reason: string = "") {
-	if (interaction.guild?.members.me?.permissions.has(PermissionFlagsBits.ManageThreads)) {
+	if (!interaction.guild?.members.me?.permissions.has(PermissionFlagsBits.ManageThreads)) {
 		await interaction.reply({
-			content: `${getEmoji("danger")}\n#- It seems like I don't have permission to manage threads to lock...`,
+			content: `# ${getEmoji("danger")}\n-# It seems like I don't have permission to manage threads to lock...`,
 		});
+		return;
 	}
 
 	const formattedTime = time(new Date(), "R");
@@ -24,19 +25,11 @@ export async function setLockedAndUpdateMessage(interaction: any, reason: string
 	await interaction.channel.setLocked(true);
 
 	try {
-		if (interaction.replied || interaction.deferred) {
-			await interaction.editReply({
-				content: `Locked this ticket successfully. To unlock this ticket, please enable it manually on "unlock" button.`,
-				components: [],
-				embeds: [],
-			});
-		} else {
-			await interaction.update({
-				content: `Locked this ticket successfully. To unlock this ticket, please enable it manually on "unlock" button.`,
-				components: [],
-				embeds: [],
-			});
-		}
+		await interaction.update({
+			content: `Locked this ticket successfully. To unlock this ticket, please enable it manually on "unlock" button.`,
+			components: [],
+			embeds: [],
+		});
 	} catch {
 		await interaction.channel.send(
 			`Locked this ticket successfully. To unlock this ticket, please enable it manually on "unlock" button.`,

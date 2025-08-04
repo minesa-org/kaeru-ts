@@ -40,7 +40,7 @@ let lockButton = new ButtonBuilder()
 	.setEmoji(emojis.ticket.bubble.lock);
 
 let karuButton = new ButtonBuilder()
-	.setCustomId("karu-button")
+	.setCustomId("ticket-karu-button")
 	.setLabel("Kāru AI (Beta)")
 	.setStyle(ButtonStyle.Secondary)
 	.setDisabled(false)

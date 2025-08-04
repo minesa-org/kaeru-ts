@@ -8,7 +8,6 @@ const interactionCreate: BotEventHandler<"interactionCreate"> = {
 	execute: async (interaction: Interaction) => {
 		try {
 			if (interaction.isContextMenuCommand()) {
-				// Context menu commands handler
 				const command = interaction.client.commands?.get(interaction.commandName);
 				if (!command) {
 					log("warning", `No context menu command handler found for: ${interaction.commandName}`);
@@ -19,7 +18,6 @@ const interactionCreate: BotEventHandler<"interactionCreate"> = {
 			}
 
 			if (interaction.isCommand()) {
-				// Slash commands handler
 				const command = interaction.client.commands?.get(interaction.commandName);
 				if (!command) {
 					log("warning", `No slash command handler found for: ${interaction.commandName}`);
@@ -30,7 +28,6 @@ const interactionCreate: BotEventHandler<"interactionCreate"> = {
 			}
 
 			if (interaction.isButton()) {
-				// Button components handler
 				const buttonHandler = interaction.client.buttons.get(interaction.customId);
 				if (!buttonHandler) {
 					log("warning", `No button handler found for button: ${interaction.customId}`);
@@ -41,7 +38,6 @@ const interactionCreate: BotEventHandler<"interactionCreate"> = {
 			}
 
 			if (interaction.isStringSelectMenu()) {
-				// Select menu handler
 				const selectHandler = interaction.client.selectMenus.get(interaction.customId);
 				if (!selectHandler) {
 					log("warning", `No select menu handler found for select menu: ${interaction.customId}`);
@@ -52,13 +48,22 @@ const interactionCreate: BotEventHandler<"interactionCreate"> = {
 			}
 
 			if (interaction.isModalSubmit()) {
-				// Modal submit handler
-				const modalHandler = interaction.client.modals.get(interaction.customId);
-				if (!modalHandler) {
+				const customId = interaction.customId;
+				const modals = interaction.client.modals;
+
+				const modal = [...modals.values()].find(modal => {
+					const id = modal.customId;
+					if (typeof id === "string") return id === customId;
+					if (id instanceof RegExp) return id.test(customId);
+					return false;
+				});
+
+				if (!modal) {
 					log("warning", `No modal handler found for modal: ${interaction.customId}`);
 					return;
 				}
-				await modalHandler.execute(interaction);
+
+				await modal.execute(interaction);
 				return;
 			}
 		} catch (error) {

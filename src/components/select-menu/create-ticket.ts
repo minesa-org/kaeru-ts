@@ -1,33 +1,35 @@
 import {
-	StringSelectMenuInteraction,
+	ActionRowBuilder,
 	ModalBuilder,
 	TextInputBuilder,
 	TextInputStyle,
-	ActionRowBuilder,
+	StringSelectMenuInteraction,
 } from "discord.js";
 import type { BotComponent } from "@interfaces/botTypes.js";
 
-const selectMenu: BotComponent = {
+const createTicketSelectMenu: BotComponent = {
 	customId: "create-ticket",
-	async execute(interaction: StringSelectMenuInteraction) {
+
+	execute: async (interaction: StringSelectMenuInteraction): Promise<void> => {
 		const label = interaction.values[0] || "bug";
 
 		const modal = new ModalBuilder()
-			.setCustomId(`create-ticket-modal`)
-			.setTitle(`Create a ${label.toUpperCase()} ticket`);
+			.setCustomId(`create-ticket-modal|label-${label}`)
+			.setTitle("Ticket creation");
 
-		const input = new TextInputBuilder()
-			.setCustomId("ticket-title")
-			.setLabel("Please explain your issue with a few words.")
+		const messageInput = new TextInputBuilder()
+			.setCustomId("message")
+			.setLabel("Please describe your issue in detail")
 			.setRequired(true)
-			.setStyle(TextInputStyle.Short)
-			.setPlaceholder("Cannot post memes")
-			.setMinLength(5)
-			.setMaxLength(80);
+			.setStyle(TextInputStyle.Paragraph)
+			.setPlaceholder("I am trying to tap the '+' icon, but I can't upload files?")
+			.setMinLength(20)
+			.setMaxLength(800);
 
-		modal.addComponents(new ActionRowBuilder<TextInputBuilder>().addComponents(input));
+		modal.addComponents(new ActionRowBuilder<TextInputBuilder>().addComponents(messageInput));
+
 		await interaction.showModal(modal).catch(console.error);
 	},
 };
 
-export default selectMenu;
+export default createTicketSelectMenu;

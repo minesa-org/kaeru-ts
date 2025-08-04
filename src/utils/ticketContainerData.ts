@@ -5,7 +5,7 @@ import {
 	TextDisplayBuilder,
 	ThumbnailBuilder,
 } from "discord.js";
-import { getEmoji } from "./emojis.js";
+import { getEmoji } from "@utils/emojis.js";
 import { getStaffRoleId } from "@utils/saveStaffRole.js";
 
 export const ticketContainerData = async (interaction: any) => {

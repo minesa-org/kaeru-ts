@@ -18,9 +18,9 @@ import {
 	ButtonStyle,
 	ChatInputCommandInteraction,
 } from "discord.js";
-import { emojis, getEmoji } from "@utils/emojis.js";
-import type { BotCommand } from "@interfaces/botTypes.js";
-import { formatMultiline } from "@utils/formatMultiline.js";
+import { emojis, getEmoji } from "../../utils/emojis.js";
+import type { BotCommand } from "../../interfaces/botTypes.js";
+import { formatMultiline } from "../../utils/formatMultiline.js";
 
 const announce: BotCommand = {
 	data: new SlashCommandBuilder()
@@ -288,7 +288,7 @@ const announce: BotCommand = {
 
 		container.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
-				`-# ${getEmoji("bubble")} __@${interaction.user.username}__`,
+				`-# ${getEmoji("bubble")} __../${interaction.user.username}__`,
 			),
 		);
 

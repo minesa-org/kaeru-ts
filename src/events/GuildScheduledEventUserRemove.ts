@@ -1,5 +1,5 @@
 import { Events } from "discord.js";
-import type { BotEventHandler } from "@interfaces/botTypes.js";
+import type { BotEventHandler } from "../interfaces/botTypes.js";
 
 const guildScheduledUserRemoveEvent: BotEventHandler<Events.GuildScheduledEventUserRemove> = {
 	name: Events.GuildScheduledEventUserRemove,

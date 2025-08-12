@@ -1,6 +1,6 @@
 import { StringSelectMenuInteraction } from "discord.js";
-import type { BotComponent } from "@interfaces/botTypes.js";
-import { setLockedAndUpdateMessage } from "@utils/ticketLockandUpdate.js";
+import type { BotComponent } from "../../interfaces/botTypes.js";
+import { setLockedAndUpdateMessage } from "../../utils/ticketLockandUpdate.js";
 
 const ticketLockReason: BotComponent = {
 	customId: "ticket-lock-reason",

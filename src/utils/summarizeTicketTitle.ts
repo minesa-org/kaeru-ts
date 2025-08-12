@@ -1,4 +1,4 @@
-import { karu } from "@config/karu.js";
+import { karu } from "../config/karu.js";
 export async function summarizeTicketTitle(inputText: string) {
 	try {
 		const model = karu.getGenerativeModel({

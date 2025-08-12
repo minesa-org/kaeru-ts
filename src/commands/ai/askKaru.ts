@@ -5,11 +5,11 @@ import {
 	MessageFlags,
 	ChatInputCommandInteraction,
 } from "discord.js";
-import type { BotCommand } from "@interfaces/botTypes.js";
-import { emojis } from "@utils/emojis.js";
-import { log } from "@utils/colors.js";
-import { langMap } from "@utils/languageMap.js";
-import { karu } from "@config/karu.js";
+import type { BotCommand } from "../../interfaces/botTypes.js";
+import { emojis, getEmoji } from "../../utils/emojis.js";
+import { log } from "../../utils/colors.js";
+import { langMap } from "../../utils/languageMap.js";
+import { karu } from "../../config/karu.js";
 
 const askKaruCommand: BotCommand = {
 	data: new SlashCommandBuilder()
@@ -64,7 +64,7 @@ const askKaruCommand: BotCommand = {
 
 		const prompt = interaction.options.getString("question")?.trim();
 		if (!prompt) {
-			return interaction.editReply(`${emojis.error} No question provided.`);
+			return interaction.editReply(`${getEmoji("error")} No question provided.`);
 		}
 
 		try {
@@ -127,7 +127,7 @@ Always assume the user wants high-signal help — no fluff.
 		} catch (err) {
 			log("error", "Failed to ask Kaeru:", err);
 			await interaction.editReply({
-				content: `${emojis.error} Failed to ask Kaeru. The system might be confused — try again in a moment.`,
+				content: `${getEmoji("error")} Failed to ask Kaeru. The system might be confused — try again in a moment.`,
 			});
 		}
 	},

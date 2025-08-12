@@ -10,14 +10,14 @@ import {
 	REST,
 	Routes,
 } from "discord.js";
-import { header, log, separator } from "@utils/colors.js";
+import { header, log, separator } from "../utils/colors.js";
 import type {
 	BotCommand,
 	BotComponent,
 	ButtonCommand,
 	ModalCommand,
 	SelectMenuCommand,
-} from "@interfaces/botTypes.js";
+} from "../interfaces/botTypes.js";
 
 export type BotInteraction =
 	| CommandInteraction
@@ -50,7 +50,7 @@ export async function loadCommands(client: Client) {
 
 	header("Loading Commands and Components");
 	// Slash commands
-	const commandsPath = path.join(process.cwd(), "src", "commands");
+	const commandsPath = path.join(process.cwd(), "dist", "commands");
 	const commandFiles = await getFiles(commandsPath);
 
 	for (const filePath of commandFiles) {
@@ -71,7 +71,7 @@ export async function loadCommands(client: Client) {
 	separator();
 
 	// Buttons
-	const buttonPath = path.join(process.cwd(), "src", "components", "button");
+	const buttonPath = path.join(process.cwd(), "dist", "components", "button");
 	const buttonFiles = await getFiles(buttonPath);
 
 	for (const filePath of buttonFiles) {
@@ -97,7 +97,7 @@ export async function loadCommands(client: Client) {
 	separator();
 
 	// Modals
-	const modalPath = path.join(process.cwd(), "src", "components", "modal");
+	const modalPath = path.join(process.cwd(), "dist", "components", "modal");
 	const modalFiles = await getFiles(modalPath);
 
 	for (const filePath of modalFiles) {
@@ -123,7 +123,7 @@ export async function loadCommands(client: Client) {
 	separator();
 
 	// Select menus
-	const selectMenuPath = path.join(process.cwd(), "src", "components", "select-menu");
+	const selectMenuPath = path.join(process.cwd(), "dist", "components", "select-menu");
 	const selectMenuFiles = await getFiles(selectMenuPath);
 
 	for (const filePath of selectMenuFiles) {

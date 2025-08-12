@@ -1,6 +1,6 @@
 import { ButtonInteraction, PermissionFlagsBits, MessageFlags } from "discord.js";
-import type { BotComponent } from "@interfaces/botTypes.js";
-import { getEmoji } from "@utils/emojis.js";
+import type { BotComponent } from "../../interfaces/botTypes.js";
+import { getEmoji } from "../../utils/emojis.js";
 
 const ticketKaruButton: BotComponent = {
 	customId: "ticket-karu-button",

@@ -1,6 +1,6 @@
-import type { BotCommand } from "@interfaces/botTypes.js";
-import { getEmoji } from "@utils/emojis.js";
-import { lockButtonRow, ticketMenuRow } from "@utils/ticketRows.js";
+import type { BotCommand } from "../../interfaces/botTypes.js";
+import { getEmoji } from "../../utils/emojis.js";
+import { lockButtonRow, ticketMenuRow } from "../../utils/ticketRows.js";
 import {
 	ApplicationCommandType,
 	ApplicationIntegrationType,
@@ -71,7 +71,7 @@ const quickTicket: BotCommand = {
 			components: [
 				new ContainerBuilder().addTextDisplayComponents(
 					new TextDisplayBuilder().setContent(
-						`## ${getEmoji("ticket.create")} <@${interaction.user.id}>, you have opened a quick-action for this message\n> ${message.content}\n> -# Jump to [message](${message.url})\n> -# ———————————————\n- Message sent by __@${message.author?.username ?? "Unknown"}__`,
+						`## ${getEmoji("ticket.create")} <../${interaction.user.id}>, you have opened a quick-action for this message\n> ${message.content}\n> -# Jump to [message](${message.url})\n> -# ———————————————\n- Message sent by __../${message.author?.username ?? "Unknown"}__`,
 					),
 				),
 				ticketMenuRow,

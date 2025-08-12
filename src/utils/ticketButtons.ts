@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
-import { emojis } from "@utils/emojis.js";
+import { emojis } from "../utils/emojis.js";
 
 const lockButton = new ButtonBuilder()
 	.setCustomId("ticket-lock-conversation")

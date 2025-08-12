@@ -7,8 +7,8 @@ import {
 	ModalSubmitInteraction,
 	PermissionFlagsBits,
 } from "discord.js";
-import { getEmoji } from "@utils/emojis.js";
-import { BotComponent } from "@interfaces/botTypes.js";
+import { getEmoji } from "../../utils/emojis.js";
+import { BotComponent } from "../../interfaces/botTypes.js";
 
 const createTicketModal: BotComponent = {
 	customId: "ticket-close-modal",
@@ -36,7 +36,7 @@ const createTicketModal: BotComponent = {
 			components: [
 				new TextDisplayBuilder().setContent(`# ${getEmoji("ticket.bubble.close")}`),
 				new TextDisplayBuilder().setContent(
-					`-# **<@!${interaction.user.id}>** has __force closed__ the thread as completed ${formattedTime}`,
+					`-# **<../!${interaction.user.id}>** has __force closed__ the thread as completed ${formattedTime}`,
 				),
 				new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Large).setDivider(false),
 				new TextDisplayBuilder().setContent(["### Comment", `>>> ${closeReason}`].join("\n")),

@@ -6,9 +6,9 @@ import {
 	TextDisplayBuilder,
 	ThumbnailBuilder,
 } from "discord.js";
-import type { BotEventHandler } from "@interfaces/botTypes.js";
-import { EmojiSize, getEmojiURL } from "@utils/getEmojiURL.js";
-import { getEmoji } from "@utils/emojis.js";
+import type { BotEventHandler } from "../interfaces/botTypes.js";
+import { EmojiSize, getEmojiURL } from "../utils/getEmojiURL.js";
+import { getEmoji } from "../utils/emojis.js";
 
 const guildMemberAddEvent: BotEventHandler<Events.GuildMemberAdd> = {
 	name: Events.GuildMemberAdd,
@@ -55,7 +55,7 @@ const guildMemberAddEvent: BotEventHandler<Events.GuildMemberAdd> = {
 						new TextDisplayBuilder().setContent(
 							[
 								`${getEmoji("timeout")} Time-outed a new account`,
-								`User <@${member.user.id}> (${member.user.username}) has joined the server.\nTheir account is younger than 7 days, so they have been timeouted for one week.`,
+								`User <../${member.user.id}> (${member.user.username}) has joined the server.\nTheir account is younger than 7 days, so they have been timeouted for one week.`,
 							].join("\n"),
 						),
 					)

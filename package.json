@@ -5,14 +5,10 @@
 	"type": "module",
 	"main": "dist/index.js",
 	"scripts": {
-		"dev": "tsx watch src/index.ts",
-		"start": "node dist/index.js",
-		"build": "tsc",
-		"pm2:start": "pm2 start dist/index.js --name kaeru",
-		"pm2:stop": "pm2 stop kaeru",
-		"pm2:restart": "pm2 restart kaeru",
-		"pm2:logs": "pm2 logs kaeru",
-		"format": "prettier --write ."
+		"dev": "TS_NODE_TRANSPILE_ONLY=1 tsx watch --tsconfig tsconfig.dev.json src/index.ts",
+		"clean": "rm -rf ./dist",
+		"build": "npm run clean && tsc --project tsconfig.json",
+		"start": "node dist/index.js"
 	},
 	"keywords": [
 		"discord",
@@ -31,22 +27,15 @@
 		"discord.js": "^14.21.0",
 		"dotenv": "^16.6.1",
 		"moment-timezone": "^0.6.0",
-		"mongoose": "^8.17.0",
-		"tsconfig-paths": "^4.2.0"
+		"mongoose": "^8.17.0"
 	},
 	"devDependencies": {
-		"@types/chalk": "^0.4.31",
-		"@types/mongoose": "^5.11.96",
 		"@types/node": "^20.11.30",
-		"pm2": "^6.0.8",
 		"prettier": "^3.6.2",
 		"tsx": "^4.20.3",
 		"typescript": "^5.4.5"
 	},
 	"engines": {
 		"node": ">=18.0.0"
-	},
-	"directories": {
-		"test": "tests"
 	}
 }

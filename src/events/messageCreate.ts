@@ -1,10 +1,10 @@
 import { Events, Message, TextChannel, ThreadChannel } from "discord.js";
-import { EventModule } from "@interfaces/botTypes.js";
-import { karu } from "@config/karu.js";
-import { handleKaruMessage } from "@utils/karuHandleMessage.js";
-import { getMongooseConnection } from "@database/mongoose.js";
-import MessageModel from "@database/schemas/message.model.js";
-import { log } from "@utils/colors.js";
+import { EventModule } from "../interfaces/botTypes.js";
+import { karu } from "../config/karu.js";
+import { handleKaruMessage } from "../utils/karuHandleMessage.js";
+import { getMongooseConnection } from "../database/mongoose.js";
+import MessageModel from "../database/schemas/message.model.js";
+import { log } from "../utils/colors.js";
 
 const messageCreateEvent: EventModule<Events.MessageCreate> = {
 	name: Events.MessageCreate,

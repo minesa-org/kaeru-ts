@@ -1,6 +1,6 @@
 import { MessageFlags, type Interaction } from "discord.js";
-import type { BotEventHandler } from "@interfaces/botTypes.js";
-import { log } from "@utils/colors.js";
+import type { BotEventHandler } from "../interfaces/botTypes.js";
+import { log } from "../utils/colors.js";
 import { Events } from "discord.js";
 
 const interactionCreateEvent: BotEventHandler<Events.InteractionCreate> = {
@@ -14,6 +14,7 @@ const interactionCreateEvent: BotEventHandler<Events.InteractionCreate> = {
 					log("warning", `No context menu command handler found for: ${interaction.commandName}`);
 					return;
 				}
+				// @ts-ignore - Union type issue with execute parameter
 				await command.execute(interaction);
 				return;
 			}
@@ -24,6 +25,7 @@ const interactionCreateEvent: BotEventHandler<Events.InteractionCreate> = {
 					log("warning", `No slash command handler found for: ${interaction.commandName}`);
 					return;
 				}
+				// @ts-ignore - Union type issue with execute parameter
 				await command.execute(interaction);
 				return;
 			}

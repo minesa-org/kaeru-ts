@@ -1,7 +1,11 @@
-import type { BotCommand } from "@interfaces/botTypes.js";
-import { emojis } from "@utils/emojis.js";
-import { log } from "@utils/colors.js";
+import type { BotCommand } from "../../interfaces/botTypes.js";
+import { emojis } from "../../utils/emojis.js";
+import { log } from "../../utils/colors.js";
+import { langMap } from "../../utils/languageMap.js";
+import { karu } from "../../config/karu.js";
 import {
+	ActionRowBuilder,
+	ButtonBuilder,
 	ApplicationIntegrationType,
 	ButtonStyle,
 	ChatInputCommandInteraction,
@@ -9,9 +13,6 @@ import {
 	MessageFlags,
 	SlashCommandBuilder,
 } from "discord.js";
-import { langMap } from "@utils/languageMap.js";
-import { karu } from "@config/karu.js";
-import { ActionRowBuilder, ButtonBuilder } from "@discordjs/builders";
 
 const askKaruCommand: BotCommand = {
 	data: new SlashCommandBuilder()

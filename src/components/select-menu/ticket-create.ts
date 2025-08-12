@@ -5,7 +5,7 @@ import {
 	TextInputStyle,
 	StringSelectMenuInteraction,
 } from "discord.js";
-import type { BotComponent } from "@interfaces/botTypes.js";
+import type { BotComponent } from "../../interfaces/botTypes.js";
 
 const createTicketSelectMenu: BotComponent = {
 	customId: "ticket-create",

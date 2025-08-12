@@ -1,7 +1,7 @@
-import { BotComponent } from "@interfaces/botTypes.js";
-import { emojis, getEmoji } from "@utils/emojis.js";
-import { ticketContainerData } from "@utils/ticketContainerData.js";
-import { lockButtonRow } from "@utils/ticketRows.js";
+import { BotComponent } from "../../interfaces/botTypes.js";
+import { emojis, getEmoji } from "../../utils/emojis.js";
+import { ticketContainerData } from "../../utils/ticketContainerData.js";
+import { lockButtonRow } from "../../utils/ticketRows.js";
 import {
 	ActionRowBuilder,
 	StringSelectMenuBuilder,
@@ -115,7 +115,7 @@ const ticketState: BotComponent = {
 					components: [
 						new TextDisplayBuilder().setContent(`# ${getEmoji("ticket.bubble.done")}`),
 						new TextDisplayBuilder().setContent(
-							`-# **<@!${authorId}>** __closed__ this as completed ${formattedTime},`,
+							`-# **<../!${authorId}>** __closed__ this as completed ${formattedTime},`,
 						),
 						new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(true),
 					],
@@ -164,7 +164,7 @@ const ticketState: BotComponent = {
 					components: [
 						new TextDisplayBuilder().setContent(`# ${getEmoji("ticket.bubble.stale")}`),
 						new TextDisplayBuilder().setContent(
-							`-# **<@!${authorId}>** __closed__ this as not planned ${formattedTime},`,
+							`-# **<../!${authorId}>** __closed__ this as not planned ${formattedTime},`,
 						),
 						new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(true),
 					],

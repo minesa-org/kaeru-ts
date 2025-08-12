@@ -5,12 +5,12 @@ import {
 	Webhook,
 	ChannelType,
 } from "discord.js";
-import type { BotComponent } from "@interfaces/botTypes.js";
-import { emojis, getEmoji } from "@utils/emojis.js";
-import { log } from "@utils/colors.js";
-import { summarizeTicketTitle } from "@utils/summarizeTicketTitle.js";
-import { ticketContainerData } from "@utils/ticketContainerData.js";
-import { lockButtonRow, ticketMenuRow } from "@utils/ticketRows.js";
+import type { BotComponent } from "../../interfaces/botTypes.js";
+import { emojis, getEmoji } from "../../utils/emojis.js";
+import { log } from "../../utils/colors.js";
+import { summarizeTicketTitle } from "../../utils/summarizeTicketTitle.js";
+import { ticketContainerData } from "../../utils/ticketContainerData.js";
+import { lockButtonRow, ticketMenuRow } from "../../utils/ticketRows.js";
 
 interface WebhookData {
 	id: string;

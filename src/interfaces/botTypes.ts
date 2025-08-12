@@ -1,4 +1,5 @@
 import type {
+	Interaction,
 	ButtonInteraction,
 	StringSelectMenuInteraction,
 	ModalSubmitInteraction,
@@ -14,7 +15,8 @@ import type {
 } from "discord.js";
 
 // === Command Interfaces ===
-interface BaseCommand<I, D> {
+
+interface BaseCommand<I extends Interaction = Interaction, D = any> {
 	data: D;
 	execute: (interaction: I) => Promise<any>;
 }
@@ -27,6 +29,7 @@ export type MessageContextMenuCommand = BaseCommand<
 	MessageContextMenuCommandInteraction,
 	ContextMenuCommandBuilder
 >;
+
 export type UserContextMenuCommand = BaseCommand<
 	UserContextMenuCommandInteraction,
 	ContextMenuCommandBuilder
@@ -38,7 +41,7 @@ export type BotCommand = SlashCommand | MessageContextMenuCommand | UserContextM
 
 type ComponentExecuteReturn = void | Promise<void> | Promise<InteractionResponse<boolean> | void>;
 
-interface BaseComponent<TInteraction> {
+interface BaseComponent<TInteraction extends Interaction> {
 	customId: string | RegExp;
 	execute: (interaction: TInteraction) => ComponentExecuteReturn;
 }

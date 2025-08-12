@@ -1,8 +1,8 @@
-import { karu } from "@config/karu.js";
-import type { BotCommand } from "@interfaces/botTypes.js";
-import { log } from "@utils/colors.js";
-import { emojis } from "@utils/emojis.js";
-import { langMap } from "@utils/languageMap.js";
+import { karu } from "../../config/karu.js";
+import type { BotCommand } from "../../interfaces/botTypes.js";
+import { log } from "../../utils/colors.js";
+import { emojis } from "../../utils/emojis.js";
+import { langMap } from "../../utils/languageMap.js";
 import {
 	ApplicationCommandType,
 	ApplicationIntegrationType,
@@ -115,7 +115,7 @@ Key Points:
 
 				const [summarySection, keyPointSection] = output
 					.split(/Key Points:\n?/i)
-					.map(s => s.trim());
+					.map((s: string) => s.trim());
 
 				const summary = summarySection.replace(/^Summary:\n?/i, "").trim();
 				const keyPoints = keyPointSection.trim();

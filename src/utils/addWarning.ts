@@ -1,4 +1,4 @@
-import { Guild } from "@database/schemas/guild.model.js";
+import { Guild } from "../database/schemas/guild.model.js";
 
 /**
  * Add a warning to a user

@@ -1,4 +1,4 @@
-import { Guild } from "@database/schemas/guild.model.js";
+import { Guild } from "../database/schemas/guild.model.js";
 
 /**
  * Save the staff role ID for a guild

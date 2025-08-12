@@ -51,7 +51,6 @@ jobs:
           cp -r /tmp/branch-content/* .
           cp -r /tmp/branch-content/.[^.]* . 2>/dev/null || true
 
-          # Dist klasörünü kopyala
           cp -r /tmp/dist-backup ./dist
 
           git add .

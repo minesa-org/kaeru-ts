@@ -31,25 +31,29 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: Configure git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: Prepare dist branch content
         run: |
-          # Temp dizin oluştur
           mkdir /tmp/dist-branch
 
-          # dist klasörünü ve package.json vb. dosyaları kopyala
+          # dist klasörünü ve package.json'u kopyala
           cp -r dist /tmp/dist-branch/
           cp package.json /tmp/dist-branch/
           cp package-lock.json /tmp/dist-branch/ || true
-
-          # Gerekli ise diğer statik dosyalar varsa onları da buraya ekle
-          # Örneğin: cp README.md /tmp/dist-branch/
 
       - name: Create and push dist-build branch
         run: |
           git checkout --orphan dist-build
           git reset --hard
 
-          # dist branch içeriğini kopyala
+          # Temizle
+          rm -rf *
+
+          # Dist branch içeriğini kopyala
           cp -r /tmp/dist-branch/* ./
           cp -r /tmp/dist-branch/.[^.]* . 2>/dev/null || true
 

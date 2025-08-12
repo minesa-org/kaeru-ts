@@ -17,5 +17,5 @@ yarn-error.log*
 .idea/
 
 # Build ve cache
-# temporarly removed dist/
+dist/
 .cache/

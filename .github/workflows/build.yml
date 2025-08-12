@@ -1,0 +1,60 @@
+name: Build and Publish Dist Branch
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create and populate dist branch
+        run: |
+          cp -r dist /tmp/dist-backup
+
+          mkdir -p /tmp/branch-content
+          rsync -av --exclude='src' --exclude='tsconfig.json' --exclude='.git' ./ /tmp/branch-content/
+
+          git checkout -B dist-build
+
+          git rm -rf . || true
+          git clean -fdx
+
+          cp -r /tmp/branch-content/* .
+          cp -r /tmp/branch-content/.[^.]* . 2>/dev/null || true
+
+          # Dist klasörünü kopyala
+          cp -r /tmp/dist-backup ./dist
+
+          git add .
+          git commit -m "Update dist build [skip ci]" || echo "No changes to commit"
+
+          git push --force origin dist-build

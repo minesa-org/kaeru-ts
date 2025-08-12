@@ -5,10 +5,9 @@
 	"type": "module",
 	"main": "dist/index.js",
 	"scripts": {
-		"dev": "TS_NODE_TRANSPILE_ONLY=1 tsx watch --tsconfig tsconfig.dev.json src/index.ts",
 		"clean": "rm -rf ./dist",
 		"build": "npm run clean && tsc --project tsconfig.json",
-		"start": "node dist/index.js"
+		"start": "npm run build && node dist/index.js"
 	},
 	"keywords": [
 		"discord",

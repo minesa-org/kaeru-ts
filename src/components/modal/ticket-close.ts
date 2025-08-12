@@ -14,6 +14,8 @@ const createTicketModal: BotComponent = {
 	customId: "ticket-close-modal",
 
 	execute: async (interaction: ModalSubmitInteraction): Promise<void> => {
+		await interaction.deferReply();
+
 		if (!interaction.guild?.members.me?.permissions.has(PermissionFlagsBits.ManageThreads)) {
 			await interaction.editReply({
 				components: [

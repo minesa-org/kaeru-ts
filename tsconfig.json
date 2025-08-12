@@ -4,31 +4,15 @@
 		"target": "ES2020",
 		"moduleResolution": "NodeNext",
 		"esModuleInterop": true,
-		"allowSyntheticDefaultImports": true,
 		"outDir": "./dist",
 		"rootDir": "./src",
 		"resolveJsonModule": true,
 		"strict": true,
-		"skipLibCheck": true,
-		"baseUrl": "./src",
-		"paths": {
-			"@types/*": ["@types/*"],
-			"@events/*": ["events/*"],
-			"@commands/*": ["commands/*"],
-			"@handlers/*": ["handlers/*"],
-			"@interfaces/*": ["interfaces/*"],
-			"@components/*": ["components/*"],
-			"@utils/*": ["utils/*"],
-			"@config/*": ["config/*"],
-			"@models/*": ["models/*"],
-			"@database/*": ["database/*"]
-		}
+		"typeRoots": ["./src/types", "./node_modules/@types"]
 	},
-	"include": ["src"],
-	"exclude": ["node_modules", "dist"],
-	"typeRoots": ["./node_modules/@types", "./src/@types"],
+	"include": ["src/**/*", "src/types/**/*"],
+	"exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
 	"ts-node": {
-		"esm": true,
-		"experimentalSpecifierResolution": "node"
+		"esm": true
 	}
 }

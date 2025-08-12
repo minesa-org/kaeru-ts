@@ -1,4 +1,4 @@
-import { header, log } from "@utils/colors.js";
+import { header, log } from "../utils/colors.js";
 import mongoose, { connect, Connection } from "mongoose";
 
 let connection: Connection | null = null;

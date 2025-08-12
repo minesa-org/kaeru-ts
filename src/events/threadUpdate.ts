@@ -10,8 +10,9 @@ import {
 	GuildAuditLogsEntry,
 	GuildMember,
 } from "discord.js";
-import { emojis, getEmoji } from "@utils/emojis.js";
-import { BotEventHandler } from "@interfaces/botTypes.js";
+import { getEmoji } from "../utils/emojis.js";
+import type { emojis } from "../utils/emojis.js";
+import { BotEventHandler } from "../interfaces/botTypes.js";
 
 const threadUpdateEvent: BotEventHandler<Events.ThreadUpdate> = {
 	name: Events.ThreadUpdate,
@@ -40,7 +41,7 @@ const threadUpdateEvent: BotEventHandler<Events.ThreadUpdate> = {
 				components: [
 					new TextDisplayBuilder().setContent(`# ${emoji}`),
 					new TextDisplayBuilder().setContent(
-						`-# **<@!${auditLog.executor!.id}>** ${text} ${formattedTime}`,
+						`-# **<../!${auditLog.executor!.id}>** ${text} ${formattedTime}`,
 					),
 					new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(true),
 				],

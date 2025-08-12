@@ -5,11 +5,11 @@ import {
 	Partials,
 	PresenceUpdateStatus,
 } from "discord.js";
-import { loadCommands, registerCommandsGlobally } from "@handlers/commands.js";
-import { loadEvents } from "@handlers/events.js";
-import { printLogo } from "@utils/colors.js";
-import { initializeMongoose } from "@database/mongoose.js";
-import { log } from "@utils/colors.js";
+import { loadCommands, registerCommandsGlobally } from "../handlers/commands.js";
+import { loadEvents } from "../handlers/events.js";
+import { printLogo } from "../utils/colors.js";
+import { initializeMongoose } from "../database/mongoose.js";
+import { log } from "../utils/colors.js";
 
 const client = new Client({
 	intents: [

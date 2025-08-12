@@ -6,7 +6,7 @@ import {
 	SeparatorSpacingSize,
 	PermissionFlagsBits,
 } from "discord.js";
-import { getEmoji } from "@utils/emojis.js";
+import { getEmoji } from "../utils/emojis.js";
 
 export async function setLockedAndUpdateMessage(interaction: any, reason: string = "") {
 	if (!interaction.guild?.members.me?.permissions.has(PermissionFlagsBits.ManageThreads)) {
@@ -40,7 +40,7 @@ export async function setLockedAndUpdateMessage(interaction: any, reason: string
 		components: [
 			new TextDisplayBuilder().setContent(`# ${getEmoji("ticket.bubble.lock")}`),
 			new TextDisplayBuilder().setContent(
-				`-# **<@!${interaction.user.id}>** has __locked__ the thread${
+				`-# **<../!${interaction.user.id}>** has __locked__ the thread${
 					reason ? ` ${reason}` : ""
 				} and limited conversation to staffs ${formattedTime}`,
 			),

@@ -1,18 +1,18 @@
-import type { Client, Collection } from "discord.js";
+import type { Collection } from "discord.js";
 import type {
-	BaseCommand,
+	BotCommand,
 	ButtonCommand,
 	SelectMenuCommand,
 	ModalCommand,
-	EventHandler,
-} from "@interfaces/botTypes.ts";
+	BotEventHandler,
+} from "../interfaces/botTypes.js";
 
 declare module "discord.js" {
 	interface Client {
-		commands: Collection<string, BaseCommand>;
+		commands: Collection<string, BotCommand>;
 		buttons: Collection<string, ButtonCommand>;
 		selectMenus: Collection<string, SelectMenuCommand>;
 		modals: Collection<string, ModalCommand>;
-		events: Collection<string, EventHandler<keyof import("discord.js").ClientEvents>>;
+		events: Collection<string, BotEventHandler<keyof import("discord.js").ClientEvents>>;
 	}
 }

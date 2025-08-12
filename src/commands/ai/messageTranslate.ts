@@ -1,8 +1,8 @@
-import { karu } from "@config/karu.js";
-import type { BotCommand } from "@interfaces/botTypes.js";
-import { log } from "@utils/colors.js";
-import { emojis } from "@utils/emojis.js";
-import { langMap } from "@utils/languageMap.js";
+import { karu } from "../../config/karu.js";
+import type { BotCommand } from "../../interfaces/botTypes.js";
+import { log } from "../../utils/colors.js";
+import { emojis } from "../../utils/emojis.js";
+import { langMap } from "../../utils/languageMap.js";
 import {
 	ApplicationCommandType,
 	ApplicationIntegrationType,

@@ -1,8 +1,8 @@
-import { BotCommand } from "@interfaces/botTypes.js";
-import { emojis, getEmoji } from "@utils/emojis.js";
-import { formatMultiline } from "@utils/formatMultiline.js";
-import { saveStaffRoleId } from "@utils/saveStaffRole.js";
-import { isValidImageUrl } from "@utils/isValidImageUrl.js";
+import { BotCommand } from "../../interfaces/botTypes.js";
+import { emojis, getEmoji } from "../../utils/emojis.js";
+import { formatMultiline } from "../../utils/formatMultiline.js";
+import { saveStaffRoleId } from "../../utils/saveStaffRole.js";
+import { isValidImageUrl } from "../../utils/isValidImageUrl.js";
 import {
 	ActionRowBuilder,
 	ApplicationIntegrationType,

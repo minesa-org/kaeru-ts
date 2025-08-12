@@ -1,8 +1,8 @@
 import { Events, Client } from "discord.js";
-import type { BotEventHandler } from "@interfaces/botTypes.js";
+import type { BotEventHandler } from "../interfaces/botTypes.js";
 import chalk from "chalk";
-import { getMongooseConnection } from "@database/mongoose.js";
-import { log } from "@utils/colors.js";
+import { getMongooseConnection } from "../database/mongoose.js";
+import { log } from "../utils/colors.js";
 
 const readyEvent: BotEventHandler<Events.ClientReady> = {
 	name: Events.ClientReady,

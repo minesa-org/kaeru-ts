@@ -1,4 +1,4 @@
-import { log } from "@utils/colors.js";
+import { log } from "../utils/colors.js";
 
 export enum EmojiSize {
 	Small = 16,

@@ -5,8 +5,8 @@ import {
 	TextDisplayBuilder,
 	ThumbnailBuilder,
 } from "discord.js";
-import { getEmoji } from "@utils/emojis.js";
-import { getStaffRoleId } from "@utils/saveStaffRole.js";
+import { getEmoji } from "../utils/emojis.js";
+import { getStaffRoleId } from "../utils/saveStaffRole.js";
 
 export const ticketContainerData = async (interaction: any) => {
 	const staffRoleId = await getStaffRoleId(interaction.guild.id);

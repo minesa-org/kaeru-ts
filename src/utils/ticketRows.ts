@@ -5,7 +5,7 @@ import {
 	StringSelectMenuBuilder,
 	StringSelectMenuOptionBuilder,
 } from "discord.js";
-import { emojis } from "@utils/emojis.js";
+import { emojis } from "../utils/emojis.js";
 
 let ticketMenu = new StringSelectMenuBuilder()
 	.setCustomId("ticket-select-menu")

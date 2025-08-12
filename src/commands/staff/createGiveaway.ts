@@ -13,9 +13,9 @@ import {
 	TextDisplayBuilder,
 	User,
 } from "discord.js";
-import { timezoneChecking, timeChecking } from "@utils/timeChecking.js";
-import { getEmoji } from "@utils/emojis.js";
-import { BotCommand } from "@interfaces/botTypes.js";
+import { timezoneChecking, timeChecking } from "../../utils/timeChecking.js";
+import { getEmoji } from "../../utils/emojis.js";
+import { BotCommand } from "../../interfaces/botTypes.js";
 
 const createGiveaway: BotCommand = {
 	data: new SlashCommandBuilder()
@@ -386,8 +386,8 @@ export default createGiveaway;
 
 /**
  * Shuffles the subscribers array to randomly select a winner.
- * @param array Array of users to shuffle
- * @returns Shuffled array of users
+ * ../param array Array of users to shuffle
+ * ../returns Shuffled array of users
  */
 function shuffleSubscribers(array: User[]): User[] {
 	for (let i = array.length - 1; i > 0; i--) {

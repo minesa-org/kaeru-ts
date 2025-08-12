@@ -1,7 +1,7 @@
-import ChatThread from "@models/ChatThread.js";
-import { karu } from "@config/karu.js";
-import { log } from "@utils/colors.js";
-import { emojis, getEmoji } from "@utils/emojis.js";
+import ChatThread from "../models/ChatThread.js";
+import { karu } from "../config/karu.js";
+import { log } from "../utils/colors.js";
+import { emojis, getEmoji } from "../utils/emojis.js";
 import { Message as DiscordMessage, TextChannel, ThreadChannel } from "discord.js";
 
 type SendableChannel = TextChannel | ThreadChannel;

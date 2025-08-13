@@ -29,7 +29,7 @@ const pingCommand: BotCommand = {
 
 		if (!emoji || !emoji.includes(":")) {
 			return interaction.reply({
-				content: `${emojis.error} Invalid emoji format. Please use a Discord emoji.`,
+				content: `${getEmoji("error")} Invalid emoji format. Please use a Discord emoji.`,
 			});
 		}
 
@@ -39,7 +39,7 @@ const pingCommand: BotCommand = {
 				content: `# ${getEmoji("brain")} Here is your emoji URL:\n> ${url}`,
 			});
 		} catch (error) {
-			await interaction.reply({ content: `${emojis.error} Failed to get emoji URL.` });
+			await interaction.reply({ content: `${getEmoji("error")} Failed to get emoji URL.` });
 		}
 	},
 };

@@ -18,7 +18,7 @@ import {
 	ButtonStyle,
 	ChatInputCommandInteraction,
 } from "discord.js";
-import { emojis, getEmoji } from "../../utils/emojis.js";
+import { getEmoji } from "../../utils/emojis.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
 import { formatMultiline } from "../../utils/formatMultiline.js";
 
@@ -338,7 +338,7 @@ const announce: BotCommand = {
 			} catch (sendError: any) {
 				console.error("Error sending announcement:", sendError);
 				await interaction.editReply({
-					content: `${emojis.error} There was an error sending the announcement: ${sendError.message}`,
+					content: `${getEmoji("error")} There was an error sending the announcement: ${sendError.message}`,
 				});
 			} finally {
 				try {
@@ -350,7 +350,7 @@ const announce: BotCommand = {
 		} catch (createError: any) {
 			console.error("Error creating webhook:", createError);
 			await interaction.editReply({
-				content: `${emojis.error} There was an error creating the webhook: ${createError.message}`,
+				content: `${getEmoji("error")} There was an error creating the webhook: ${createError.message}`,
 			});
 		}
 	},

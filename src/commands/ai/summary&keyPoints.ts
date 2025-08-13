@@ -1,7 +1,7 @@
 import { karu } from "../../config/karu.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
 import { log } from "../../utils/colors.js";
-import { emojis } from "../../utils/emojis.js";
+import { getEmoji } from "../../utils/emojis.js";
 import { langMap } from "../../utils/languageMap.js";
 import {
 	ApplicationCommandType,
@@ -44,7 +44,7 @@ const messageSummary: BotCommand = {
 
 		if (!message || typeof message.content !== "string" || message.content.trim() === "") {
 			return interaction.editReply({
-				content: `${emojis.info} This message seems to hold no content—nothing to summarize so... this means nothing to summarize. \n-# Message shouldn't be inside an embed or container telling it in case c:`,
+				content: `${getEmoji("info")} This message seems to hold no content—nothing to summarize so... this means nothing to summarize. \n-# Message shouldn't be inside an embed or container telling it in case c:`,
 			});
 		}
 
@@ -69,7 +69,7 @@ const messageSummary: BotCommand = {
 
 			if (textToSummarize.trim() === "") {
 				return interaction.editReply({
-					content: `# ${emojis.info} \nEmbeds, attachments or system messages can't be summarized. Maybe give it a try with a text message?`,
+					content: `# ${getEmoji("info")} \nEmbeds, attachments or system messages can't be summarized. Maybe give it a try with a text message?`,
 				});
 			}
 
@@ -121,7 +121,7 @@ Key Points:
 				const keyPoints = keyPointSection.trim();
 
 				const summaryTextSection = new TextDisplayBuilder().setContent(
-					[`## ${emojis.text_append} Summarized`, summary].join("\n"),
+					[`## ${getEmoji("text_append")} Summarized`, summary].join("\n"),
 				);
 
 				const divider = new SeparatorBuilder()
@@ -129,7 +129,7 @@ Key Points:
 					.setSpacing(SeparatorSpacingSize.Large);
 
 				const keyPointsTextSection = new TextDisplayBuilder().setContent(
-					[`## ${emojis.list_bullet} Key Points`, keyPoints].join("\n"),
+					[`## ${getEmoji("list_bullet")} Key Points`, keyPoints].join("\n"),
 				);
 
 				await interaction.editReply({
@@ -139,13 +139,13 @@ Key Points:
 			} catch (err) {
 				log("error", "Failed to summarize the message:", err);
 				await interaction.editReply({
-					content: `${emojis.error} Failed to summarize the message. The system might be confused — try again in a moment.`,
+					content: `${getEmoji("error")} Failed to summarize the message. The system might be confused — try again in a moment.`,
 				});
 			}
 		} catch (err) {
 			log("error", "Failed to summarize the message:", err);
 			await interaction.editReply({
-				content: `${emojis.error} Failed to summarize the message. The system might be confused — try again in a moment.`,
+				content: `${getEmoji("error")} Failed to summarize the message. The system might be confused — try again in a moment.`,
 			});
 		}
 	},

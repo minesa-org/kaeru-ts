@@ -1,5 +1,5 @@
 import type { BotCommand } from "../../interfaces/botTypes.js";
-import { emojis } from "../../utils/emojis.js";
+import { emojis, getEmoji } from "../../utils/emojis.js";
 import { log } from "../../utils/colors.js";
 import { langMap } from "../../utils/languageMap.js";
 import { karu } from "../../config/karu.js";
@@ -223,7 +223,7 @@ const askKaruCommand: BotCommand = {
 				break;
 
 			default:
-				await interaction.editReply(`${emojis.error} Invalid subcommand.`);
+				await interaction.editReply(`${getEmoji("error")} Invalid subcommand.`);
 				break;
 		}
 
@@ -259,7 +259,7 @@ const askKaruCommand: BotCommand = {
 		} catch (err) {
 			log("error", "Failed to execute AI command:", err);
 			await interaction.editReply({
-				content: `${emojis.error} Failed to execute AI command. The system might be confused — try again in a moment.`,
+				content: `${getEmoji("error")} Failed to execute AI command. The system might be confused — try again in a moment.`,
 			});
 		}
 	},

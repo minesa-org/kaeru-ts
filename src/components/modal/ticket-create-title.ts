@@ -124,12 +124,12 @@ const createTicketModal: BotComponent = {
 
 			if (!interaction.deferred && !interaction.replied) {
 				await interaction.reply({
-					content: `${emojis.error} Failed to create ticket. Please try again.`,
+					content: `${getEmoji("error")} Failed to create ticket. Please try again.`,
 					flags: MessageFlags.Ephemeral,
 				});
 			} else if (interaction.deferred && !interaction.replied) {
 				await interaction.editReply({
-					content: `${emojis.error} Failed to create ticket. Please try again.`,
+					content: `${getEmoji("error")} Failed to create ticket. Please try again.`,
 				});
 			}
 		}

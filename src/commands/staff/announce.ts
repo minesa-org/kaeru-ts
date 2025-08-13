@@ -288,7 +288,7 @@ const announce: BotCommand = {
 
 		container.addTextDisplayComponents(
 			new TextDisplayBuilder().setContent(
-				`-# ${getEmoji("bubble")} __../${interaction.user.username}__`,
+				`-# ${getEmoji("bubble")} __@${interaction.user.username}__`,
 			),
 		);
 

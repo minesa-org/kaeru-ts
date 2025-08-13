@@ -5,7 +5,3 @@
 ## 🧪 Checklist
 
 - [ ] Code is tested
-
-## 📎 Related Issue
-
-Closes #\_\_

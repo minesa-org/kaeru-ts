@@ -1,7 +1,7 @@
 import { karu } from "../../config/karu.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
 import { log } from "../../utils/colors.js";
-import { emojis } from "../../utils/emojis.js";
+import { getEmoji } from "../../utils/emojis.js";
 import { langMap } from "../../utils/languageMap.js";
 import {
 	ApplicationCommandType,
@@ -44,7 +44,7 @@ const messageTranslate: BotCommand = {
 
 		if (!message || typeof message.content !== "string" || message.content.trim() === "") {
 			return interaction.editReply({
-				content: `${emojis.info} This message seems to hold no content—nothing to translate so... this means nothing to translate. \n-# Message shouldn't be inside an embed or container telling it in case c:`,
+				content: `${getEmoji("info")} This message seems to hold no content—nothing to translate so... this means nothing to translate. \n-# Message shouldn't be inside an embed or container telling it in case c:`,
 			});
 		}
 
@@ -103,7 +103,7 @@ Do NOT add anything else.
 			const formattedTranslated = translated.replace(/\\n/g, "\n");
 
 			const sectionOriginal = new TextDisplayBuilder().setContent(
-				`### ${emojis.globe} Original Message\n${formattedCleaned}`,
+				`### ${getEmoji("globe")} Original Message\n${formattedCleaned}`,
 			);
 
 			const separator = new SeparatorBuilder()
@@ -111,7 +111,7 @@ Do NOT add anything else.
 				.setDivider(true);
 
 			const sectionTranslated = new TextDisplayBuilder().setContent(
-				`### ${emojis.swap} Translated\n${formattedTranslated}`,
+				`### ${getEmoji("swap")} Translated\n${formattedTranslated}`,
 			);
 
 			await interaction.editReply({
@@ -122,7 +122,7 @@ Do NOT add anything else.
 		} catch (err) {
 			log("error", "Failed to translate the message:", err);
 			await interaction.editReply({
-				content: `${emojis.error} Failed to translate the message. The system might be confused — try again in a moment.`,
+				content: `${getEmoji("error")} Failed to translate the message. The system might be confused — try again in a moment.`,
 			});
 		}
 	},

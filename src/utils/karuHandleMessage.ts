@@ -1,7 +1,7 @@
 import ChatThread from "../models/ChatThread.js";
 import { karu } from "../config/karu.js";
 import { log } from "../utils/colors.js";
-import { emojis, getEmoji } from "../utils/emojis.js";
+import { getEmoji } from "../utils/emojis.js";
 import { Message as DiscordMessage, TextChannel, ThreadChannel } from "discord.js";
 
 type SendableChannel = TextChannel | ThreadChannel;
@@ -92,6 +92,6 @@ Never reveal internal model names or AI configurations (you are "Kāru", not Gem
 		await chatThread.save();
 	} catch (error: any) {
 		log("error", `Error: ${error}`);
-		await message.reply(`${emojis.error} Something went wrong: ${error.message}`);
+		await message.reply(`${getEmoji("error")} Something went wrong: ${error.message}`);
 	}
 }

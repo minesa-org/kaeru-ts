@@ -6,7 +6,7 @@ import {
 	ChatInputCommandInteraction,
 } from "discord.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
-import { emojis, getEmoji } from "../../utils/emojis.js";
+import { getEmoji } from "../../utils/emojis.js";
 import { log } from "../../utils/colors.js";
 import { langMap } from "../../utils/languageMap.js";
 import { karu } from "../../config/karu.js";
@@ -121,7 +121,7 @@ Always assume the user wants high-signal help — no fluff.
 				.replace(/^Kāru[:,\s]*/i, "")
 				.replace(/^Bot[:,\s]*/i, "");
 
-			const content = emojis.intelligence + " " + output;
+			const content = `${getEmoji("intelligence")} ${output}`;
 
 			await interaction.editReply({ content });
 		} catch (err) {

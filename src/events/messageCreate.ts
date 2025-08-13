@@ -16,30 +16,34 @@ const messageCreateEvent: EventModule<Events.MessageCreate> = {
 
 		const isKaruThread = message.channel.isThread() && message.channel.name.startsWith("💭");
 
-		const connection = getMongooseConnection();
-		if (connection) {
-			try {
-				await MessageModel.create({
-					userId: message.author.id,
-					guildId: message.guild.id,
-					threadId: message.channel.isThread() ? message.channel.id : undefined,
-					content: message.content,
-					timestamp: new Date(),
-				});
-			} catch (error) {
-				log("error", "Failed to log message to MongoDB:", error);
-			}
-		} else {
-			log("error", "Mongoose connection is not established. Cannot log message.");
+		let userPrompt = message.content?.trim() || "";
+		userPrompt = userPrompt.replace(/<@!?\d+>/g, "").trim();
+
+		if (!userPrompt && message.attachments.size > 0) {
+			userPrompt = `Attachment: ${message.attachments.first()?.name || "file"}`;
 		}
 
-		const userPrompt = message.content?.trim() || "";
 		if (!userPrompt) return;
-		const cleanedPrompt = userPrompt.replace(/<@!?\d+>/g, "").trim();
-		if (!cleanedPrompt) return;
 
 		if (isKaruThread) {
-			await handleKaruMessage(message, message.channel as ThreadChannel, cleanedPrompt);
+			const connection = getMongooseConnection();
+			if (connection) {
+				try {
+					await MessageModel.create({
+						userId: message.author.id,
+						guildId: message.guild.id,
+						threadId: message.channel.id,
+						content: userPrompt,
+						timestamp: new Date(),
+					});
+				} catch (error) {
+					log("error", "Failed to log message to MongoDB:", error);
+				}
+			} else {
+				log("error", "Mongoose connection is not established. Cannot log message.");
+			}
+
+			await handleKaruMessage(message, message.channel as ThreadChannel, userPrompt);
 			return;
 		}
 
@@ -54,7 +58,7 @@ const messageCreateEvent: EventModule<Events.MessageCreate> = {
 				},
 			});
 
-			const summaryPrompt = `Summarize the following user message in under 5 words for use as a thread title:\n"${cleanedPrompt}"`;
+			const summaryPrompt = `Summarize the following user message in under 5 words for use as a thread title:\n"${userPrompt}"`;
 
 			const summaryResult = await summaryModel.generateContent(summaryPrompt);
 			let threadName = summaryResult.response
@@ -70,8 +74,7 @@ const messageCreateEvent: EventModule<Events.MessageCreate> = {
 				autoArchiveDuration: 60,
 			});
 
-			await handleKaruMessage(message, thread, cleanedPrompt);
-			return;
+			await handleKaruMessage(message, thread, userPrompt);
 		}
 	},
 };

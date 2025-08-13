@@ -30,7 +30,7 @@
 		"mongoose": "^8.17.0"
 	},
 	"devDependencies": {
-		"@types/node": "^20.11.30",
+		"@types/node": "^24.2.1",
 		"prettier": "^3.6.2",
 		"tsx": "^4.20.3",
 		"typescript": "^5.4.5"

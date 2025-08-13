@@ -7,16 +7,19 @@ import {
 	ContainerBuilder,
 	InteractionContextType,
 	MessageFlags,
-	PermissionFlagsBits,
 	SlashCommandBuilder,
 	TextDisplayBuilder,
-	GuildMember,
-	PermissionsBitField,
+	SectionBuilder,
+	ThumbnailBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+	ActionRowBuilder,
 } from "discord.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
 import { getEmoji } from "../../utils/emojis.js";
+import { getEmojiURL } from "../../utils/getEmojiURL.js";
 
-const RULE_NAME = "Focused People";
+export const RULE_NAME = "Focused People";
 
 const focusMode: BotCommand = {
 	data: new SlashCommandBuilder()
@@ -86,23 +89,6 @@ const focusMode: BotCommand = {
 					"zh-CN": "显示正在专注模式的用户",
 					it: "Mostra gli utenti in modalità concentrazione",
 					"pt-BR": "Mostrar usuários no modo foco",
-				}),
-		)
-		.addSubcommand(sub =>
-			sub
-				.setName("clear")
-				.setNameLocalizations({
-					tr: "temizle",
-					"zh-CN": "清除",
-					it: "pulisci",
-					"pt-BR": "limpar",
-				})
-				.setDescription("Clear all users from focus mode")
-				.setDescriptionLocalizations({
-					tr: "Tüm kullanıcıları odak modundan çıkar",
-					"zh-CN": "将所有用户移出专注模式",
-					it: "Rimuovi tutti gli utenti dalla modalità concentrazione",
-					"pt-BR": "Remover todos do modo foco",
 				}),
 		),
 
@@ -188,9 +174,21 @@ const focusMode: BotCommand = {
 				const usersList = keywords.map((m, i) => `${i + 1}. ${m}`).join("\n");
 
 				const container = new ContainerBuilder()
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(`# ${getEmoji("dnd")} Focused Users`),
-						new TextDisplayBuilder().setContent(usersList),
+					.addSectionComponents(
+						new SectionBuilder()
+							.setThumbnailAccessory(new ThumbnailBuilder().setURL(getEmojiURL(getEmoji("dnd"))))
+							.addTextDisplayComponents(
+								new TextDisplayBuilder().setContent(`## Focused Users`),
+								new TextDisplayBuilder().setContent(usersList),
+							),
+					)
+					.addActionRowComponents(
+						new ActionRowBuilder<ButtonBuilder>().addComponents(
+							new ButtonBuilder()
+								.setCustomId("focus-list-clear")
+								.setLabel("Clear list")
+								.setStyle(ButtonStyle.Danger),
+						),
 					)
 					.setAccentColor(0x5e5cde);
 
@@ -200,25 +198,6 @@ const focusMode: BotCommand = {
 					allowedMentions: {
 						parse: [],
 					},
-				});
-
-			case "clear":
-				const perms =
-					member instanceof GuildMember
-						? member.permissions
-						: new PermissionsBitField(BigInt(member.permissions as string));
-
-				if (!perms.has(PermissionFlagsBits.ManageGuild)) {
-					return await interaction.reply({
-						content: `${getEmoji("error")} No, no, no... you don't have permission to use this command dear.`,
-						flags: MessageFlags.Ephemeral,
-					});
-				}
-
-				await rule?.edit({ triggerMetadata: { keywordFilter: [] } });
-				return await interaction.reply({
-					content: `${getEmoji("reactions.kaeru.thumbsup")} Focus mode cleared for everyone. Happy!`,
-					flags: MessageFlags.Ephemeral,
 				});
 		}
 	},

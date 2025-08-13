@@ -63,7 +63,9 @@ const guildMemberAddEvent: BotEventHandler<Events.GuildMemberAdd> = {
 			);
 
 			if (guild.systemChannel?.isTextBased() && guild.systemChannel.viewable) {
-				await guild.systemChannel.send({ components: [container] }).catch(console.error);
+				await guild.systemChannel
+					.send({ components: [container], flags: MessageFlags.IsComponentsV2 })
+					.catch(console.error);
 			}
 		}
 	},

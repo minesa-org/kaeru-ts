@@ -7,28 +7,22 @@ import {
 	ModalSubmitInteraction,
 	PermissionFlagsBits,
 } from "discord.js";
-import { getEmoji } from "../../utils/emojis.js";
+import { getEmoji, sendErrorMessage } from "../../utils/export.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
 
 const createTicketModal: BotComponent = {
 	customId: "ticket-close-modal",
 
 	execute: async (interaction: ModalSubmitInteraction): Promise<void> => {
-		await interaction.deferReply();
-
 		if (!interaction.guild?.members.me?.permissions.has(PermissionFlagsBits.ManageThreads)) {
-			await interaction.editReply({
-				components: [
-					new TextDisplayBuilder().setContent(`${getEmoji("danger")}`),
-					new TextDisplayBuilder().setContent("-# I don't have permission to manage threads."),
-				],
-				flags: MessageFlags.IsComponentsV2,
-				allowedMentions: {
-					parse: [],
-				},
-			});
-			return;
+			return sendErrorMessage(
+				interaction,
+				`No permission to manage threads aka no closing.`,
+				"danger",
+			);
 		}
+
+		await interaction.deferReply();
 
 		const closeReason = interaction.fields.getTextInputValue("close-reason");
 

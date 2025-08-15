@@ -12,7 +12,7 @@ import {
 	SeparatorBuilder,
 } from "discord.js";
 import { karu } from "../../config/karu.js";
-import { getEmoji } from "../../utils/emojis.js";
+import { getEmoji, sendErrorMessage } from "../../utils/export.js";
 
 export default {
 	data: new SlashCommandBuilder()
@@ -46,10 +46,11 @@ export default {
 		}
 
 		if (!(channel instanceof TextChannel || channel instanceof ThreadChannel)) {
-			return interaction.reply({
-				content: "Sadece metin kanallarındaki ruh halini analiz edebilirim.",
-				flags: MessageFlags.Ephemeral,
-			});
+			return sendErrorMessage(
+				interaction,
+				"If it is not a text channel... then I cannot, sorry.",
+				"info",
+			);
 		}
 
 		await interaction.deferReply();

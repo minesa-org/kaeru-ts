@@ -1,7 +1,3 @@
-import { BotComponent } from "../../interfaces/botTypes.js";
-import { emojis, getEmoji } from "../../utils/emojis.js";
-import { ticketContainerData } from "../../utils/ticketContainerData.js";
-import { lockButtonRow } from "../../utils/ticketRows.js";
 import {
 	ActionRowBuilder,
 	StringSelectMenuBuilder,
@@ -18,6 +14,8 @@ import {
 	GuildMember,
 	APIInteractionGuildMember,
 } from "discord.js";
+import { BotComponent } from "../../interfaces/botTypes.js";
+import { emojis, getEmoji, lockButtonRow, ticketContainerData } from "../../utils/export.js";
 
 const menu3 = new StringSelectMenuBuilder()
 	.setCustomId("ticket-select-menu")

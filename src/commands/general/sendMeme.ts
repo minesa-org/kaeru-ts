@@ -10,7 +10,7 @@ import {
 	TextDisplayBuilder,
 } from "discord.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
-import { getEmoji } from "../../utils/emojis.js";
+import { getEmoji, sendErrorMessage } from "../../utils/export.js";
 
 const sendMeme: BotCommand = {
 	data: new SlashCommandBuilder()
@@ -43,8 +43,6 @@ const sendMeme: BotCommand = {
 		}),
 
 	execute: async (interaction: ChatInputCommandInteraction) => {
-		await interaction.deferReply();
-
 		const memeDataRaw = await fetch("https://apis.duncte123.me/meme");
 		const memeData = await memeDataRaw.json();
 
@@ -52,8 +50,10 @@ const sendMeme: BotCommand = {
 		const image = memeData.data?.image ?? memeData.image ?? null;
 
 		if (!image) {
-			return interaction.editReply(`${getEmoji("error")} No mamez...`);
+			return sendErrorMessage(interaction, "No mamez...", "info");
 		}
+
+		await interaction.deferReply();
 
 		const container = new ContainerBuilder()
 			.addTextDisplayComponents(

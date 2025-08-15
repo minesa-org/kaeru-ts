@@ -1,4 +1,3 @@
-import moment from "moment-timezone";
 import {
 	GuildScheduledEventEntityType,
 	GuildScheduledEventPrivacyLevel,
@@ -13,8 +12,8 @@ import {
 	TextDisplayBuilder,
 	User,
 } from "discord.js";
-import { timezoneChecking, timeChecking } from "../../utils/timeChecking.js";
-import { getEmoji } from "../../utils/emojis.js";
+import moment from "moment-timezone";
+import { getEmoji, timezoneChecking, timeChecking, sendErrorMessage } from "../../utils/export.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
 
 const createGiveaway: BotCommand = {
@@ -274,23 +273,18 @@ const createGiveaway: BotCommand = {
 				})
 				.setRequired(false),
 		) as SlashCommandBuilder,
-	execute: async (interaction: ChatInputCommandInteraction) => {
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
+	execute: async (interaction: ChatInputCommandInteraction) => {
 		// Permission check
 		if (!interaction.guild?.members.me?.permissions.has(PermissionFlagsBits.ManageEvents)) {
-			return interaction.editReply({
-				components: [
-					new TextDisplayBuilder().setContent(
-						[
-							`# ${getEmoji("danger")}`,
-							`It seems like I don't have permission to manage events to create giveaways...`,
-						].join("\n"),
-					),
-				],
-				flags: [MessageFlags.IsComponentsV2],
-			});
+			return sendErrorMessage(
+				interaction,
+				`-# It seems like I can't create events.\n> ${getEmoji("reactions.user.thumbsup")} Got it! I will give you the permission to create, soon.`,
+				"danger",
+			);
 		}
+
+		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
 		const giveawayName = interaction.options.getString("prize", true);
 		const giveawayDescription =

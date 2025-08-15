@@ -1,8 +1,3 @@
-import { BotCommand } from "../../interfaces/botTypes.js";
-import { emojis, getEmoji } from "../../utils/emojis.js";
-import { formatMultiline } from "../../utils/formatMultiline.js";
-import { saveStaffRoleId } from "../../utils/saveStaffRole.js";
-import { isValidImageUrl } from "../../utils/isValidImageUrl.js";
 import {
 	ActionRowBuilder,
 	ApplicationIntegrationType,
@@ -25,6 +20,14 @@ import {
 	TextDisplayBuilder,
 	underline,
 } from "discord.js";
+import { BotCommand } from "../../interfaces/botTypes.js";
+import {
+	emojis,
+	getEmoji,
+	formatMultiline,
+	isValidImageUrl,
+	saveStaffRoleId,
+} from "../../utils/export.js";
 
 const setupCommand: BotCommand = {
 	data: new SlashCommandBuilder()
@@ -185,19 +188,20 @@ const setupCommand: BotCommand = {
 						.setRequired(false),
 				),
 		) as SlashCommandBuilder,
+
 	execute: async (interaction: ChatInputCommandInteraction) => {
 		const guild = interaction.guild;
 
 		if (!guild?.members.me?.permissions.has("ManageThreads")) {
 			return interaction.reply({
-				content: `${getEmoji("error")} I don't have permission to manage threads.`,
+				content: `# ${getEmoji("error")}\n-#  I don't have permission to manage threads.`,
 				flags: MessageFlags.Ephemeral,
 			});
 		}
 
 		if (!guild?.members.me?.permissions.has("CreatePrivateThreads")) {
 			return interaction.reply({
-				content: `${getEmoji("error")} I don't have permission to create private threads.`,
+				content: `# ${getEmoji("error")}\n-# I don't have permission to create private threads.`,
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -226,7 +230,7 @@ const setupCommand: BotCommand = {
 					.has([PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages])
 			) {
 				return interaction.editReply({
-					content: `${getEmoji("danger")} I don't have permission to send messages or view ${sendingChannel ?? "the"} channel.`,
+					content: `# ${getEmoji("danger")}\n-# I don't have permission to send messages or view ${sendingChannel ?? "the"} channel.`,
 				});
 			}
 

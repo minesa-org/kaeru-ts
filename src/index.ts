@@ -1,6 +1,6 @@
 import "dotenv/config";
 import client from "./config/client.js";
-import { log } from "./utils/colors.js";
+import { log } from "./utils/export.js";
 
 async function startBot() {
 	try {

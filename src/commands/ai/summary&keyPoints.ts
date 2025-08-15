@@ -1,8 +1,3 @@
-import { karu } from "../../config/karu.js";
-import type { BotCommand } from "../../interfaces/botTypes.js";
-import { log } from "../../utils/colors.js";
-import { getEmoji } from "../../utils/emojis.js";
-import { langMap } from "../../utils/languageMap.js";
 import {
 	ApplicationCommandType,
 	ApplicationIntegrationType,
@@ -14,6 +9,9 @@ import {
 	SeparatorSpacingSize,
 	SeparatorBuilder,
 } from "discord.js";
+import { karu } from "../../config/karu.js";
+import type { BotCommand } from "../../interfaces/botTypes.js";
+import { getEmoji, log, langMap, sendErrorMessage } from "../../utils/export.js";
 
 const messageSummary: BotCommand = {
 	data: new ContextMenuCommandBuilder()
@@ -43,9 +41,11 @@ const messageSummary: BotCommand = {
 		const message = interaction.targetMessage;
 
 		if (!message || typeof message.content !== "string" || message.content.trim() === "") {
-			return interaction.editReply({
-				content: `${getEmoji("info")} This message seems to hold no content—nothing to summarize so... this means nothing to summarize. \n-# Message shouldn't be inside an embed or container telling it in case c:`,
-			});
+			return sendErrorMessage(
+				interaction,
+				"This message seems to hold no content—nothing to summarize so... this means nothing to summarize. \n-# Message shouldn't be inside an embed or container telling it in case c:",
+				"info",
+			);
 		}
 
 		try {
@@ -138,15 +138,21 @@ Key Points:
 				});
 			} catch (err) {
 				log("error", "Failed to summarize the message:", err);
-				await interaction.editReply({
-					content: `${getEmoji("error")} Failed to summarize the message. The system might be confused — try again in a moment.`,
-				});
+
+				return sendErrorMessage(
+					interaction,
+					"Failed to summarize with Karu. The system might be confused — try again in a moment.",
+					"error",
+				);
 			}
 		} catch (err) {
 			log("error", "Failed to summarize the message:", err);
-			await interaction.editReply({
-				content: `${getEmoji("error")} Failed to summarize the message. The system might be confused — try again in a moment.`,
-			});
+
+			return sendErrorMessage(
+				interaction,
+				"Failed to summarize with Karu. The system might be confused — try again in a moment.",
+				"error",
+			);
 		}
 	},
 };

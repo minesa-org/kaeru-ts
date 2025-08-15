@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import type { Client, ClientEvents } from "discord.js";
-import { log, separator, header } from "../utils/colors.js";
+import { log, separator, header } from "../utils/export.js";
 import type { EventModule } from "../interfaces/botTypes.ts";
 import chalk from "chalk";
 

@@ -78,7 +78,7 @@ export const emojis = {
 /**
  * Recursively gets the keys of an object, including nested keys.
  */
-type RecursiveKeyOf<TObj extends object> = {
+export type RecursiveKeyOf<TObj extends object> = {
 	[TKey in keyof TObj & string]: TObj[TKey] extends { id: string; name: string }
 		? TKey
 		: TObj[TKey] extends object

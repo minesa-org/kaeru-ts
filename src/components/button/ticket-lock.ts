@@ -8,17 +8,13 @@ import {
 	MessageFlags,
 } from "discord.js";
 import type { BotComponent } from "../../interfaces/botTypes.js";
-import { getEmoji } from "../../utils/export.js";
+import { getEmoji, sendErrorMessage } from "../../utils/export.js";
 
 const ticketLockButton: BotComponent = {
 	customId: "ticket-lock-conversation",
 	execute: async (interaction: ButtonInteraction) => {
 		if (!interaction.guild?.members.me?.permissions.has(PermissionFlagsBits.ManageThreads)) {
-			await interaction.reply({
-				content: `${getEmoji("danger")}\n-# It seems like I don't have permission to manage threads to lock...`,
-				flags: MessageFlags.Ephemeral,
-			});
-			return;
+			return sendErrorMessage(interaction, `No permission to lock`, "danger");
 		}
 
 		const lockButtonExplanation = new EmbedBuilder()

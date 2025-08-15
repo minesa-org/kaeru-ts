@@ -14,9 +14,10 @@ import {
 	ButtonBuilder,
 	ButtonStyle,
 	ActionRowBuilder,
+	PermissionFlagsBits,
 } from "discord.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
-import { getEmoji, getEmojiURL } from "../../utils/export.js";
+import { getEmoji, getEmojiURL, sendErrorMessage } from "../../utils/export.js";
 
 export const RULE_NAME = "Focused People";
 
@@ -96,12 +97,20 @@ const focusMode: BotCommand = {
 		const subcommand = options.getSubcommand();
 		const mention = `<@${user.id}>`;
 
-		// This command can be used in guild only but yeah
+		if (!guild?.members.me?.permissions.has(PermissionFlagsBits.ManageGuild)) {
+			return await sendErrorMessage(
+				interaction,
+				"I don't have permission to create automod rule to put you in focus mode. I am sorry.",
+				"reactions.kaeru.thumbsdown",
+			);
+		}
 		if (!guild || !member) {
-			return await interaction.reply({
-				content: `${getEmoji("error")}`,
-				flags: MessageFlags.Ephemeral,
-			});
+			// This command can be used in guild only but yeah
+			return await sendErrorMessage(
+				interaction,
+				"> Be in guild. Alright got it.",
+				"reactions.user.thumbsup",
+			);
 		}
 
 		let rules = await guild.autoModerationRules.fetch();
@@ -134,17 +143,19 @@ const focusMode: BotCommand = {
 				const alreadySet = keywords.includes(mention);
 
 				if (enable && alreadySet) {
-					return await interaction.reply({
-						content: `${getEmoji("info")} You're already in focus mode.`,
-						flags: MessageFlags.Ephemeral,
-					});
+					return await sendErrorMessage(
+						interaction,
+						`You are already in __focus__ mode\n> ${getEmoji("reactions.user.haha")} Ohhh, okay. My bad lol`,
+						"reactions.kaeru.question",
+					);
 				}
 
 				if (!enable && !alreadySet) {
-					return await interaction.reply({
-						content: `${getEmoji("info")} You're not in focus mode.`,
-						flags: MessageFlags.Ephemeral,
-					});
+					return await sendErrorMessage(
+						interaction,
+						`You are not in __focus__ mode though...\n> ${getEmoji("reactions.user.haha")} Ohhh, okay. My bad haha`,
+						"reactions.kaeru.question",
+					);
 				}
 
 				const updatedKeywords = enable
@@ -157,17 +168,18 @@ const focusMode: BotCommand = {
 
 				return await interaction.reply({
 					content: enable
-						? `${getEmoji("reactions.kaeru.emphasize")} You’re now in focus mode.`
-						: `${getEmoji("reactions.kaeru.emphasize")} Focus mode disabled.`,
+						? `# ${getEmoji("reactions.kaeru.emphasize")}\n-# Focus mode __activated__.`
+						: `# ${getEmoji("reactions.kaeru.emphasize")}\n-# Focus mode __disabled__.`,
 					flags: MessageFlags.Ephemeral,
 				});
 
 			case "list":
 				if (keywords.length === 0) {
-					return await interaction.reply({
-						content: "Nobody is focused right now.",
-						flags: MessageFlags.Ephemeral,
-					});
+					return await sendErrorMessage(
+						interaction,
+						`Everyone is fine to get disturbed.\n> ${getEmoji("reactions.user.thumbsup")} Ah, so no one is focused.`,
+						"reactions.kaeru.thumbsup",
+					);
 				}
 
 				const usersList = keywords.map((m, i) => `${i + 1}. ${m}`).join("\n");

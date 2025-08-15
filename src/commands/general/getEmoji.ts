@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction } from "discord.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
-import { EmojiSize, getEmoji, getEmojiURL } from "../../utils/export.js";
+import { EmojiSize, getEmoji, getEmojiURL, sendErrorMessage } from "../../utils/export.js";
 
 const pingCommand: BotCommand = {
 	data: new SlashCommandBuilder()
@@ -27,18 +27,16 @@ const pingCommand: BotCommand = {
 		const size = interaction.options.getInteger("size")?.valueOf();
 
 		if (!emoji || !emoji.includes(":")) {
-			return interaction.reply({
-				content: `${getEmoji("error")} Invalid emoji format. Please use a Discord emoji.`,
-			});
+			return sendErrorMessage(interaction, `Invalid emoji. Hmm...`, "info");
 		}
 
 		try {
 			const url = getEmojiURL(emoji!, size ?? EmojiSize.Large);
-			await interaction.reply({
+			return interaction.reply({
 				content: `# ${getEmoji("brain")} Here is your emoji URL:\n> ${url}`,
 			});
 		} catch (error) {
-			await interaction.reply({ content: `${getEmoji("error")} Failed to get emoji URL.` });
+			return sendErrorMessage(interaction, `Failed to get emoji.`, "reactions.kaeru.question");
 		}
 	},
 };

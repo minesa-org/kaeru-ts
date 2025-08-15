@@ -9,7 +9,7 @@ import {
 	SlashCommandBuilder,
 } from "discord.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
-import { emojis, getEmoji, log, langMap } from "../../utils/export.js";
+import { emojis, getEmoji, log, langMap, sendErrorMessage } from "../../utils/export.js";
 import { karu } from "../../config/karu.js";
 
 const askKaruCommand: BotCommand = {
@@ -257,9 +257,12 @@ const askKaruCommand: BotCommand = {
 			});
 		} catch (err) {
 			log("error", "Failed to execute AI command:", err);
-			await interaction.editReply({
-				content: `${getEmoji("error")} Failed to execute AI command. The system might be confused — try again in a moment.`,
-			});
+
+			return sendErrorMessage(
+				interaction,
+				"Failed to rewrite with Karu. The system might be confused — try again in a moment.",
+				"error",
+			);
 		}
 	},
 };

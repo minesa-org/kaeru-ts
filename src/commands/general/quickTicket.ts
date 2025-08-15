@@ -13,7 +13,7 @@ import {
 } from "discord.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
 import { getEmoji } from "../../utils/emojis.js";
-import { lockButtonRow, ticketMenuRow } from "../../utils/export.js";
+import { lockButtonRow, sendErrorMessage, ticketMenuRow } from "../../utils/export.js";
 
 const quickTicket: BotCommand = {
 	data: new ContextMenuCommandBuilder()
@@ -29,7 +29,7 @@ const quickTicket: BotCommand = {
 		.setType(ApplicationCommandType.Message)
 		.setIntegrationTypes([ApplicationIntegrationType.GuildInstall])
 		.setContexts([InteractionContextType.Guild]),
-		
+
 	execute: async (interaction: MessageContextMenuCommandInteraction) => {
 		await interaction.deferReply({
 			flags: MessageFlags.Ephemeral,
@@ -41,17 +41,20 @@ const quickTicket: BotCommand = {
 				PermissionFlagsBits.CreatePrivateThreads,
 			])
 		) {
-			return interaction.reply({
-				content: `# ${getEmoji("danger")}\n -# Let's be sure I have creating private threads and managing threads.`,
-			});
+			return sendErrorMessage(
+				interaction,
+				`Let's be sure I have creating private threads and managing threads.`,
+				"danger",
+			);
 		}
 
 		const message = interaction.targetMessage;
 
 		if (message.channel.isThread()) {
-			return interaction.reply({
-				content: `# ${getEmoji("reactions.kaeru.question")}\nYou can't create thread inside thread. Huh... w-what is going on?`,
-			});
+			return sendErrorMessage(
+				interaction,
+				`You can't create thread inside thread. Huh... w-what is going on?`,
+			);
 		}
 
 		if (!(interaction.channel instanceof TextChannel)) {
@@ -81,7 +84,7 @@ const quickTicket: BotCommand = {
 			flags: MessageFlags.IsComponentsV2,
 		});
 
-		await interaction.editReply({
+		return await interaction.editReply({
 			content: `# ${getEmoji("ticket.created")} Created <#${thread.id}>\nNow, you can talk about your issue with our staff members or server members.`,
 		});
 	},

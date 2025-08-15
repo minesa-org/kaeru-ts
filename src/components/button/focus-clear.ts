@@ -6,7 +6,7 @@ import {
 	PermissionsBitField,
 } from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
-import { getEmoji } from "../../utils/export.js";
+import { getEmoji, sendErrorMessage } from "../../utils/export.js";
 import { RULE_NAME } from "../../commands/general/focus.js";
 
 const focusClear: BotComponent = {
@@ -31,15 +31,16 @@ const focusClear: BotComponent = {
 				: new PermissionsBitField(BigInt(member.permissions as string));
 
 		if (!perms.has(PermissionFlagsBits.ManageGuild)) {
-			return await interaction.reply({
-				content: `${getEmoji("error")} No, no, no... you don't have permission to use this command dear.`,
-				flags: MessageFlags.Ephemeral,
-			});
+			return sendErrorMessage(
+				interaction,
+				`Permission missing... Oof.`,
+				"reactions.user.emphasize",
+			);
 		}
 
 		await rule?.edit({ triggerMetadata: { keywordFilter: [] } });
 		return await interaction.reply({
-			content: `${getEmoji("reactions.kaeru.thumbsup")} Focus mode cleared for everyone. Happy!`,
+			content: `# ${getEmoji("reactions.kaeru.thumbsup")}\n-# Focus mode cleared for everyone. Happy!`,
 			flags: MessageFlags.Ephemeral,
 		});
 	},

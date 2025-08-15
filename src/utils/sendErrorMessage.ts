@@ -1,8 +1,13 @@
 import {
+	AnySelectMenuInteraction,
+	ButtonInteraction,
 	ChatInputCommandInteraction,
 	ContainerBuilder,
+	MessageContextMenuCommandInteraction,
 	MessageFlags,
+	ModalSubmitInteraction,
 	TextDisplayBuilder,
+	UserContextMenuCommandInteraction,
 } from "discord.js";
 import { emojis, getEmoji, RecursiveKeyOf } from "./emojis.js";
 
@@ -14,7 +19,13 @@ import { emojis, getEmoji, RecursiveKeyOf } from "./emojis.js";
  * @param accentColor Optional hex color for container (default red)
  */
 export async function sendErrorMessage(
-	interaction: ChatInputCommandInteraction,
+	interaction:
+		| ChatInputCommandInteraction
+		| MessageContextMenuCommandInteraction
+		| UserContextMenuCommandInteraction
+		| ButtonInteraction
+		| AnySelectMenuInteraction
+		| ModalSubmitInteraction,
 	content: string,
 	reactionKey: RecursiveKeyOf<typeof emojis> = "reactions.kaeru.emphasize",
 	accentColor: number | undefined = undefined,

@@ -10,8 +10,8 @@ import {
 	ThreadChannel,
 } from "discord.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
-import { getEmoji } from "../../utils/export.js";
 import { karu } from "../../config/karu.js";
+import { getEmoji, useCooldown, sendErrorMessage } from "../../utils/export.js";
 
 const timelapse: BotCommand = {
 	data: new SlashCommandBuilder()
@@ -38,19 +38,23 @@ const timelapse: BotCommand = {
 
 	execute: async (interaction: ChatInputCommandInteraction) => {
 		const { channel } = interaction;
-
-		if (!channel) {
-			return interaction.reply({
-				content: `${getEmoji("reactions.kaeru.question")} No messages in here, I can't feel it...`,
-				flags: MessageFlags.Ephemeral,
-			});
-		}
+		if (
+			await useCooldown(
+				"timelapse",
+				interaction.user.id,
+				15,
+				"Waittt! You are so fast, you will able to use it again",
+				interaction,
+			)
+		)
+			return;
 
 		if (!(channel instanceof TextChannel || channel instanceof ThreadChannel)) {
-			return interaction.reply({
-				content: "I can't feel the voice of people... \n-# Kaeru can only summarize text channels.",
-				flags: MessageFlags.Ephemeral,
-			});
+			return sendErrorMessage(
+				interaction,
+				`-# Kaeru can only summarize text and thread type channels.\n\n> ${getEmoji("reactions.user.thumbsup")} Okay! I have to go to **message** then apps and click __Summarize & Key Points__ on the message.`,
+				"reactions.kaeru.question",
+			);
 		}
 
 		await interaction.deferReply();

@@ -19,7 +19,7 @@ import {
 	ChatInputCommandInteraction,
 } from "discord.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
-import { formatMultiline, getEmoji } from "../../utils/export.js";
+import { formatMultiline, getEmoji, sendErrorMessage } from "../../utils/export.js";
 
 const announce: BotCommand = {
 	data: new SlashCommandBuilder()
@@ -178,17 +178,11 @@ const announce: BotCommand = {
 				PermissionFlagsBits.CreatePublicThreads,
 			])
 		) {
-			return interaction.editReply({
-				components: [
-					new TextDisplayBuilder().setContent(
-						[
-							`# ${getEmoji("danger")}`,
-							`-# Make sure I have permissions of mentioning roles, adding reactions and creating public threads!`,
-						].join("\n"),
-					),
-				],
-				flags: [MessageFlags.IsComponentsV2],
-			});
+			return sendErrorMessage(
+				interaction,
+				`-# Make sure I have permissions of mentioning roles, adding reactions and creating public threads!`,
+				"danger",
+			);
 		}
 		const channel = interaction.options.getChannel("channel");
 
@@ -216,7 +210,7 @@ const announce: BotCommand = {
 			const response = await fetch(attachment.url);
 			if (!response.ok) {
 				await interaction.editReply({
-					content: `${getEmoji("danger")} Couldn't download the file, please upload a proper attachment.`,
+					content: `# ${getEmoji("danger")}\n-# Couldn't download the file, please upload a proper attachment.`,
 				});
 				return;
 			}
@@ -266,7 +260,7 @@ const announce: BotCommand = {
 				new URL(url);
 			} catch {
 				await interaction.editReply({
-					content: `${getEmoji("error")} Invalid link format. Please use: \`<url>, <label>\` — e.g., \`https://example.com, Visit site\``,
+					content: `# ${getEmoji("error")}\n-# Invalid link format. Please use: \`<url>, <label>\` — e.g., \`https://example.com, Visit site\``,
 				});
 				return;
 			}
@@ -298,7 +292,7 @@ const announce: BotCommand = {
 				!("createWebhook" in channel) ||
 				typeof channel.createWebhook !== "function"
 			) {
-				throw new Error("Seçilen kanal webhook oluşturmayı desteklemiyor veya geçersiz.");
+				throw new Error("Selected channel does not support webhook to create");
 			}
 
 			const webhook = await channel.createWebhook({
@@ -333,7 +327,9 @@ const announce: BotCommand = {
 				}
 
 				await interaction.editReply({
-					content: italic(`Done! Announcement sent to ${channel}!`),
+					content: italic(
+						`# ${getEmoji("reactions.kaeru.thumbsup")}\n-# Done! Announcement sent to ${channel}!`,
+					),
 				});
 			} catch (sendError: any) {
 				console.error("Error sending announcement:", sendError);
@@ -350,7 +346,7 @@ const announce: BotCommand = {
 		} catch (createError: any) {
 			console.error("Error creating webhook:", createError);
 			await interaction.editReply({
-				content: `${getEmoji("error")} There was an error creating the webhook: ${createError.message}`,
+				content: `# ${getEmoji("error")}\n-# There was an error creating the webhook: ${createError.message}`,
 			});
 		}
 	},

@@ -194,14 +194,14 @@ const setupCommand: BotCommand = {
 
 		if (!guild?.members.me?.permissions.has("ManageThreads")) {
 			return interaction.reply({
-				content: `${getEmoji("error")} I don't have permission to manage threads.`,
+				content: `# ${getEmoji("error")}\n-#  I don't have permission to manage threads.`,
 				flags: MessageFlags.Ephemeral,
 			});
 		}
 
 		if (!guild?.members.me?.permissions.has("CreatePrivateThreads")) {
 			return interaction.reply({
-				content: `${getEmoji("error")} I don't have permission to create private threads.`,
+				content: `# ${getEmoji("error")}\n-# I don't have permission to create private threads.`,
 				flags: MessageFlags.Ephemeral,
 			});
 		}
@@ -230,7 +230,7 @@ const setupCommand: BotCommand = {
 					.has([PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages])
 			) {
 				return interaction.editReply({
-					content: `${getEmoji("danger")} I don't have permission to send messages or view ${sendingChannel ?? "the"} channel.`,
+					content: `# ${getEmoji("danger")}\n-# I don't have permission to send messages or view ${sendingChannel ?? "the"} channel.`,
 				});
 			}
 

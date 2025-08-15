@@ -73,6 +73,17 @@ export const emojis = {
 	magic: { id: "1375436613856788550", name: "wand" },
 	text_append: { id: "1375448596509495366", name: "text_append" },
 	list_bullet: { id: "1375468308022951966", name: "list_bullet" },
+	stickers: {
+		thinking: { id: "1406027491403104316", name: "thinking" },
+		sleepy: { id: "1406027455294210128", name: "sleepy" },
+		shocked: { id: "1406027424604618773", name: "shocked" },
+		approved: { id: "1406027391779999815", name: "approved" },
+		confused: { id: "1406027359072555029", name: "confused" },
+		angry: { id: "1406027315019911188", name: "angry" },
+		wink: { id: "1406027160153751553", name: "wink" },
+		mad: { id: "1406027121897373828", name: "mad" },
+		pout: { id: "1406027073562345512", name: "pout" },
+	},
 };
 
 /**

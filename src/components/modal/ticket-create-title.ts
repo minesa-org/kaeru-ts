@@ -10,7 +10,7 @@ import { emojis, getEmoji } from "../../utils/emojis.js";
 import { log } from "../../utils/colors.js";
 import { summarizeTicketTitle } from "../../utils/summarizeTicketTitle.js";
 import { ticketContainerData } from "../../utils/ticketContainerData.js";
-import { lockButtonRow, ticketMenuRow } from "../../utils/ticketRows.js";
+import { lockButtonRow, ticketMenuRow } from "../../utils/export.js";
 
 interface WebhookData {
 	id: string;

@@ -1,6 +1,6 @@
 import type { BotCommand } from "../../interfaces/botTypes.js";
 import { getEmoji } from "../../utils/emojis.js";
-import { lockButtonRow, ticketMenuRow } from "../../utils/ticketRows.js";
+import { lockButtonRow, ticketMenuRow } from "../../utils/export.js";
 import {
 	ApplicationCommandType,
 	ApplicationIntegrationType,

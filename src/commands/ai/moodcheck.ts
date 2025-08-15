@@ -12,7 +12,7 @@ import {
 	SeparatorBuilder,
 } from "discord.js";
 import { karu } from "../../config/karu.js";
-import { getEmoji } from "../../utils/emojis.js";
+import { getEmoji } from "../../utils/export.js";
 
 export default {
 	data: new SlashCommandBuilder()

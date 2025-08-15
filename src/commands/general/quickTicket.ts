@@ -1,6 +1,3 @@
-import type { BotCommand } from "../../interfaces/botTypes.js";
-import { getEmoji } from "../../utils/emojis.js";
-import { lockButtonRow, ticketMenuRow } from "../../utils/export.js";
 import {
 	ApplicationCommandType,
 	ApplicationIntegrationType,
@@ -14,6 +11,9 @@ import {
 	TextChannel,
 	TextDisplayBuilder,
 } from "discord.js";
+import type { BotCommand } from "../../interfaces/botTypes.js";
+import { getEmoji } from "../../utils/emojis.js";
+import { lockButtonRow, ticketMenuRow } from "../../utils/export.js";
 
 const quickTicket: BotCommand = {
 	data: new ContextMenuCommandBuilder()
@@ -29,6 +29,7 @@ const quickTicket: BotCommand = {
 		.setType(ApplicationCommandType.Message)
 		.setIntegrationTypes([ApplicationIntegrationType.GuildInstall])
 		.setContexts([InteractionContextType.Guild]),
+		
 	execute: async (interaction: MessageContextMenuCommandInteraction) => {
 		await interaction.deferReply({
 			flags: MessageFlags.Ephemeral,

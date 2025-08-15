@@ -1,8 +1,3 @@
-import { BotCommand } from "../../interfaces/botTypes.js";
-import { emojis, getEmoji } from "../../utils/emojis.js";
-import { formatMultiline } from "../../utils/formatMultiline.js";
-import { saveStaffRoleId } from "../../utils/saveStaffRole.js";
-import { isValidImageUrl } from "../../utils/isValidImageUrl.js";
 import {
 	ActionRowBuilder,
 	ApplicationIntegrationType,
@@ -25,6 +20,14 @@ import {
 	TextDisplayBuilder,
 	underline,
 } from "discord.js";
+import { BotCommand } from "../../interfaces/botTypes.js";
+import {
+	emojis,
+	getEmoji,
+	formatMultiline,
+	isValidImageUrl,
+	saveStaffRoleId,
+} from "../../utils/export.js";
 
 const setupCommand: BotCommand = {
 	data: new SlashCommandBuilder()
@@ -185,6 +188,7 @@ const setupCommand: BotCommand = {
 						.setRequired(false),
 				),
 		) as SlashCommandBuilder,
+
 	execute: async (interaction: ChatInputCommandInteraction) => {
 		const guild = interaction.guild;
 

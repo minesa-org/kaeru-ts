@@ -16,8 +16,7 @@ import {
 	ActionRowBuilder,
 } from "discord.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
-import { getEmoji } from "../../utils/emojis.js";
-import { getEmojiURL } from "../../utils/getEmojiURL.js";
+import { getEmoji, getEmojiURL } from "../../utils/export.js";
 
 export const RULE_NAME = "Focused People";
 

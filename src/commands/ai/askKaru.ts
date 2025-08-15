@@ -6,10 +6,8 @@ import {
 	ChatInputCommandInteraction,
 } from "discord.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
-import { getEmoji } from "../../utils/emojis.js";
-import { log } from "../../utils/colors.js";
-import { langMap } from "../../utils/languageMap.js";
 import { karu } from "../../config/karu.js";
+import { getEmoji, log, langMap } from "../../utils/export.js";
 
 const askKaruCommand: BotCommand = {
 	data: new SlashCommandBuilder()

@@ -10,7 +10,7 @@ import {
 	TextDisplayBuilder,
 } from "discord.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
-import { getEmoji } from "../../utils/emojis.js";
+import { getEmoji } from "../../utils/export.js";
 
 const sendMeme: BotCommand = {
 	data: new SlashCommandBuilder()

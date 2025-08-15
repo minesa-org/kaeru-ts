@@ -1,5 +1,3 @@
-import fs from "fs";
-import path from "path";
 import {
 	Client,
 	Collection,
@@ -10,7 +8,6 @@ import {
 	REST,
 	Routes,
 } from "discord.js";
-import { header, log, separator } from "../utils/colors.js";
 import type {
 	BotCommand,
 	BotComponent,
@@ -18,6 +15,9 @@ import type {
 	ModalCommand,
 	SelectMenuCommand,
 } from "../interfaces/botTypes.js";
+import fs from "fs";
+import path from "path";
+import { header, log, separator } from "../utils/export.js";
 
 export type BotInteraction =
 	| CommandInteraction

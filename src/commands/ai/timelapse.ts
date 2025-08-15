@@ -10,7 +10,7 @@ import {
 	ThreadChannel,
 } from "discord.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
-import { getEmoji } from "../../utils/emojis.js";
+import { getEmoji } from "../../utils/export.js";
 import { karu } from "../../config/karu.js";
 
 const timelapse: BotCommand = {

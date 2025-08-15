@@ -1,8 +1,3 @@
-import type { BotCommand } from "../../interfaces/botTypes.js";
-import { emojis, getEmoji } from "../../utils/emojis.js";
-import { log } from "../../utils/colors.js";
-import { langMap } from "../../utils/languageMap.js";
-import { karu } from "../../config/karu.js";
 import {
 	ActionRowBuilder,
 	ButtonBuilder,
@@ -13,6 +8,9 @@ import {
 	MessageFlags,
 	SlashCommandBuilder,
 } from "discord.js";
+import type { BotCommand } from "../../interfaces/botTypes.js";
+import { emojis, getEmoji, log, langMap } from "../../utils/export.js";
+import { karu } from "../../config/karu.js";
 
 const askKaruCommand: BotCommand = {
 	data: new SlashCommandBuilder()
@@ -184,6 +182,7 @@ const askKaruCommand: BotCommand = {
 						.setRequired(true),
 				),
 		),
+
 	execute: async (interaction: ChatInputCommandInteraction) => {
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 

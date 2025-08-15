@@ -10,8 +10,7 @@ import {
 	GuildAuditLogsEntry,
 	GuildMember,
 } from "discord.js";
-import { getEmoji } from "../utils/emojis.js";
-import type { emojis } from "../utils/emojis.js";
+import { type emojis, getEmoji } from "../utils/export.js";
 import { BotEventHandler } from "../interfaces/botTypes.js";
 
 const threadUpdateEvent: BotEventHandler<Events.ThreadUpdate> = {

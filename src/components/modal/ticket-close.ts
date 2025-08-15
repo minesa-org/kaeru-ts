@@ -7,7 +7,7 @@ import {
 	ModalSubmitInteraction,
 	PermissionFlagsBits,
 } from "discord.js";
-import { getEmoji } from "../../utils/emojis.js";
+import { getEmoji } from "../../utils/export.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
 
 const createTicketModal: BotComponent = {

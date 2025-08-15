@@ -6,7 +6,7 @@ import {
 	PermissionsBitField,
 } from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
-import { getEmoji } from "../../utils/emojis.js";
+import { getEmoji } from "../../utils/export.js";
 import { RULE_NAME } from "../../commands/general/focus.js";
 
 const focusClear: BotComponent = {

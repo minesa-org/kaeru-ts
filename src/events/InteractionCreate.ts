@@ -1,6 +1,6 @@
 import { MessageFlags, type Interaction } from "discord.js";
 import type { BotEventHandler } from "../interfaces/botTypes.js";
-import { log } from "../utils/colors.js";
+import { log } from "../utils/export.js";
 import { Events } from "discord.js";
 
 const interactionCreateEvent: BotEventHandler<Events.InteractionCreate> = {

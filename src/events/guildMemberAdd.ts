@@ -7,8 +7,7 @@ import {
 	ThumbnailBuilder,
 } from "discord.js";
 import type { BotEventHandler } from "../interfaces/botTypes.js";
-import { EmojiSize, getEmojiURL } from "../utils/getEmojiURL.js";
-import { getEmoji } from "../utils/emojis.js";
+import { EmojiSize, getEmojiURL, getEmoji } from "../utils/export.js";
 
 const guildMemberAddEvent: BotEventHandler<Events.GuildMemberAdd> = {
 	name: Events.GuildMemberAdd,

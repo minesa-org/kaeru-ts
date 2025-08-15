@@ -1,7 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction } from "discord.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
-import { EmojiSize, getEmojiURL } from "../../utils/getEmojiURL.js";
-import { emojis, getEmoji } from "../../utils/emojis.js";
+import { EmojiSize, getEmoji, getEmojiURL } from "../../utils/export.js";
 
 const pingCommand: BotCommand = {
 	data: new SlashCommandBuilder()

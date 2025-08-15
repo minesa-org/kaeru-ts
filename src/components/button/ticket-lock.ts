@@ -8,7 +8,7 @@ import {
 	MessageFlags,
 } from "discord.js";
 import type { BotComponent } from "../../interfaces/botTypes.js";
-import { getEmoji } from "../../utils/emojis.js";
+import { getEmoji } from "../../utils/export.js";
 
 const ticketLockButton: BotComponent = {
 	customId: "ticket-lock-conversation",

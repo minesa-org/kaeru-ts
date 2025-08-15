@@ -18,9 +18,8 @@ import {
 	ButtonStyle,
 	ChatInputCommandInteraction,
 } from "discord.js";
-import { getEmoji } from "../../utils/emojis.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
-import { formatMultiline } from "../../utils/formatMultiline.js";
+import { formatMultiline, getEmoji } from "../../utils/export.js";
 
 const announce: BotCommand = {
 	data: new SlashCommandBuilder()
@@ -170,6 +169,7 @@ const announce: BotCommand = {
 				})
 				.setRequired(false),
 		) as SlashCommandBuilder,
+
 	execute: async (interaction: ChatInputCommandInteraction) => {
 		if (
 			!interaction.guild?.members.me?.permissions.has([

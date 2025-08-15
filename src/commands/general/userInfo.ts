@@ -13,7 +13,7 @@ import {
 	UserContextMenuCommandInteraction,
 } from "discord.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
-import { getEmoji } from "../../utils/emojis.js";
+import { getEmoji } from "../../utils/export.js";
 
 const userInfo: BotCommand = {
 	data: new ContextMenuCommandBuilder()
@@ -36,8 +36,8 @@ const userInfo: BotCommand = {
 			"pt-BR": "Informações do Usuário",
 			"zh-CN": "用户信息",
 		}),
+
 	execute: async (interaction: UserContextMenuCommandInteraction) => {
-		// Checking if command ran in server or dm
 		if (
 			Object.keys(interaction.authorizingIntegrationOwners).every(
 				key => key == ApplicationIntegrationType.UserInstall.toString(),

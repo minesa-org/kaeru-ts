@@ -54,7 +54,7 @@ const guildMemberAddEvent: BotEventHandler<Events.GuildMemberAdd> = {
 						new TextDisplayBuilder().setContent(
 							[
 								`${getEmoji("timeout")} Time-outed a new account`,
-								`User <../${member.user.id}> (${member.user.username}) has joined the server.\nTheir account is younger than 7 days, so they have been timeouted for one week.`,
+								`User <@${member.user.id}> (${member.user.username}) has joined the server.\nTheir account is younger than 7 days, so they have been timeouted for one week.`,
 							].join("\n"),
 						),
 					)

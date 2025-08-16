@@ -43,6 +43,7 @@ const messageCreateEvent: EventModule<Events.MessageCreate> = {
 			}
 
 			await handleKaruMessage(message, message.channel as ThreadChannel, userPrompt);
+
 			return;
 		}
 
@@ -66,7 +67,7 @@ const messageCreateEvent: EventModule<Events.MessageCreate> = {
 				.trim()
 				.slice(0, 80);
 
-			if (!threadName) threadName = `💭 Kāru & ${message.author.username}`;
+			if (!threadName) threadName = `💭 Käru & ${message.author.username}`;
 
 			const thread = await message.startThread({
 				name: `💭 ${threadName}`,

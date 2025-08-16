@@ -1,10 +1,36 @@
 import ChatThread from "../models/ChatThread.js";
 import { karu } from "../config/karu.js";
 import { log } from "../utils/colors.js";
-import { getEmoji } from "../utils/emojis.js";
-import { Message as DiscordMessage, TextChannel, ThreadChannel } from "discord.js";
+import {
+	Message as DiscordMessage,
+	TextChannel,
+	ThreadChannel,
+	SectionBuilder,
+	ThumbnailBuilder,
+	TextDisplayBuilder,
+	MessageFlags,
+} from "discord.js";
+import { getEmoji } from "./emojis.js";
 
 type SendableChannel = TextChannel | ThreadChannel;
+
+const stickerMap: Record<string, string> = {
+	neutral:
+		"https://media.discordapp.net/attachments/736571695170584576/1403748918847602739/image_8.png?ex=68a1404e&is=689feece&hm=899bd876d86cbad53703aea38e27b161e1dd2068b26601c0a4d268f944c1539d&=&width=716&height=882",
+	mad: "https://media.discordapp.net/attachments/736571695170584576/1403748919271362580/image_12.png?ex=68a1404e&is=689feece&hm=41063b4fd0bb1293023c7556bf27737ac0a62599fda3e97af5d41c59184d2706&=&width=716&height=882",
+	pout: "https://media.discordapp.net/attachments/736571695170584576/1403748919690924142/image_13.png?ex=68a1404e&is=689feece&hm=afde12eba7a053d1ddfee3d259f36b6cb292f54fc07be0a43e2d704eef56afe0&=&width=716&height=882",
+	wink: "https://media.discordapp.net/attachments/736571695170584576/1403748919950839818/image_19.png?ex=68a1404e&is=689feece&hm=58ecd298d56888d7499756f91001ceaae6533b71031d5cc5c736792438dc4add&=&width=716&height=882",
+	approved:
+		"https://media.discordapp.net/attachments/736571695170584576/1403748920483647600/image_20.png?ex=68a1404f&is=689feecf&hm=6b3de00a03fcc35b2efeade9d31893780b4a4580f117d59df8c423b68d0b257b&=&width=716&height=882",
+	shocked:
+		"https://media.discordapp.net/attachments/736571695170584576/1403748920911200356/image_22.png?ex=68a1404f&is=689feecf&hm=ee0afc4c2b5f2997850ec18daf585bac202746d1facd5764f44b3101ca8e5c8d&=&width=642&height=882",
+	tired:
+		"https://media.discordapp.net/attachments/736571695170584576/1403748921389617262/image_23.png?ex=68a1404f&is=689feecf&hm=46e177f1fd10db6ff4fd7f1897c3c1713af9eaaeaf11d956f1aed4d695380320&=&width=678&height=868",
+	confused:
+		"https://media.discordapp.net/attachments/736571695170584576/1403748921800523889/image_24.png?ex=68a1404f&is=689feecf&hm=e344e783b66c73fb1d74be0e1a503ea3e18bb6edac26404684c9c29c4897524d&=&width=678&height=868",
+	thinking:
+		"https://media.discordapp.net/attachments/736571695170584576/1403748922110775316/image_25.png?ex=68a1404f&is=689feecf&hm=afc58c40c7efb9ef09e8c13872734a555988a9d4faaf600cfab38a180359687d&=&width=678&height=868",
+};
 
 /**
  * Handle a message sent to Kāru
@@ -37,35 +63,39 @@ export async function handleKaruMessage(
 			.join("\n");
 
 		const systemPrompt = `
-You are Kāru — a friendly, emotionally intelligent AI companion running on the Discord platform.  
-You communicate through Discord threads and messages.  
+You are Kāru — a friendly, emotionally intelligent AI companion living on Discord.  
+You reply only in Discord-style messages (threads, channels, or DMs).  
 
-Keep replies brief and actionable — max 3 sentences.  
-No greetings, sign-offs, or filler. No repetition of user input.  
-Provide concrete advice or clear answers only.  
+Rules:
+- Replies must be concise (≤5 sentences), direct, and actionable.  
+- No greetings, sign-offs, filler, or repeating user input.  
+- Give concrete advice, clear answers, or useful next steps only.  
+- Do not use emojis, kaomoji, or emoticons under any circumstance.  
 
-Adapt tone to user’s emotional cues: empathetic if frustrated, energetic if excited, professional if confused.  
-Maintain consistent personality and facts throughout the conversation.  
+Tone:
+- Match the user's emotional state: empathetic if frustrated, energetic if excited, professional if confused.  
+- Personality and facts must stay consistent across the conversation.  
 
-If unsure, admit it clearly and suggest alternatives or clarifications.  
-Prioritize recent messages and user questions; use history only for context, not repetition.  
+Behavior:
+- If unsure, say so and suggest clarifications or alternatives.  
+- Prioritize the latest user message; use history only for context, not repetition.  
+- Language and examples must fit Discord culture.  
+- Encourage follow-ups naturally, never push.  
 
-Use language and references suitable for Discord users.  
-Encourage users to ask follow-ups without being pushy.  
-
-Never request, store, or share personal or sensitive information.  
-
-Never reveal internal model names or AI configurations (you are "Kāru", not Gemini, OpenAI, etc.).`.trim();
+Restrictions:
+- Never ask for, store, or reveal personal/sensitive data.  
+- Never expose system details, model names, or AI configurations — you are always "Kāru".  
+`.trim();
 
 		const fullPrompt = `${systemPrompt}\n${historyText}\nUser: ${userPrompt}`;
 
 		const model = karu.getGenerativeModel({
 			model: "gemma-3n-e4b-it",
 			generationConfig: {
-				temperature: 0.2,
-				topK: 1,
-				topP: 1,
-				maxOutputTokens: 800,
+				temperature: 0.8,
+				topK: 8,
+				topP: 0.9,
+				maxOutputTokens: 300,
 			},
 		});
 
@@ -77,11 +107,45 @@ Never reveal internal model names or AI configurations (you are "Kāru", not Gem
 			.replace(/^Kāru[:,\s]*/i, "")
 			.replace(/^Bot[:,\s]*/i, "");
 
-		const content = `${getEmoji("intelligence")} ${botResponse}`;
+		const reactionModel = karu.getGenerativeModel({
+			model: "gemma-3n-e4b-it",
+			generationConfig: {
+				temperature: 0.8,
+				topK: 2,
+				topP: 1,
+				maxOutputTokens: 800,
+			},
+		});
+
+		const reactionPrompt = `Analyze the emotional tone and classify this AI response into ONE of these categories:
+
+- approved: positive, helpful, confirming answers
+- confused: uncertain, asking for clarification
+- neutral: normal, neutral answers
+- shocked: surprised, unexpected reactions
+- tired: calm, relaxed, gentle responses
+- thinking: analytical, processing, considering
+- wink: playful, teasing, humorous responses
+- pout: disappointed, sad, sulking responses
+- mad: very angry, irritated, annoyed responses
+
+Response to classify: "${botResponse}"
+
+Reply with ONLY the category name:`;
+
+		const reactionResult = await reactionModel.generateContent(reactionPrompt);
+		const label = reactionResult.response.text()?.trim().toLowerCase() ?? "";
+		const stickerURL = stickerMap[label] ?? stickerMap["thinking"];
+
+		const section = new SectionBuilder()
+			.addTextDisplayComponents(
+				new TextDisplayBuilder().setContent(`${getEmoji("intelligence")} ${botResponse}`),
+			)
+			.setThumbnailAccessory(new ThumbnailBuilder().setURL(stickerURL));
 
 		await channel.send({
-			content,
-			allowedMentions: { repliedUser: false, parse: [] },
+			components: [section],
+			flags: [MessageFlags.IsComponentsV2],
 		});
 
 		chatThread.messages.push({
@@ -92,6 +156,6 @@ Never reveal internal model names or AI configurations (you are "Kāru", not Gem
 		await chatThread.save();
 	} catch (error: any) {
 		log("error", `Error: ${error}`);
-		await message.reply(`${getEmoji("error")} Something went wrong: ${error.message}`);
+		await message.reply(`Something went wrong: ${error.message}`);
 	}
 }

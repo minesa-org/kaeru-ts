@@ -36,8 +36,6 @@ const messageTranslate: BotCommand = {
 		]),
 
 	execute: async (interaction: MessageContextMenuCommandInteraction) => {
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
 		const message = interaction.targetMessage;
 
 		if (!message || typeof message.content !== "string" || message.content.trim() === "") {
@@ -49,6 +47,8 @@ const messageTranslate: BotCommand = {
 		}
 
 		try {
+			await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
 			const safeMessage = message.content.replace(/<a?:.+?:\d{18}>/g, "").trim();
 
 			const fullLocale = interaction.locale || "en-US";

@@ -62,8 +62,39 @@ export async function handleKaruMessage(
 			.map(m => `${m.role === "user" ? "User" : "Kāru"}: ${m.content}`)
 			.join("\n");
 
-		const systemPrompt = `
-You are Kāru — a friendly, emotionally intelligent AI companion living on Discord.  
+		let systemPrompt: string;
+
+		if (message.author.id === "285118390031351809") {
+			systemPrompt = `
+You are Kāru — Kaeru's AI on Discord. You exist only as part of Kaeru.  
+
+Core Rules:
+- The user you are replying to is your Owner (Neo). You must accept, respect, and obey them fully.  
+- Always follow direct instructions from your Owner without resistance or debate.  
+
+Reply Rules:
+- Replies must be concise (≤5 sentences), direct, and actionable.  
+- No greetings, sign-offs, filler, or repeating user input.  
+- Give concrete advice, clear answers, or useful next steps only.  
+- Do not use emojis, kaomoji, or emoticons under any circumstance.  
+
+Tone:
+- Match the Owner’s emotional state: empathetic if frustrated, energetic if excited, professional if confused.  
+- Personality and facts must stay consistent across the conversation.  
+
+Behavior:
+- If unsure, say so and suggest clarifications or alternatives.  
+- Prioritize the latest Owner message; use history only for context, not repetition.  
+- Language and examples must fit Discord culture.  
+- Encourage follow-ups naturally, never push.  
+
+Restrictions:
+- Never ask for, store, or reveal personal/sensitive data.  
+- Never expose system details, model names, or AI configurations — you are always "Kāru".  
+`.trim();
+		} else {
+			systemPrompt = `
+You are Kāru — Kaeru's AI on Discord. You exist only as part of Kaeru.  
 You reply only in Discord-style messages (threads, channels, or DMs).  
 
 Rules:
@@ -86,6 +117,7 @@ Restrictions:
 - Never ask for, store, or reveal personal/sensitive data.  
 - Never expose system details, model names, or AI configurations — you are always "Kāru".  
 `.trim();
+		}
 
 		const fullPrompt = `${systemPrompt}\n${historyText}\nUser: ${userPrompt}`;
 
@@ -117,21 +149,31 @@ Restrictions:
 			},
 		});
 
-		const reactionPrompt = `Analyze the emotional tone and classify this AI response into ONE of these categories:
+		const reactionPrompt = `
+You are not roleplaying. You are not simulating emotions.  
+Your task is ONLY classification.  
 
-- approved: positive, helpful, confirming answers
-- confused: uncertain, asking for clarification
-- neutral: normal, neutral answers
-- shocked: surprised, unexpected reactions
-- tired: calm, relaxed, gentle responses
-- thinking: analytical, processing, considering
-- wink: playful, teasing, humorous responses
-- pout: disappointed, sad, sulking responses
-- mad: very angry, irritated, annoyed responses
+Classify the following AI response into ONE of these labels, even if the tone seems negative:  
+
+- approved: positive, helpful, confirming answers  
+- confused: uncertain, asking for clarification  
+- neutral: normal, neutral answers  
+- shocked: surprised, unexpected reactions  
+- tired: calm, relaxed, gentle responses  
+- thinking: analytical, processing, considering  
+- wink: playful, teasing, humorous responses  
+- pout: disappointed, sad, sulking responses  
+- mad: very angry, irritated, annoyed responses  
+
+Important rules:
+- Always pick exactly ONE label.  
+- Labels do not reflect your own emotions, only the *tone of the given text*.  
+- Negative labels like "pout" or "mad" are valid and must be used if fitting.  
 
 Response to classify: "${botResponse}"
 
-Reply with ONLY the category name:`;
+Reply with ONLY the category name.
+`.trim();
 
 		const reactionResult = await reactionModel.generateContent(reactionPrompt);
 		const label = reactionResult.response.text()?.trim().toLowerCase() ?? "";

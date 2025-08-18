@@ -1,6 +1,5 @@
 import {
 	ActionRowBuilder,
-	ApplicationCommandOptionChannelTypesMixin,
 	ApplicationIntegrationType,
 	bold,
 	ChannelType,
@@ -12,7 +11,6 @@ import {
 	MessageFlags,
 	NewsChannel,
 	PermissionFlagsBits,
-	SectionBuilder,
 	SeparatorBuilder,
 	SeparatorSpacingSize,
 	SlashCommandBuilder,
@@ -209,23 +207,6 @@ const setupCommand: BotCommand = {
 		const { channel, guild } = interaction;
 
 		const channelOption = interaction.options.getChannel("channel");
-		const sendingChannel =
-			channelOption instanceof TextChannel || channelOption instanceof NewsChannel
-				? channelOption
-				: null;
-
-		if (
-			!interaction.guild ||
-			!sendingChannel ||
-			!("permissionsFor" in sendingChannel) ||
-			!sendingChannel
-				.permissionsFor(interaction.guild.members.me!)
-				.has([PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages])
-		) {
-			return interaction.editReply({
-				content: `# ${getEmoji("danger")}\n-# I don't have permission to send messages or view ${sendingChannel ?? "the"} channel.`,
-			});
-		}
 
 		const ticketCommand = async () => {
 			if (!guild?.members.me?.permissions.has("ManageThreads")) {
@@ -238,6 +219,24 @@ const setupCommand: BotCommand = {
 					`I don't have permission to create private threads.`,
 					"error",
 				);
+			}
+
+			const sendingChannel =
+				channelOption instanceof TextChannel || channelOption instanceof NewsChannel
+					? channelOption
+					: null;
+
+			if (
+				!interaction.guild ||
+				!sendingChannel ||
+				!("permissionsFor" in sendingChannel) ||
+				!sendingChannel
+					.permissionsFor(interaction.guild.members.me!)
+					.has([PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages])
+			) {
+				return interaction.reply({
+					content: `# ${getEmoji("danger")}\n-# I don't have permission to send messages or view ${sendingChannel ?? "the"} channel.`,
+				});
 			}
 
 			await interaction.deferReply({
@@ -338,10 +337,10 @@ const setupCommand: BotCommand = {
 		const hubCommand = async () => {
 			await interaction.deferReply();
 
-			await setHubChannel(guild!.id, channel!.id);
+			await setHubChannel(guild!.id, channelOption!.id);
 
 			return interaction.editReply({
-				content: `${getEmoji("reactions.user.thumbsup")} Created the voice hub system successfully in ${channel!.url}.`,
+				content: `${getEmoji("reactions.user.thumbsup")} Created the voice hub system successfully.`,
 			});
 		};
 

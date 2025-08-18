@@ -31,16 +31,30 @@ const interactionCreateEvent: BotEventHandler<Events.InteractionCreate> = {
 			}
 
 			if (interaction.isButton()) {
-				const buttonHandler = interaction.client.buttons.get(interaction.customId);
-				if (!buttonHandler) {
+				const handler = [...interaction.client.buttons.values()].find(h => {
+					if (h.customId instanceof RegExp) return h.customId.test(interaction.customId);
+					return h.customId === interaction.customId;
+				});
+
+				if (!handler) {
 					log("warning", `No button handler found for button: ${interaction.customId}`);
 					return;
 				}
-				await buttonHandler.execute(interaction);
+				await handler.execute(interaction);
 				return;
 			}
 
 			if (interaction.isStringSelectMenu()) {
+				const selectHandler = interaction.client.selectMenus.get(interaction.customId);
+				if (!selectHandler) {
+					log("warning", `No select menu handler found for select menu: ${interaction.customId}`);
+					return;
+				}
+				await selectHandler.execute(interaction);
+				return;
+			}
+
+			if (interaction.isUserSelectMenu()) {
 				const selectHandler = interaction.client.selectMenus.get(interaction.customId);
 				if (!selectHandler) {
 					log("warning", `No select menu handler found for select menu: ${interaction.customId}`);

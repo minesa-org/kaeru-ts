@@ -16,7 +16,7 @@ import { emojis, getEmoji, RecursiveKeyOf } from "./emojis.js";
  * @param interaction The interaction object
  * @param content Main error text
  * @param reactionKey Emoji key for getEmoji (e.g., "reactions.kaeru.emphasize")
- * @param accentColor Optional hex color for container (default red)
+ * @param accentColor Optional hex color for container
  */
 export async function sendErrorMessage(
 	interaction:

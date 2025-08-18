@@ -1,6 +1,12 @@
-import { MessageFlags, type Interaction } from "discord.js";
+import {
+	ContainerBuilder,
+	MessageFlags,
+	SeparatorBuilder,
+	TextDisplayBuilder,
+	type Interaction,
+} from "discord.js";
 import type { BotEventHandler } from "../interfaces/botTypes.js";
-import { log } from "../utils/export.js";
+import { getEmoji, log } from "../utils/export.js";
 import { Events } from "discord.js";
 
 const interactionCreateEvent: BotEventHandler<Events.InteractionCreate> = {
@@ -31,16 +37,30 @@ const interactionCreateEvent: BotEventHandler<Events.InteractionCreate> = {
 			}
 
 			if (interaction.isButton()) {
-				const buttonHandler = interaction.client.buttons.get(interaction.customId);
-				if (!buttonHandler) {
+				const handler = [...interaction.client.buttons.values()].find(h => {
+					if (h.customId instanceof RegExp) return h.customId.test(interaction.customId);
+					return h.customId === interaction.customId;
+				});
+
+				if (!handler) {
 					log("warning", `No button handler found for button: ${interaction.customId}`);
 					return;
 				}
-				await buttonHandler.execute(interaction);
+				await handler.execute(interaction);
 				return;
 			}
 
 			if (interaction.isStringSelectMenu()) {
+				const selectHandler = interaction.client.selectMenus.get(interaction.customId);
+				if (!selectHandler) {
+					log("warning", `No select menu handler found for select menu: ${interaction.customId}`);
+					return;
+				}
+				await selectHandler.execute(interaction);
+				return;
+			}
+
+			if (interaction.isUserSelectMenu()) {
 				const selectHandler = interaction.client.selectMenus.get(interaction.customId);
 				if (!selectHandler) {
 					log("warning", `No select menu handler found for select menu: ${interaction.customId}`);
@@ -73,8 +93,22 @@ const interactionCreateEvent: BotEventHandler<Events.InteractionCreate> = {
 			log("error", `Failed executing interaction:`, error);
 			if (interaction.isRepliable() && !interaction.replied) {
 				await interaction.reply({
-					content: "Something went wrong while executing your interaction.",
-					flags: MessageFlags.Ephemeral,
+					components: [
+						new TextDisplayBuilder().setContent(getEmoji("reactions.kaeru.heart")),
+						new ContainerBuilder()
+							.addTextDisplayComponents(
+								new TextDisplayBuilder().setContent(
+									"Sometimes, things can go as unexpected. Like this one, this one is failed. Anyway lemme tell you a story",
+								),
+							)
+							.addSeparatorComponents(new SeparatorBuilder().setDivider(true))
+							.addTextDisplayComponents(
+								new TextDisplayBuilder().setContent(
+									"-# It was 3 years ago, while I was sitting with my grandfather, my grandfather asked for water, I said okay and I took the water from the kitchen and gave the water to my grandfather.\n-# I sat down and he said to me; Look, son, a day will come when people will waste time reading your message.. it just is",
+								),
+							),
+					],
+					flags: [MessageFlags.Ephemeral, MessageFlags.IsComponentsV2],
 				});
 			}
 		}

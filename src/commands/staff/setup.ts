@@ -27,6 +27,8 @@ import {
 	formatMultiline,
 	isValidImageUrl,
 	saveStaffRoleId,
+	sendErrorMessage,
+	setHubChannel,
 } from "../../utils/export.js";
 
 const setupCommand: BotCommand = {
@@ -187,35 +189,38 @@ const setupCommand: BotCommand = {
 						})
 						.setRequired(false),
 				),
+		)
+		.addSubcommand(subcommand =>
+			subcommand
+				.setName("voice-hub")
+				.setDescription("Set up a voice hub that people can create their vc!")
+				.addChannelOption(option =>
+					option
+						.setName("channel")
+						.setDescription("Select the channel that will become hub")
+						.addChannelTypes(ChannelType.GuildVoice)
+						.setRequired(true),
+				),
 		) as SlashCommandBuilder,
 
 	execute: async (interaction: ChatInputCommandInteraction) => {
-		const guild = interaction.guild;
+		const { channel, guild } = interaction;
 
-		if (!guild?.members.me?.permissions.has("ManageThreads")) {
-			return interaction.reply({
-				content: `# ${getEmoji("error")}\n-#  I don't have permission to manage threads.`,
-				flags: MessageFlags.Ephemeral,
-			});
-		}
-
-		if (!guild?.members.me?.permissions.has("CreatePrivateThreads")) {
-			return interaction.reply({
-				content: `# ${getEmoji("error")}\n-# I don't have permission to create private threads.`,
-				flags: MessageFlags.Ephemeral,
-			});
-		}
+		const channelOption = interaction.options.getChannel("channel");
 
 		const ticketCommand = async () => {
-			await interaction.deferReply({
-				flags: MessageFlags.Ephemeral,
-			});
+			if (!guild?.members.me?.permissions.has("ManageThreads")) {
+				return sendErrorMessage(interaction, `I don't have permission to manage threads.`, "error");
+			}
 
-			const containerDescription = interaction.options.getString("description") ?? "";
-			const customImageUrl = interaction.options.getString("image_url") ?? "";
-			const staffRole = interaction.options.getRole("staff_role")?.id ?? "";
+			if (!guild?.members.me?.permissions.has("CreatePrivateThreads")) {
+				return sendErrorMessage(
+					interaction,
+					`I don't have permission to create private threads.`,
+					"error",
+				);
+			}
 
-			const channelOption = interaction.options.getChannel("channel");
 			const sendingChannel =
 				channelOption instanceof TextChannel || channelOption instanceof NewsChannel
 					? channelOption
@@ -229,10 +234,18 @@ const setupCommand: BotCommand = {
 					.permissionsFor(interaction.guild.members.me!)
 					.has([PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages])
 			) {
-				return interaction.editReply({
+				return interaction.reply({
 					content: `# ${getEmoji("danger")}\n-# I don't have permission to send messages or view ${sendingChannel ?? "the"} channel.`,
 				});
 			}
+
+			await interaction.deferReply({
+				flags: MessageFlags.Ephemeral,
+			});
+
+			const containerDescription = interaction.options.getString("description") ?? "";
+			const customImageUrl = interaction.options.getString("image_url") ?? "";
+			const staffRole = interaction.options.getRole("staff_role")?.id ?? "";
 
 			let imageUrl =
 				"https://cdn.discordapp.com/attachments/736571695170584576/1398695161923375144/default_ticket_image.png?ex=68864be1&is=6884fa61&hm=0e8b5986b4ee4a9451a844bf1e6b1eecb3abd4d125f5c5670ece213d82d2ee36&"; // kaeru's default image for ticket banner
@@ -305,13 +318,13 @@ const setupCommand: BotCommand = {
 				flags: MessageFlags.IsComponentsV2,
 			});
 
-			await saveStaffRoleId(interaction.guild.id, staffRole);
+			await saveStaffRoleId(interaction.guild!.id, staffRole);
 
 			await interaction.editReply({
 				content: `${getEmoji("ticket.create")} Created the ticket system successfully in ${sendingChannel}.`,
 			});
 
-			if (!interaction.guild.members.me?.permissions.has(PermissionFlagsBits.ManageMessages)) {
+			if (!interaction.guild!.members.me?.permissions.has(PermissionFlagsBits.ManageMessages)) {
 				await interaction.followUp({
 					content: `## ${getEmoji("danger") + " " + underline("Recommending")}\nIf Kaeru has ${bold(
 						"Manage Messages",
@@ -321,9 +334,22 @@ const setupCommand: BotCommand = {
 			}
 		};
 
+		const hubCommand = async () => {
+			await interaction.deferReply();
+
+			await setHubChannel(guild!.id, channelOption!.id);
+
+			return interaction.editReply({
+				content: `${getEmoji("reactions.user.thumbsup")} Created the voice hub system successfully.`,
+			});
+		};
+
 		switch (interaction.options.getSubcommand()) {
 			case "ticket":
 				await ticketCommand();
+				break;
+			case "voice-hub":
+				await hubCommand();
 				break;
 		}
 	},

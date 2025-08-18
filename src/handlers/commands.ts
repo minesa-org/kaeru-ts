@@ -7,6 +7,7 @@ import {
 	ModalSubmitInteraction,
 	REST,
 	Routes,
+	UserSelectMenuInteraction,
 } from "discord.js";
 import type {
 	BotCommand,
@@ -132,7 +133,9 @@ export async function loadCommands(client: Client) {
 			const component = module.default ?? module;
 
 			if ("customId" in component && "execute" in component) {
-				const menuComponent = component as SelectMenuCommand;
+				const menuComponent = component as SelectMenuCommand<
+					StringSelectMenuInteraction | UserSelectMenuInteraction
+				>;
 				const customId =
 					menuComponent.customId instanceof RegExp
 						? menuComponent.customId.source

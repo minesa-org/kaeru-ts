@@ -73,6 +73,9 @@ export const emojis = {
 	magic: { id: "1375436613856788550", name: "wand" },
 	text_append: { id: "1375448596509495366", name: "text_append" },
 	list_bullet: { id: "1375468308022951966", name: "list_bullet" },
+	lock_dotted: { id: "1407076701959356596", name: "lock_dotted" },
+	number_point: { id: "1407078457216733294", name: "number_point" },
+	lock_fill: { id: "1407084819111739483", name: "lock_fill" },
 	stickers: {
 		thinking: { id: "1406027491403104316", name: "thinking" },
 		sleepy: { id: "1406027455294210128", name: "sleepy" },

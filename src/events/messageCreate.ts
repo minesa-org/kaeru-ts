@@ -1,5 +1,5 @@
 import { Events, Message, TextChannel, ThreadChannel } from "discord.js";
-import MessageModel from "../database/schemas/message.model.js";
+import MessageModel from "../models/message.model.js";
 import { EventModule } from "../interfaces/botTypes.js";
 import { karu } from "../config/karu.js";
 import { getMongooseConnection } from "../database/mongoose.js";

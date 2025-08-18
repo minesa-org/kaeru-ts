@@ -3,8 +3,12 @@ import {
 	PermissionFlagsBits,
 	MessageFlags,
 	GuildMember,
+	ContainerBuilder,
+	TextDisplayBuilder,
+	SeparatorBuilder,
 } from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
+import { sendErrorMessage } from "../../utils/sendErrorMessage.js";
 
 const vcKickSelect: BotComponent = {
 	customId: "vc_kick_select",
@@ -14,16 +18,16 @@ const vcKickSelect: BotComponent = {
 		const member = interaction.member as GuildMember;
 		const channel = member.voice.channel;
 		if (!channel) {
-			await interaction.editReply({
-				content: "You are not in a voice channel.",
-			});
+			await sendErrorMessage(
+				interaction,
+				"Voice channel! Where are you!?",
+				"reactions.user.question",
+			);
 			return;
 		}
 
 		if (!interaction.guild?.members.me?.permissions.has(PermissionFlagsBits.ManageChannels)) {
-			await interaction.editReply({
-				content: "Bot doesn't have permission to manage channel permissions.",
-			});
+			await sendErrorMessage(interaction, "No permission, give me permission!");
 			return;
 		}
 
@@ -46,12 +50,26 @@ const vcKickSelect: BotComponent = {
 			}
 		}
 
+		const container = new ContainerBuilder()
+			.addTextDisplayComponents(new TextDisplayBuilder().setContent("Kicked && Blacklisted"))
+			.addSeparatorComponents(new SeparatorBuilder().setDivider(true))
+			.addTextDisplayComponents(
+				new TextDisplayBuilder().setContent(
+					kickedMembers.length > 0
+						? [`# Bye bye...`, `- ${kickedMembers.join("\n- ")}`].join("\n")
+						: [
+								`# No members were kicked`,
+								`Did you just try to kick someone not in the channel?`,
+							].join("\n"),
+				),
+			);
+
 		await interaction.editReply({
-			content:
-				kickedMembers.length > 0
-					? `Kicked & blacklisted: ${kickedMembers.join(", ")}`
-					: "No members were kicked.",
+			components: [container],
+			flags: MessageFlags.IsComponentsV2,
 		});
+
+		return;
 	},
 };
 

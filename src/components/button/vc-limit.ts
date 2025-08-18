@@ -8,6 +8,7 @@ import {
 	MessageFlags,
 } from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
+import { sendErrorMessage } from "../../utils/sendErrorMessage.js";
 
 const vcLimit: BotComponent = {
 	customId: /^vc-limit-\d+$/,
@@ -16,17 +17,15 @@ const vcLimit: BotComponent = {
 		const channel = interaction.guild?.channels.cache.get(channelId);
 
 		if (!channel?.isVoiceBased()) {
-			return interaction.reply({
-				content: "Voice channel not found.",
-				flags: MessageFlags.Ephemeral,
-			});
+			return sendErrorMessage(interaction, "Voice channel is not found, impossible!", "error");
 		}
 
 		if (!channel.permissionsFor(interaction.user)?.has(PermissionFlagsBits.ManageChannels)) {
-			return interaction.reply({
-				content: "You don't have permission to control this channel.",
-				flags: MessageFlags.Ephemeral,
-			});
+			return sendErrorMessage(
+				interaction,
+				"Is your name channel's name? yeah it's not.\n-# Don't do something crazy to change your name to channel's name. :D",
+				"reactions.kaeru.question",
+			);
 		}
 
 		const modal = new ModalBuilder()
@@ -35,7 +34,8 @@ const vcLimit: BotComponent = {
 
 		const limitInput = new TextInputBuilder()
 			.setCustomId("limit")
-			.setLabel("User Limit (0-99, 0 = unlimited)")
+			.setLabel("✦ Please enter user limit")
+			.setPlaceholder("Between 1-99, 0 for unlimited")
 			.setStyle(TextInputStyle.Short)
 			.setMinLength(1)
 			.setMaxLength(2)

@@ -51,7 +51,7 @@ const vcKickSelect: BotComponent = {
 		}
 
 		const container = new ContainerBuilder()
-			.addTextDisplayComponents(new TextDisplayBuilder().setContent("Kicked && Blacklisted"))
+			.addTextDisplayComponents(new TextDisplayBuilder().setContent("-# Kicked && Blacklisted"))
 			.addSeparatorComponents(new SeparatorBuilder().setDivider(true))
 			.addTextDisplayComponents(
 				new TextDisplayBuilder().setContent(

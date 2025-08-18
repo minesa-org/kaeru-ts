@@ -12,6 +12,9 @@ import type {
 	SlashCommandSubcommandsOnlyBuilder,
 	ChatInputCommandInteraction,
 	InteractionResponse,
+	UserSelectMenuInteraction,
+	ChannelSelectMenuInteraction,
+	RoleSelectMenuInteraction,
 } from "discord.js";
 
 // === Command Interfaces ===
@@ -47,10 +50,18 @@ interface BaseComponent<TInteraction extends Interaction> {
 }
 
 export interface ButtonCommand extends BaseComponent<ButtonInteraction> {}
-export interface SelectMenuCommand extends BaseComponent<StringSelectMenuInteraction> {}
+
+export interface SelectMenuCommand<
+	T extends
+		| StringSelectMenuInteraction
+		| UserSelectMenuInteraction
+		| ChannelSelectMenuInteraction
+		| RoleSelectMenuInteraction,
+> extends BaseComponent<T> {}
+
 export interface ModalCommand extends BaseComponent<ModalSubmitInteraction> {}
 
-export type BotComponent = ButtonCommand | SelectMenuCommand | ModalCommand;
+export type BotComponent = ButtonCommand | SelectMenuCommand<any> | ModalCommand;
 
 // === Event Handler Interface ===
 

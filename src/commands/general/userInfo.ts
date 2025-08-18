@@ -90,7 +90,7 @@ const userInfo: BotCommand = {
 			[
 				`# ${getEmoji("avatar")} User Information`,
 				`**Name:** ${user.displayName ?? user.username} (\`@${user.username}\`)`,
-				`**User ID:** ${user.id}`,
+				`**User ID:** \`${user.id}\``,
 				`**Accent Color:** ${user.accentColor != null ? `#${user.accentColor.toString(16).padStart(6, "0")}` : "Using a banner."}`,
 				avatarDecoLine,
 				`-# You can also see other details on their profile.`,

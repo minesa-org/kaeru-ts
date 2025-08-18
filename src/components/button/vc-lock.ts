@@ -1,5 +1,13 @@
-import { ButtonInteraction, MessageFlags, PermissionFlagsBits } from "discord.js";
+import {
+	ButtonInteraction,
+	MessageFlags,
+	PermissionFlagsBits,
+	SeparatorBuilder,
+	TextDisplayBuilder,
+} from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
+import { sendErrorMessage } from "../../utils/sendErrorMessage.js";
+import { getEmoji } from "../../utils/emojis.js";
 
 const vcLock: BotComponent = {
 	customId: /^vc-lock-\d+$/,
@@ -8,17 +16,15 @@ const vcLock: BotComponent = {
 		const channel = interaction.guild?.channels.cache.get(channelId);
 
 		if (!channel?.isVoiceBased()) {
-			return interaction.reply({
-				content: "Voice channel not found.",
-				flags: MessageFlags.Ephemeral,
-			});
+			return sendErrorMessage(interaction, "Voice channel is not found, impossible!", "error");
 		}
 
 		if (!channel.permissionsFor(interaction.user)?.has(PermissionFlagsBits.ManageChannels)) {
-			return interaction.reply({
-				content: "You don't have permission to control this channel.",
-				flags: MessageFlags.Ephemeral,
-			});
+			return sendErrorMessage(
+				interaction,
+				"Is your name channel's name? yeah it's not.\n-# Don't do something crazy to change your name to channel's name. :D",
+				"reactions.kaeru.question",
+			);
 		}
 
 		const everyoneRole = interaction.guild!.roles.everyone;
@@ -29,9 +35,13 @@ const vcLock: BotComponent = {
 			Connect: isLocked ? null : false,
 		});
 
+		const text = new TextDisplayBuilder().setContent(
+			`# ${isLocked ? getEmoji("ticket.bubble.key") : getEmoji("ticket.bubble.lock")}\n### Channel ${isLocked ? "unlocked" : "locked"}.`,
+		);
+
 		await interaction.reply({
-			content: `Channel ${isLocked ? "unlocked" : "locked"}.`,
-			flags: MessageFlags.Ephemeral,
+			components: [text],
+			flags: [MessageFlags.Ephemeral, MessageFlags.IsComponentsV2],
 		});
 	},
 };

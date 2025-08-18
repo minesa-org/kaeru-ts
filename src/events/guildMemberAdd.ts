@@ -11,7 +11,8 @@ import type { BotEventHandler } from "../interfaces/botTypes.js";
 import { EmojiSize, getEmojiURL, getEmoji } from "../utils/export.js";
 import { log } from "../utils/colors.js";
 
-const ONE_WEEK = 1000 * 60 * 60 * 24 * 7;
+const THREE_HOURS = 1000 * 60 * 60 * 3;
+const SEVEN_DAYS = 1000 * 60 * 60 * 24 * 7;
 
 const guildMemberAddEvent: BotEventHandler<Events.GuildMemberAdd> = {
 	name: Events.GuildMemberAdd,
@@ -20,9 +21,9 @@ const guildMemberAddEvent: BotEventHandler<Events.GuildMemberAdd> = {
 		const guild = member.guild;
 		const accountAge = Date.now() - member.user.createdTimestamp;
 
-		if (accountAge < ONE_WEEK) {
+		if (accountAge < SEVEN_DAYS) {
 			const timeoutReason = "Account is younger than 7 days.";
-			const timeoutDuration = new Date(Date.now() + ONE_WEEK);
+			const timeoutDuration = new Date(Date.now() + THREE_HOURS);
 
 			try {
 				await member.send({
@@ -33,7 +34,7 @@ const guildMemberAddEvent: BotEventHandler<Events.GuildMemberAdd> = {
 									new TextDisplayBuilder().setContent(
 										[
 											`# Time-outed!`,
-											`Your account is younger than 7 days, so you have been temporarily restricted.`,
+											`Your account is younger than 7 days, so you have been temporarily restricted for 3 hours.`,
 											`-# Server: ${guild.name}`,
 										].join("\n"),
 									),
@@ -51,7 +52,7 @@ const guildMemberAddEvent: BotEventHandler<Events.GuildMemberAdd> = {
 
 			try {
 				await member.disableCommunicationUntil(timeoutDuration, timeoutReason);
-				log("info", `Timed out ${member.user.tag} for 7 days (account too new).`);
+				log("info", `Timed out ${member.user.tag} for 3 hours (account too new).`);
 			} catch (err) {
 				log("error", `Failed to timeout ${member.user.tag}: ${err}`);
 			}
@@ -63,7 +64,7 @@ const guildMemberAddEvent: BotEventHandler<Events.GuildMemberAdd> = {
 							[
 								`# ${getEmoji("timeout")} Time-outed a new account`,
 								`User <@${member.user.id}> (${member.user.tag}) joined.`,
-								`Account too new → timeouted for 1 week.`,
+								`Account too new → timeouted for 3 hours.`,
 							].join("\n"),
 						),
 					)
@@ -73,10 +74,15 @@ const guildMemberAddEvent: BotEventHandler<Events.GuildMemberAdd> = {
 			const systemChannel = guild.systemChannel;
 			if (systemChannel?.isTextBased() && systemChannel.viewable) {
 				if (
-					systemChannel.permissionsFor(guild.members.me!)?.has(PermissionsBitField.Flags.SendMessages)
+					systemChannel
+						.permissionsFor(guild.members.me!)
+						?.has(PermissionsBitField.Flags.SendMessages)
 				) {
 					try {
-						await systemChannel.send({ components: [container], flags: MessageFlags.IsComponentsV2 });
+						await systemChannel.send({
+							components: [container],
+							flags: MessageFlags.IsComponentsV2,
+						});
 					} catch (err) {
 						log("error", `Failed to send system message in ${guild.name}: ${err}`);
 					}

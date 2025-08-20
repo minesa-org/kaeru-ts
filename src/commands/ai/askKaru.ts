@@ -9,7 +9,7 @@ import type { BotCommand } from "../../interfaces/botTypes.js";
 import { karu } from "../../config/karu.js";
 import { getEmoji, log, langMap, sendErrorMessage } from "../../utils/export.js";
 
-const askKaruCommand: BotCommand = {
+const askKaru: BotCommand = {
 	data: new SlashCommandBuilder()
 		.setName("ask")
 		.setDescription("Ask Kaeru a question")
@@ -138,4 +138,4 @@ Always assume the user wants high-signal help — no fluff.
 	},
 };
 
-export default askKaruCommand;
+export default askKaru;

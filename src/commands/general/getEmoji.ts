@@ -2,7 +2,7 @@ import { SlashCommandBuilder, ChatInputCommandInteraction } from "discord.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
 import { EmojiSize, getEmoji, getEmojiURL, sendErrorMessage } from "../../utils/export.js";
 
-const pingCommand: BotCommand = {
+const emojiURL: BotCommand = {
 	data: new SlashCommandBuilder()
 		.setName("emoji-url")
 		.setDescription("Get emoji URL.")
@@ -41,4 +41,4 @@ const pingCommand: BotCommand = {
 	},
 };
 
-export default pingCommand;
+export default emojiURL;

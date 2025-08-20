@@ -12,7 +12,7 @@ import type { BotCommand } from "../../interfaces/botTypes.js";
 import { emojis, getEmoji, log, langMap, sendErrorMessage } from "../../utils/export.js";
 import { karu } from "../../config/karu.js";
 
-const askKaruCommand: BotCommand = {
+const rewrite: BotCommand = {
 	data: new SlashCommandBuilder()
 		.setName("writing")
 		.setNameLocalizations({
@@ -267,4 +267,4 @@ const askKaruCommand: BotCommand = {
 	},
 };
 
-export default askKaruCommand;
+export default rewrite;

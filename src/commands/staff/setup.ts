@@ -31,7 +31,7 @@ import {
 	setHubChannel,
 } from "../../utils/export.js";
 
-const setupCommand: BotCommand = {
+const setup: BotCommand = {
 	data: new SlashCommandBuilder()
 		.setName("setup")
 		.setNameLocalizations({
@@ -355,4 +355,4 @@ const setupCommand: BotCommand = {
 	},
 };
 
-export default setupCommand;
+export default setup;

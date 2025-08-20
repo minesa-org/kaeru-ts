@@ -29,7 +29,7 @@ const focusMode: BotCommand = {
 		.setNameLocalizations({
 			tr: "odak",
 			"zh-CN": "专注",
-			it: "concentrazione",
+			it: "concentra", 
 			"pt-BR": "foco",
 		})
 		.setDescription("Manage your focus mode")

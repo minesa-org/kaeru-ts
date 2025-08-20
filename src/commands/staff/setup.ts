@@ -193,18 +193,42 @@ const setup: BotCommand = {
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName("voice-hub")
+				.setNameLocalizations({
+					tr: "ses-merkezi",
+					"zh-CN": "语音中心",
+					it: "hub-vocale",
+					"pt-BR": "hub-de-voz",
+				})
 				.setDescription("Set up a voice hub that people can create their vc!")
+				.setDescriptionLocalizations({
+					tr: "Kullanıcıların kendi ses kanallarını oluşturabileceği bir ses merkezi kur",
+					"zh-CN": "建立一个语音中心，让用户可以创建自己的语音频道",
+					it: "Imposta un hub vocale in cui le persone possono creare il proprio canale vocale",
+					"pt-BR": "Configure um hub de voz onde as pessoas possam criar seu canal de voz",
+				})
 				.addChannelOption(option =>
 					option
 						.setName("channel")
+						.setNameLocalizations({
+							tr: "kanal",
+							"zh-CN": "频道",
+							it: "canale",
+							"pt-BR": "canal",
+						})
 						.setDescription("Select the channel that will become hub")
+						.setDescriptionLocalizations({
+							tr: "Merkez olacak kanalı seç",
+							"zh-CN": "选择将成为中心的频道",
+							it: "Seleziona il canale che diventerà l'hub",
+							"pt-BR": "Selecione o canal que se tornará o hub",
+						})
 						.addChannelTypes(ChannelType.GuildVoice)
 						.setRequired(true),
 				),
 		) as SlashCommandBuilder,
 
 	execute: async (interaction: ChatInputCommandInteraction) => {
-		const { channel, guild } = interaction;
+		const { guild } = interaction;
 
 		const channelOption = interaction.options.getChannel("channel");
 

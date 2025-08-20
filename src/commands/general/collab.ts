@@ -34,17 +34,54 @@ const collabTogether: BotCommand = {
 		.setContexts([InteractionContextType.Guild, InteractionContextType.PrivateChannel])
 		.setIntegrationTypes(ApplicationIntegrationType.GuildInstall)
 		.setName("collab")
+		.setNameLocalizations({
+			tr: "işbirliği",
+			"zh-CN": "协作",
+			it: "collabora",
+			"pt-BR": "colaborar",
+		})
 		.setDescription("Share your file to collab with specific people")
+		.setDescriptionLocalizations({
+			tr: "Belirli kişilerle işbirliği yapmak için dosyanı paylaş",
+			"zh-CN": "与特定人员协作共享你的文件",
+			it: "Condividi il tuo file per collaborare con persone specifiche",
+			"pt-BR": "Compartilhe seu arquivo para colaborar com pessoas específicas",
+		})
+
 		.addAttachmentOption(option =>
 			option
 				.setName("file")
+				.setNameLocalizations({
+					tr: "dosya",
+					"zh-CN": "文件",
+					it: "file",
+					"pt-BR": "arquivo",
+				})
 				.setDescription("Text based files are supported (BETA)")
+				.setDescriptionLocalizations({
+					tr: "Metin tabanlı dosyalar desteklenir (BETA)",
+					"zh-CN": "支持基于文本的文件（测试版）",
+					it: "Sono supportati i file di testo (BETA)",
+					"pt-BR": "Arquivos de texto são suportados (BETA)",
+				})
 				.setRequired(true),
 		)
 		.addBooleanOption(option =>
 			option
 				.setName("view")
+				.setNameLocalizations({
+					tr: "görünür",
+					"zh-CN": "可见",
+					it: "visibile",
+					"pt-BR": "visível",
+				})
 				.setDescription("Is it viewable by non-collaborators?")
+				.setDescriptionLocalizations({
+					tr: "İşbirliği yapmayanlar tarafından görülebilir mi?",
+					"zh-CN": "非协作者可以查看吗？",
+					it: "È visibile ai non collaboratori?",
+					"pt-BR": "É visível para não colaboradores?",
+				})
 				.setRequired(false),
 		) as SlashCommandBuilder,
 

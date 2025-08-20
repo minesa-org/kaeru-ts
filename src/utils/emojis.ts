@@ -77,6 +77,9 @@ export const emojis = {
 	number_point: { id: "1407078457216733294", name: "number_point" },
 	lock_fill: { id: "1407084819111739483", name: "lock_fill" },
 	people: { id: "1407663609055809576", name: "people" },
+	document: { id: "1407670625677475850", name: "document" },
+	pencil: { id: "1407807672849403984", name: "pencil" },
+	eye: { id: "1407807605048479867", name: "eye" },
 	stickers: {
 		thinking: { id: "1406027491403104316", name: "thinking" },
 		sleepy: { id: "1406027455294210128", name: "sleepy" },

@@ -1,7 +1,9 @@
 import {
 	ActionRowBuilder,
+	ApplicationIntegrationType,
 	ChatInputCommandInteraction,
 	ContainerBuilder,
+	InteractionContextType,
 	MessageFlags,
 	SectionBuilder,
 	SeparatorBuilder,
@@ -14,10 +16,23 @@ import { BotCommand } from "../../interfaces/botTypes.js";
 import { sendErrorMessage } from "../../utils/sendErrorMessage.js";
 import { getEmoji } from "../../utils/emojis.js";
 
-const SUPPORTED_EXTENSIONS = [".txt", ".js", ".ts", ".py", ".json", ".css", ".html", ".md"];
+const SUPPORTED_EXTENSIONS = [
+	".txt",
+	".js",
+	".ts",
+	".py",
+	".json",
+	".css",
+	".html",
+	".md",
+	".cpp",
+	".rs",
+];
 
 const collabTogether: BotCommand = {
 	data: new SlashCommandBuilder()
+		.setContexts([InteractionContextType.Guild, InteractionContextType.PrivateChannel])
+		.setIntegrationTypes(ApplicationIntegrationType.GuildInstall)
 		.setName("collab")
 		.setDescription("Share your file to collab with specific people")
 		.addAttachmentOption(option =>
@@ -38,8 +53,7 @@ const collabTogether: BotCommand = {
 
 		const file = options.getAttachment("file");
 		const ext = SUPPORTED_EXTENSIONS.find(e => file?.name.endsWith(e));
-
-		const isViewable = options.getBoolean("view");
+		const isViewable = options.getBoolean("view") ?? false;
 
 		if (!ext) {
 			return sendErrorMessage(
@@ -55,7 +69,14 @@ const collabTogether: BotCommand = {
 			return sendErrorMessage(interaction, "File too large. Max **4000** characters for now.");
 		}
 
-		interaction.client.fileCache.set(interaction.user.id, { text, ext, name: file!.name });
+		interaction.client.fileCache.set(interaction.user.id, {
+			text,
+			ext,
+			name: file!.name,
+			isViewable,
+			collaborators: [],
+			owner: interaction.user.id,
+		});
 
 		const container = new ContainerBuilder()
 			.addTextDisplayComponents(

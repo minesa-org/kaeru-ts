@@ -48,6 +48,7 @@ export async function loadCommands(client: Client) {
 	client.buttons = new Collection();
 	client.selectMenus = new Collection();
 	client.modals = new Collection();
+	client.fileCache = new Map();
 
 	header("Loading Commands and Components");
 	// Slash commands

@@ -14,7 +14,17 @@ declare module "discord.js" {
 		selectMenus: Collection<string, SelectMenuCommand<any>>;
 		modals: Collection<string, ModalCommand>;
 		events: Collection<string, BotEventHandler<keyof import("discord.js").ClientEvents>>;
-
-		fileCache: Map<string, { text: string; ext: string; name: string }>;
+		fileCache: Map<
+			string,
+			{
+				text: string;
+				ext: string;
+				name: string;
+				isViewable: boolean;
+				collaborators: string[];
+				owner: string;
+				threadId?: string;
+			}
+		>;
 	}
 }

@@ -13,18 +13,19 @@ import {
 } from "discord.js";
 import { karu } from "../../config/karu.js";
 import { getEmoji, sendErrorMessage } from "../../utils/export.js";
+import { BotCommand } from "../../interfaces/botTypes.js";
 
-export default {
+const moodCheck: BotCommand = {
 	data: new SlashCommandBuilder()
-		.setName("moodcheck")
+		.setName("mood-check")
 		.setDescription("See channel's mood breakdown")
 		.setNameLocalizations({
-			tr: "ruhhaligor",
-			ru: "настроение",
-			de: "stimmung",
-			it: "umorecanale",
-			"zh-CN": "心情检查",
-			"pt-BR": "verhumor",
+			tr: "ruh-hali",
+			ru: "настроение-канала",
+			de: "stimmungs-check",
+			it: "umore-canale",
+			"zh-CN": "心情-检查",
+			"pt-BR": "ver-humor",
 		})
 		.setDescriptionLocalizations({
 			tr: "Kanalın ruh halini gör",
@@ -128,3 +129,5 @@ ${messageTexts}
 		messages.clear();
 	},
 };
+
+export default moodCheck;

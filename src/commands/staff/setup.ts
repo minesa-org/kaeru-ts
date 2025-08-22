@@ -30,6 +30,7 @@ import {
 	sendAlertMessage,
 	setHubChannel,
 	setImageChannel,
+	containerTemplate,
 } from "../../utils/export.js";
 
 const setup: BotCommand = {
@@ -417,16 +418,19 @@ const setup: BotCommand = {
 			try {
 				await setImageChannel(guild!.id, channelOption!.id);
 
-				if (selectedChannel.isTextBased() && "setRateLimitPerUser" in selectedChannel) {
-					await selectedChannel.setRateLimitPerUser(30, "Image channel slowmode set by Kaeru");
-				}
-
 				return interaction.editReply({
-					content:
-						`${getEmoji("reactions.user.thumbsup")} Image-only channel system created successfully!\n` +
-						`- Channel slowmode set to 30 seconds\n` +
-						`- Only media content will be allowed\n` +
-						`- Automatic threads will be created for posts`,
+					components: [
+						containerTemplate({
+							tag: "System Created",
+							title: `${getEmoji("banner")} Media channel system created successfully!`,
+							description: [
+								`- Only media content will be allowed`,
+								`- Automatic threads will be created for posts`,
+							].join("\n"),
+							
+						}),
+					],
+					flags: [MessageFlags.IsComponentsV2],
 				});
 			} catch (error) {
 				console.error("Error setting up image channel:", error);

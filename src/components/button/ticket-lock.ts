@@ -61,7 +61,7 @@ const ticketLockButton: BotComponent = {
 				}),
 				lockReasonsMenu,
 			],
-			flags: MessageFlags.Ephemeral,
+			flags: [MessageFlags.Ephemeral, MessageFlags.IsComponentsV2],
 		});
 	},
 };

@@ -48,9 +48,11 @@ const ticketKaruButton: BotComponent = {
 			});
 		} catch (error) {
 			console.error("Error updating thread name:", error);
-			await interaction.reply({
+			
+			return sendAlertMessage({
+				interaction,
 				content: `${getEmoji("error")} I couldn't update the thread name... maybe next time, hehe... :/`,
-				flags: MessageFlags.Ephemeral,
+				type: "error",
 			});
 		}
 	},

@@ -13,12 +13,13 @@ export const ticketContainerData = async (interaction: any) => {
 		tag: "Pro-Ticket System",
 		title: `${getEmoji("doorEnter")} Now, we did it. Here we are!`,
 		description: [
+			``,
 			`-# [ ${roleMention(staffRoleId)} ]`,
 			"",
 			"Our staff member(s) will take care of this thread sooner. While they are on their way, why don’t you talk about your ticket?",
 		],
 		thumbnail:
-			"https://cdn.discordapp.com/attachments/736571695170584576/1327617435418755185/23679.png",
+			"https://media.discordapp.net/attachments/736571695170584576/1408594076835643412/Normal.png?ex=68aa4ef6&is=68a8fd76&hm=64bc5af80ee9a98e1449e691f12876fe265b5a3f6ce4a9d9d9995e3af6e6c182&=&format=webp&quality=lossless&width=706&height=706",
 	});
 
 	return container.toJSON();

@@ -91,6 +91,8 @@ const quickTicket: BotCommand = {
 						`- Message sent by __@${message.author?.username ?? "Unknown"}__`,
 					],
 					title: `${getEmoji("ticket.create")} Quick-Ticket Created`,
+					thumbnail:
+						"https://media.discordapp.net/attachments/736571695170584576/1408594076835643412/Normal.png?ex=68aa4ef6&is=68a8fd76&hm=64bc5af80ee9a98e1449e691f12876fe265b5a3f6ce4a9d9d9995e3af6e6c182&=&format=webp&quality=lossless&width=706&height=706",
 				}),
 				ticketMenuRow,
 				lockButtonRow,

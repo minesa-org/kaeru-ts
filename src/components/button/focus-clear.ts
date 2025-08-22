@@ -45,7 +45,7 @@ const focusClear: BotComponent = {
 			components: [
 				containerTemplate({
 					tag: "Cleared Focused People",
-					description: "Focus mode cleared for everyone. Happy!",
+					description: "Focus mode cleared for everyone. You must be happy now!",
 					title: getEmoji("reactions.kaeru.thumbsdown"),
 				}),
 			],

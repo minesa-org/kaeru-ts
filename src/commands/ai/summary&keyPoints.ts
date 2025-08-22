@@ -75,8 +75,10 @@ const messageSummary: BotCommand = {
 			}
 
 			if (textToSummarize.trim() === "") {
-				return interaction.editReply({
+				return sendAlertMessage({
+					interaction,
 					content: `# ${getEmoji("info")} \nEmbeds, attachments or system messages can't be summarized. Maybe give it a try with a text message?`,
+					tag: "Unsupported Message",
 				});
 			}
 

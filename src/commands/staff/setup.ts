@@ -381,20 +381,10 @@ const setup: BotCommand = {
 		};
 
 		const imageChannel = async () => {
-			if (!guild?.members.me?.permissions.has("CreatePublicThreads")) {
-				return sendAlertMessage({
-					interaction,
-					content: `It seems like I can't create public threads to people comment on image.\n> ${getEmoji("reactions.user.thumbsup")} Got it! I will give you the permission to manage, soon.`,
-					type: "error",
-					tag: "Missing Permissions",
-					alertReaction: "reactions.kaeru.emphasize",
-				});
-			}
-
-			const selectedChannel = guild.channels.cache.get(channelOption!.id);
+			const selectedChannel = guild?.channels.cache.get(channelOption!.id);
 			if (
 				!selectedChannel ||
-				!selectedChannel.permissionsFor(guild.members.me!)?.has("ViewChannel")
+				!selectedChannel.permissionsFor(guild?.members.me!)?.has("ViewChannel")
 			) {
 				return sendAlertMessage({
 					interaction,
@@ -404,12 +394,13 @@ const setup: BotCommand = {
 				});
 			}
 
-			if (!selectedChannel.permissionsFor(guild.members.me!)?.has("ManageMessages")) {
+			if (!guild?.members.me?.permissions.has("CreatePublicThreads")) {
 				return sendAlertMessage({
 					interaction,
-					content: `I need manage messages permission to put a cooldown on channel. You can change this permission for me later.`,
+					content: `It seems like I can't create public threads to people comment on image.\n> ${getEmoji("reactions.user.thumbsup")} Got it! I will give you the permission to manage, soon.`,
 					type: "error",
 					tag: "Missing Permissions",
+					alertReaction: "reactions.kaeru.emphasize",
 				});
 			}
 

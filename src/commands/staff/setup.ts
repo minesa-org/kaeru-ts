@@ -29,6 +29,7 @@ import {
 	saveStaffRoleId,
 	sendErrorMessage,
 	setHubChannel,
+	setImageChannel,
 } from "../../utils/export.js";
 
 const setup: BotCommand = {
@@ -188,6 +189,18 @@ const setup: BotCommand = {
 							ru: "Укажите пользовательский URL изображения для баннера тикета!",
 						})
 						.setRequired(false),
+				),
+		)
+		.addSubcommand(subcommand =>
+			subcommand
+				.setName("image-channel")
+				.setDescription("Set up an image channel that people can post only images and videos!")
+				.addChannelOption(option =>
+					option
+						.setName("channel")
+						.setDescription("Which channel will it be?")
+						.addChannelTypes(ChannelType.GuildText)
+						.setRequired(true),
 				),
 		)
 		.addSubcommand(subcommand =>
@@ -358,6 +371,26 @@ const setup: BotCommand = {
 			}
 		};
 
+		const imageChannel = async () => {
+			if (!guild?.members.me?.permissions.has("ManageThreads")) {
+				return sendErrorMessage(interaction, `I don't have permission to manage threads.`, "error");
+			}
+
+			if (!guild?.members.me?.permissions.has("CreatePrivateThreads")) {
+				return sendErrorMessage(
+					interaction,
+					`I don't have permission to create private threads.`,
+					"error",
+				);
+			}
+
+			await setImageChannel(guild!.id, channelOption!.id);
+
+			return interaction.editReply({
+				content: `${getEmoji("reactions.user.thumbsup")} Created the image-only channel system successfully.`,
+			});
+		};
+
 		const hubCommand = async () => {
 			await interaction.deferReply();
 
@@ -374,6 +407,9 @@ const setup: BotCommand = {
 				break;
 			case "voice-hub":
 				await hubCommand();
+				break;
+			case "image-channel":
+				await imageChannel();
 				break;
 		}
 	},

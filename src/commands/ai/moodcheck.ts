@@ -12,7 +12,7 @@ import {
 	SeparatorBuilder,
 } from "discord.js";
 import { karu } from "../../config/karu.js";
-import { getEmoji, sendAlertMessage } from "../../utils/export.js";
+import { containerTemplate, getEmoji, sendAlertMessage } from "../../utils/export.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
 
 const moodCheck: BotCommand = {
@@ -95,36 +95,35 @@ ${messageTexts}
 			if (mood && value) moodValues[mood] = value;
 		});
 
-		const container = new ContainerBuilder()
-			.addTextDisplayComponents(
-				new TextDisplayBuilder().setContent(`-# ${getEmoji("magic")} Kāru Moodcheck AI`),
-			)
-			.addSeparatorComponents(new SeparatorBuilder().setDivider(true))
-			.addActionRowComponents(
-				new ActionRowBuilder<ButtonBuilder>().addComponents(
-					new ButtonBuilder()
-						.setCustomId("1")
-						.setDisabled(true)
-						.setEmoji("😊")
-						.setLabel(`${moodValues.Happy || "0%"}`)
-						.setStyle(ButtonStyle.Secondary),
-					new ButtonBuilder()
-						.setCustomId("2")
-						.setDisabled(true)
-						.setEmoji("😐")
-						.setLabel(`${moodValues.Neutral || "0%"}`)
-						.setStyle(ButtonStyle.Secondary),
-					new ButtonBuilder()
-						.setCustomId("3")
-						.setDisabled(true)
-						.setEmoji("😢")
-						.setLabel(`${moodValues.Sad || "0%"}`)
-						.setStyle(ButtonStyle.Secondary),
-				),
-			);
+		const moodButtons = new ActionRowBuilder<ButtonBuilder>().addComponents(
+			new ButtonBuilder()
+				.setCustomId("1")
+				.setDisabled(true)
+				.setEmoji("😊")
+				.setLabel(`${moodValues.Happy || "0%"}`)
+				.setStyle(ButtonStyle.Secondary),
+			new ButtonBuilder()
+				.setCustomId("2")
+				.setDisabled(true)
+				.setEmoji("😐")
+				.setLabel(`${moodValues.Neutral || "0%"}`)
+				.setStyle(ButtonStyle.Secondary),
+			new ButtonBuilder()
+				.setCustomId("3")
+				.setDisabled(true)
+				.setEmoji("😢")
+				.setLabel(`${moodValues.Sad || "0%"}`)
+				.setStyle(ButtonStyle.Secondary),
+		);
 
 		await interaction.editReply({
-			components: [container],
+			components: [
+				containerTemplate({
+					tag: `${getEmoji("magic")} Kāru Moodcheck AI`,
+					description: ["### Moods", "- 😊: Happy", "- 😐: Neutral", "- 😢: Sad"],
+				}),
+				moodButtons,
+			],
 			flags: MessageFlags.IsComponentsV2,
 		});
 

@@ -7,7 +7,7 @@ import {
 } from "discord.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
 import { karu } from "../../config/karu.js";
-import { getEmoji, langMap, log, sendAlertMessage } from "../../utils/export.js";
+import { containerTemplate, getEmoji, langMap, log, sendAlertMessage } from "../../utils/export.js";
 
 const askKaru: BotCommand = {
 	data: new SlashCommandBuilder()
@@ -126,7 +126,12 @@ Always assume the user wants high-signal help — no fluff.
 
 			const content = `${getEmoji("intelligence")} ${output}`;
 
-			await interaction.editReply({ content });
+			return interaction.editReply({
+				components: [
+					containerTemplate({ tag: `${getEmoji("magic")} Kāru AI`, description: content }),
+				],
+				flags: MessageFlags.IsComponentsV2,
+			});
 		} catch (err) {
 			log("error", `Ask Karu error: ${err}`);
 			return sendAlertMessage({

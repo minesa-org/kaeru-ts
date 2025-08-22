@@ -5,13 +5,19 @@ import {
 	InteractionContextType,
 	MessageFlags,
 	MessageContextMenuCommandInteraction,
-	TextDisplayBuilder,
 	SeparatorSpacingSize,
 	SeparatorBuilder,
 } from "discord.js";
 import { karu } from "../../config/karu.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
-import { getEmoji, log, langMap, sendAlertMessage } from "../../utils/export.js";
+import {
+	getEmoji,
+	log,
+	langMap,
+	sendAlertMessage,
+	containerTemplate,
+	separator,
+} from "../../utils/export.js";
 
 const messageSummary: BotCommand = {
 	data: new ContextMenuCommandBuilder()
@@ -121,20 +127,18 @@ Key Points:
 				const summary = summarySection.replace(/^Summary:\n?/i, "").trim();
 				const keyPoints = keyPointSection.trim();
 
-				const summaryTextSection = new TextDisplayBuilder().setContent(
-					[`## ${getEmoji("text_append")} Summarized`, summary].join("\n"),
+				const summaryTextSection = [`## ${getEmoji("text_append")} Summarized`, summary].join("\n");
+				const keyPointsTextSection = [`## ${getEmoji("list_bullet")} Key Points`, keyPoints].join(
+					"\n",
 				);
 
-				const divider = new SeparatorBuilder()
-					.setDivider(true)
-					.setSpacing(SeparatorSpacingSize.Large);
-
-				const keyPointsTextSection = new TextDisplayBuilder().setContent(
-					[`## ${getEmoji("list_bullet")} Key Points`, keyPoints].join("\n"),
-				);
-
-				await interaction.editReply({
-					components: [summaryTextSection, divider, keyPointsTextSection],
+				return await interaction.editReply({
+					components: [
+						containerTemplate({
+							tag: "Summary & Key-Points System",
+							description: [summaryTextSection, "", keyPointsTextSection],
+						}),
+					],
 					flags: MessageFlags.IsComponentsV2,
 				});
 			} catch (err) {

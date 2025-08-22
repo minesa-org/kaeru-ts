@@ -8,9 +8,11 @@ import {
 	InteractionContextType,
 	MediaGalleryBuilder,
 	MediaGalleryItemBuilder,
+	MessageContextMenuCommandInteraction,
 	MessageFlags,
 	NewsChannel,
 	PermissionFlagsBits,
+	SectionBuilder,
 	SeparatorBuilder,
 	SeparatorSpacingSize,
 	SlashCommandBuilder,
@@ -18,7 +20,9 @@ import {
 	StringSelectMenuOptionBuilder,
 	TextChannel,
 	TextDisplayBuilder,
+	ThumbnailBuilder,
 	underline,
+	UserContextMenuCommandInteraction,
 } from "discord.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
 import {
@@ -375,7 +379,6 @@ const setup: BotCommand = {
 			if (!guild?.members.me?.permissions.has("ManageThreads")) {
 				return sendErrorMessage(interaction, `I don't have permission to manage threads.`, "error");
 			}
-
 			if (!guild?.members.me?.permissions.has("CreatePrivateThreads")) {
 				return sendErrorMessage(
 					interaction,
@@ -384,11 +387,55 @@ const setup: BotCommand = {
 				);
 			}
 
-			await setImageChannel(guild!.id, channelOption!.id);
+			const selectedChannel = guild.channels.cache.get(channelOption!.id);
+			if (!selectedChannel) {
+				return sendErrorMessage(
+					interaction,
+					`I cannot find or access the selected channel.`,
+					"error",
+				);
+			}
 
-			return interaction.editReply({
-				content: `${getEmoji("reactions.user.thumbsup")} Created the image-only channel system successfully.`,
-			});
+			if (!selectedChannel.permissionsFor(guild.members.me!)?.has("ViewChannel")) {
+				return sendErrorMessage(
+					interaction,
+					`I don't have permission to view the selected channel.`,
+					"error",
+				);
+			}
+
+			if (!selectedChannel.permissionsFor(guild.members.me!)?.has("ManageMessages")) {
+				return sendErrorMessage(
+					interaction,
+					`I don't have permission to manage messages in the selected channel.`,
+					"error",
+				);
+			}
+
+			await interaction.deferReply();
+
+			try {
+				await setImageChannel(guild!.id, channelOption!.id);
+
+				if (selectedChannel.isTextBased() && "setRateLimitPerUser" in selectedChannel) {
+					await selectedChannel.setRateLimitPerUser(30, "Image channel slowmode set by Kaeru");
+				}
+
+				return interaction.editReply({
+					content:
+						`${getEmoji("reactions.user.thumbsup")} Image-only channel system created successfully!\n` +
+						`- Channel slowmode set to 30 seconds\n` +
+						`- Only media content will be allowed\n` +
+						`- Automatic threads will be created for posts`,
+				});
+			} catch (error) {
+				console.error("Error setting up image channel:", error);
+				return sendErrorMessage(
+					interaction,
+					`Failed to set up the image channel system. Please try again.`,
+					"error",
+				);
+			}
 		};
 
 		const hubCommand = async () => {

@@ -1,4 +1,4 @@
-import { Guild } from "../models/guild.model.js";
+import { Guild, IGuild } from "../models/guild.model.js";
 
 /**
  * Sets the hub voice channel for a guild.
@@ -121,18 +121,13 @@ async function checkWarnings(guildId: string, userId: string): Promise<number> {
  * @param {string} channelId - The image channel ID.
  * @returns {Promise<import("../models/guild.model.js").IGuild>} The updated or newly created guild document.
  */
-async function setImageChannel(
-	guildId: string,
-	channelId: string,
-): Promise<import("../models/guild.model.js").IGuild> {
-	let guild = await Guild.findOne({ guildId });
-	if (!guild) {
-		guild = new Guild({ guildId, imageChannelId: channelId });
-	} else {
-		guild.imageChannelId = channelId;
-	}
-	await guild.save();
-	return guild;
+async function setImageChannel(guildId: string, channelId: string): Promise<IGuild> {
+	const guild = await Guild.findOneAndUpdate(
+		{ guildId },
+		{ "imageChannel.channelId": channelId },
+		{ upsert: true, new: true },
+	);
+	return guild!;
 }
 
 /**
@@ -143,7 +138,22 @@ async function setImageChannel(
  */
 async function getImageChannel(guildId: string): Promise<string | null> {
 	const guild = await Guild.findOne({ guildId });
-	return guild?.imageChannelId || null;
+	return guild?.imageChannel?.channelId ?? null;
+}
+
+/**
+ * Increases post count of image channel.
+ *
+ * @param {string} guildId - The guild ID.
+ * @returns {Promise<string | null>} The post number.
+ */
+async function incrementPostCount(guildId: string): Promise<number> {
+	const guild = await Guild.findOneAndUpdate(
+		{ guildId },
+		{ $inc: { "imageChannel.postCount": 1 } },
+		{ new: true, upsert: true },
+	);
+	return guild?.imageChannel?.postCount ?? 0;
 }
 
 export {
@@ -153,6 +163,7 @@ export {
 	getHubChannel,
 	getImageChannel,
 	getStaffRoleId,
+	incrementPostCount,
 	saveStaffRoleId,
 	setHubChannel,
 	setImageChannel,

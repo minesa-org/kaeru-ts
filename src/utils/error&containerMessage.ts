@@ -109,7 +109,7 @@ interface ContainerTemplateParams {
 	/** Tag or category of the message */
 	tag: string;
 	/** Main description content */
-	description: string;
+	description: string | string[];
 	/** Optional title for the container */
 	title?: string;
 	/** Optional thumbnail URL */
@@ -136,9 +136,16 @@ function containerTemplate({
 			new SeparatorBuilder().setDivider(true).setSpacing(SeparatorSpacingSize.Small),
 		);
 
-	const lines = [];
+	const lines: string[] = [];
 	if (title) lines.push(`# ${title}`);
-	if (description) lines.push(description);
+
+	if (description) {
+		if (Array.isArray(description)) {
+			lines.push(description.join("\n"));
+		} else {
+			lines.push(description);
+		}
+	}
 
 	const textDisplay = new TextDisplayBuilder().setContent(lines.join("\n"));
 

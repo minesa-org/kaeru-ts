@@ -1,6 +1,6 @@
 import { MessageFlags, ModalSubmitInteraction } from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
-import { sendErrorMessage } from "../../utils/sendErrorMessage.js";
+import { sendAlertMessage } from "../../utils/error&containerMessage.js";
 import { getEmoji } from "../../utils/emojis.js";
 
 const collabModal: BotComponent = {
@@ -12,14 +12,24 @@ const collabModal: BotComponent = {
 
 		const fileData = interaction.client.fileCache.get(collabKey);
 		if (!fileData) {
-			return sendErrorMessage(interaction, "File data not found.");
+			return sendAlertMessage({
+				interaction,
+				content: `File data not found`,
+				type: "error",
+				tag: "Non-supported Data",
+			});
 		}
 
 		const isOwner = interaction.user.id === fileData.owner;
 		const isCollaborator = fileData.collaborators.includes(interaction.user.id);
 
 		if (!isOwner && !isCollaborator) {
-			return sendErrorMessage(interaction, "You don't have permission to edit this file.");
+			return sendAlertMessage({
+				interaction,
+				content: `You don't have permission to edit this file.`,
+				type: "error",
+				tag: "Missing Permission",
+			});
 		}
 
 		const newContent = interaction.fields.getTextInputValue("file_content");

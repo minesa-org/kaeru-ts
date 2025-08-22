@@ -10,7 +10,7 @@ import {
 	TextDisplayBuilder,
 } from "discord.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
-import { getEmoji, sendErrorMessage } from "../../utils/export.js";
+import { getEmoji, sendAlertMessage } from "../../utils/export.js";
 
 const sendMeme: BotCommand = {
 	data: new SlashCommandBuilder()
@@ -50,7 +50,12 @@ const sendMeme: BotCommand = {
 		const image = memeData.data?.image ?? memeData.image ?? null;
 
 		if (!image) {
-			return sendErrorMessage(interaction, "No mamez...", "info");
+			return sendAlertMessage({
+				interaction,
+				content: `No mamez`,
+				type: "info",
+				tag: "No meme?",
+			});
 		}
 
 		await interaction.deferReply();

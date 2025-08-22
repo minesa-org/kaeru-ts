@@ -11,7 +11,7 @@ import {
 } from "discord.js";
 import { karu } from "../../config/karu.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
-import { getEmoji, log, langMap, sendErrorMessage } from "../../utils/export.js";
+import { getEmoji, log, langMap, sendAlertMessage } from "../../utils/export.js";
 
 const messageSummary: BotCommand = {
 	data: new ContextMenuCommandBuilder()
@@ -41,11 +41,12 @@ const messageSummary: BotCommand = {
 		const message = interaction.targetMessage;
 
 		if (!message || typeof message.content !== "string" || message.content.trim() === "") {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				"This message seems to hold no content—nothing to summarize so... this means nothing to summarize. \n-# Message shouldn't be inside an embed or container telling it in case c:",
-				"info",
-			);
+				content:
+					"This message seems to hold no content—nothing to summarize so... this means nothing to summarize. \n-# Message shouldn't be inside an embed or container telling it in case c:",
+				tag: "Channel Type",
+			});
 		}
 
 		try {
@@ -139,20 +140,23 @@ Key Points:
 			} catch (err) {
 				log("error", "Failed to summarize the message:", err);
 
-				return sendErrorMessage(
+				return sendAlertMessage({
 					interaction,
-					"Failed to summarize with Karu. The system might be confused — try again in a moment.",
-					"error",
-				);
+					content:
+						"Failed to summarize Karu. The system might be confused — try again in a moment.",
+					type: "error",
+					tag: "AI Issue",
+				});
 			}
 		} catch (err) {
 			log("error", "Failed to summarize the message:", err);
 
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				"Failed to summarize with Karu. The system might be confused — try again in a moment.",
-				"error",
-			);
+				content: "Failed to summarize Karu. The system might be confused — try again in a moment.",
+				type: "error",
+				tag: "AI Issue",
+			});
 		}
 	},
 };

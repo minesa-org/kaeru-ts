@@ -8,7 +8,7 @@ import {
 	SeparatorBuilder,
 } from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
-import { sendErrorMessage } from "../../utils/sendErrorMessage.js";
+import { sendAlertMessage } from "../../utils/error&containerMessage.js";
 
 const vcKickSelect: BotComponent = {
 	customId: "vc_kick_select",
@@ -18,17 +18,21 @@ const vcKickSelect: BotComponent = {
 		const member = interaction.member as GuildMember;
 		const channel = member.voice.channel;
 		if (!channel) {
-			await sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				"Voice channel! Where are you!?",
-				"reactions.user.question",
-			);
-			return;
+				content: `Voice channel! Where are you!?`,
+				type: "error",
+				tag: "whaaaaat",
+			});
 		}
 
 		if (!interaction.guild?.members.me?.permissions.has(PermissionFlagsBits.ManageChannels)) {
-			await sendErrorMessage(interaction, "No permission, give me permission!");
-			return;
+			return sendAlertMessage({
+				interaction,
+				content: `No permission, give me permission. (Manage Channels)`,
+				type: "error",
+				tag: "Missing Permission",
+			});
 		}
 
 		const kickedMembers: string[] = [];

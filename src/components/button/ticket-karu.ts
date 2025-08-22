@@ -1,17 +1,18 @@
 import { ButtonInteraction, PermissionFlagsBits, MessageFlags } from "discord.js";
 import type { BotComponent } from "../../interfaces/botTypes.js";
-import { getEmoji, sendErrorMessage } from "../../utils/export.js";
+import { getEmoji, sendAlertMessage } from "../../utils/export.js";
 
 const ticketKaruButton: BotComponent = {
 	customId: "ticket-karu-button",
 
 	execute: async (interaction: ButtonInteraction) => {
 		if (!interaction.guild?.members.me?.permissions.has(PermissionFlagsBits.ManageThreads)) {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				`Hmm... I don't have permissio to change thread's name to support AI.`,
-				"info",
-			);
+				content: `Hmm... I don't have permission to change thread's name to AI support.`,
+				type: "error",
+				tag: "Missing Permission",
+			});
 		}
 
 		if (!interaction.channel?.isThread()) {

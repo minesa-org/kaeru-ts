@@ -1,6 +1,17 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction } from "discord.js";
+import {
+	SlashCommandBuilder,
+	ChatInputCommandInteraction,
+	MediaGalleryBuilder,
+	MediaGalleryItemBuilder,
+} from "discord.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
-import { EmojiSize, getEmoji, getEmojiURL, sendErrorMessage } from "../../utils/export.js";
+import {
+	containerTemplate,
+	EmojiSize,
+	getEmoji,
+	getEmojiURL,
+	sendAlertMessage,
+} from "../../utils/export.js";
 
 const emojiURL: BotCommand = {
 	data: new SlashCommandBuilder()
@@ -27,16 +38,32 @@ const emojiURL: BotCommand = {
 		const size = interaction.options.getInteger("size")?.valueOf();
 
 		if (!emoji || !emoji.includes(":")) {
-			return sendErrorMessage(interaction, `Invalid emoji. Hmm...`, "info");
+			return sendAlertMessage({
+				interaction,
+				content: `Hmm... Invalid emoji.`,
+				type: "error",
+				tag: "Invalid Emoji",
+			});
 		}
 
 		try {
 			const url = getEmojiURL(emoji!, size ?? EmojiSize.Large);
 			return interaction.reply({
-				content: `# ${getEmoji("brain")} Here is your emoji URL:\n> ${url}`,
+				components: [
+					containerTemplate({
+						description: "Emoji is on below",
+						tag: `Emoji Output`,
+						images: [url],
+					}),
+				],
 			});
 		} catch (error) {
-			return sendErrorMessage(interaction, `Failed to get emoji.`, "reactions.kaeru.question");
+			return sendAlertMessage({
+				interaction,
+				content: `Failed to get emoji. Sorry.`,
+				type: "error",
+				tag: "Emoji Getting",
+			});
 		}
 	},
 };

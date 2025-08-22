@@ -12,7 +12,7 @@ import {
 	SeparatorSpacingSize,
 } from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
-import { sendErrorMessage } from "../../utils/sendErrorMessage.js";
+import { sendAlertMessage } from "../../utils/error&containerMessage.js";
 import { emojis, getEmoji } from "../../utils/emojis.js";
 
 const collabSelectMenu: BotComponent = {
@@ -20,7 +20,12 @@ const collabSelectMenu: BotComponent = {
 	execute: async (interaction: UserSelectMenuInteraction) => {
 		const fileData = interaction.client.fileCache.get(interaction.user.id);
 		if (!fileData) {
-			return sendErrorMessage(interaction, "File data not found. Please try again.");
+			return sendAlertMessage({
+				interaction,
+				content: `File data not found.`,
+				type: "error",
+				tag: "No File",
+			});
 		}
 
 		const collaborators = interaction.values;
@@ -85,10 +90,20 @@ const collabSelectMenu: BotComponent = {
 
 		const channel = interaction.channel;
 		if (!channel || !channel.isTextBased() || channel.isDMBased()) {
-			return sendErrorMessage(interaction, "Cannot create thread in this channel.");
+			return sendAlertMessage({
+				interaction,
+				content: `I cannot create thread in this channel.`,
+				type: "error",
+				tag: "Missing Permission",
+			});
 		}
 		if (channel.type !== 0) {
-			return sendErrorMessage(interaction, "You can only collaborate in text channels");
+			return sendAlertMessage({
+				interaction,
+				content: `You can only collaborate in text channels.`,
+				type: "error",
+				tag: "Missing Permission",
+			});
 		}
 
 		const followUpMessage = await interaction.followUp({

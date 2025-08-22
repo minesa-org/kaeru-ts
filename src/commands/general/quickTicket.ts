@@ -13,7 +13,7 @@ import {
 } from "discord.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
 import { getEmoji } from "../../utils/emojis.js";
-import { lockButtonRow, sendErrorMessage, ticketMenuRow } from "../../utils/export.js";
+import { lockButtonRow, sendAlertMessage, ticketMenuRow } from "../../utils/export.js";
 
 const quickTicket: BotCommand = {
 	data: new ContextMenuCommandBuilder()
@@ -41,20 +41,24 @@ const quickTicket: BotCommand = {
 				PermissionFlagsBits.CreatePrivateThreads,
 			])
 		) {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				`Let's be sure I have creating private threads and managing threads.`,
-				"danger",
-			);
+				content: `Let's be sure I have permission to __create private threads__.`,
+				type: "error",
+				tag: "Emoji Getting",
+			});
 		}
 
 		const message = interaction.targetMessage;
 
 		if (message.channel.isThread()) {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				`You can't create thread inside thread. Huh... w-what is going on?`,
-			);
+				content: `You can't create thread inside thread. Huh... w-what is going on?`,
+				type: "error",
+				tag: "Wait, what?",
+				alertReaction: "reactions.kaeru.haha",
+			});
 		}
 
 		if (!(interaction.channel instanceof TextChannel)) {

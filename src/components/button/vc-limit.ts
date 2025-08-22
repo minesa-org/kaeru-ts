@@ -5,10 +5,9 @@ import {
 	TextInputBuilder,
 	TextInputStyle,
 	PermissionFlagsBits,
-	MessageFlags,
 } from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
-import { sendErrorMessage } from "../../utils/sendErrorMessage.js";
+import { sendAlertMessage } from "../../utils/error&containerMessage.js";
 
 const vcLimit: BotComponent = {
 	customId: /^vc-limit-\d+$/,
@@ -17,15 +16,23 @@ const vcLimit: BotComponent = {
 		const channel = interaction.guild?.channels.cache.get(channelId);
 
 		if (!channel?.isVoiceBased()) {
-			return sendErrorMessage(interaction, "Voice channel is not found, impossible!", "error");
+			return sendAlertMessage({
+				interaction,
+				content: `Voice channel is not found, impossible!`,
+				type: "error",
+				tag: "What the fuck?",
+			});
 		}
 
 		if (!channel.permissionsFor(interaction.user)?.has(PermissionFlagsBits.ManageChannels)) {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				"Is your name channel's name? yeah it's not.\n-# Don't do something crazy to change your name to channel's name. :D",
-				"reactions.kaeru.question",
-			);
+				content:
+					"Is your name channel's name? yeah it's not.\n-# Don't do something crazy to change your name to channel's name. :D",
+				type: "error",
+				tag: "Missing Permission",
+				alertReaction: "reactions.kaeru.question",
+			});
 		}
 
 		const modal = new ModalBuilder()

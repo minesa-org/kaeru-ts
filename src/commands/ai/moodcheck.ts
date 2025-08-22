@@ -12,7 +12,7 @@ import {
 	SeparatorBuilder,
 } from "discord.js";
 import { karu } from "../../config/karu.js";
-import { getEmoji, sendErrorMessage } from "../../utils/export.js";
+import { getEmoji, sendAlertMessage } from "../../utils/export.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
 
 const moodCheck: BotCommand = {
@@ -40,18 +40,20 @@ const moodCheck: BotCommand = {
 		const { channel } = interaction;
 
 		if (!channel) {
-			return interaction.reply({
-				content: `${getEmoji("reactions.kaeru.question")} Burada mesaj yok, hissedemiyorum...`,
-				flags: MessageFlags.Ephemeral,
+			return sendAlertMessage({
+				interaction,
+				content: `${getEmoji("reactions.kaeru.question")} No message exists in here, I can feel it...`,
+				type: "error",
+				tag: "Message",
 			});
 		}
 
 		if (!(channel instanceof TextChannel || channel instanceof ThreadChannel)) {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				"If it is not a text channel... then I cannot, sorry.",
-				"info",
-			);
+				content: "If it is not a text channel... then I cannot, sorry.",
+				tag: "Channel Type",
+			});
 		}
 
 		await interaction.deferReply();

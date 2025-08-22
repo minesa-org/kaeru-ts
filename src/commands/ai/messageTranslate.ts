@@ -11,7 +11,7 @@ import {
 } from "discord.js";
 import { karu } from "../../config/karu.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
-import { getEmoji, log, langMap, sendErrorMessage } from "../../utils/export.js";
+import { getEmoji, log, langMap, sendAlertMessage } from "../../utils/export.js";
 
 const messageTranslate: BotCommand = {
 	data: new ContextMenuCommandBuilder()
@@ -39,11 +39,12 @@ const messageTranslate: BotCommand = {
 		const message = interaction.targetMessage;
 
 		if (!message || typeof message.content !== "string" || message.content.trim() === "") {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				"This message seems to hold no content—nothing to translate so... this means nothing to translate. \n-# Message shouldn't be inside an embed or container telling it in case c:",
-				"info",
-			);
+				content:
+					"This message seems to hold no content—nothing to translate so... this means nothing to translate. \n-# Message shouldn't be inside an embed or container telling it in case c:",
+				type: "info",
+			});
 		}
 
 		try {
@@ -122,11 +123,12 @@ Do NOT add anything else.
 		} catch (err) {
 			log("error", "Failed to translate the message:", err);
 
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				"Failed to ask Karu. The system might be confused — try again in a moment.",
-				"error",
-			);
+				content: "Failed to translate Karu. The system might be confused — try again in a moment.",
+				type: "error",
+				tag: "AI Issue",
+			});
 		}
 	},
 };

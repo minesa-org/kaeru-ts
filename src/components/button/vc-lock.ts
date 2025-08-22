@@ -2,11 +2,10 @@ import {
 	ButtonInteraction,
 	MessageFlags,
 	PermissionFlagsBits,
-	SeparatorBuilder,
 	TextDisplayBuilder,
 } from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
-import { sendErrorMessage } from "../../utils/sendErrorMessage.js";
+import { sendAlertMessage } from "../../utils/error&containerMessage.js";
 import { getEmoji } from "../../utils/emojis.js";
 
 const vcLock: BotComponent = {
@@ -16,15 +15,23 @@ const vcLock: BotComponent = {
 		const channel = interaction.guild?.channels.cache.get(channelId);
 
 		if (!channel?.isVoiceBased()) {
-			return sendErrorMessage(interaction, "Voice channel is not found, impossible!", "error");
+			return sendAlertMessage({
+				interaction,
+				content: `Voice channel is not found, impossible!`,
+				type: "error",
+				tag: "What the fuck?",
+			});
 		}
 
 		if (!channel.permissionsFor(interaction.user)?.has(PermissionFlagsBits.ManageChannels)) {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				"Is your name channel's name? yeah it's not.\n-# Don't do something crazy to change your name to channel's name. :D",
-				"reactions.kaeru.question",
-			);
+				content:
+					"Is your name channel's name? yeah it's not.\n-# Don't do something crazy to change your name to channel's name. :D",
+				type: "error",
+				tag: "Missing Permission",
+				alertReaction: "reactions.kaeru.question",
+			});
 		}
 
 		const everyoneRole = interaction.guild!.roles.everyone;

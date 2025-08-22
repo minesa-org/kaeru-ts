@@ -19,7 +19,7 @@ import {
 	ChatInputCommandInteraction,
 } from "discord.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
-import { formatMultiline, getEmoji, sendErrorMessage } from "../../utils/export.js";
+import { formatMultiline, getEmoji, sendAlertMessage } from "../../utils/export.js";
 
 const announce: BotCommand = {
 	data: new SlashCommandBuilder()
@@ -178,11 +178,13 @@ const announce: BotCommand = {
 				PermissionFlagsBits.CreatePublicThreads,
 			])
 		) {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				`-# Make sure I have permissions of mentioning roles, adding reactions and creating public threads!`,
-				"danger",
-			);
+				content: `Make sure I have permissions of mentioning roles, adding reactions and creating public threads!`,
+				type: "error",
+				tag: "Missing Permissions",
+				alertReaction: "reactions.kaeru.emphasize",
+			});
 		}
 		const channel = interaction.options.getChannel("channel");
 

@@ -13,7 +13,7 @@ import {
 	UserSelectMenuBuilder,
 } from "discord.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
-import { sendErrorMessage } from "../../utils/sendErrorMessage.js";
+import { sendAlertMessage } from "../../utils/error&containerMessage.js";
 import { getEmoji } from "../../utils/emojis.js";
 
 const SUPPORTED_EXTENSIONS = [
@@ -93,17 +93,24 @@ const collabTogether: BotCommand = {
 		const isViewable = options.getBoolean("view") ?? false;
 
 		if (!ext) {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				`Unsupported file type. Supported: ${SUPPORTED_EXTENSIONS.join(", ")}`,
-			);
+				content: `Unsupported file type. Supported: ${SUPPORTED_EXTENSIONS.join(", ")}`,
+				type: "error",
+				tag: "Non-Supported File",
+			});
 		}
 
 		const response = await fetch(file!.url);
 		const text = await response.text();
 
 		if (text.length > 4000) {
-			return sendErrorMessage(interaction, "File too large. Max **4000** characters for now.");
+			return sendAlertMessage({
+				interaction,
+				content: `File is too large to send to Discord. Max **4,000** characters for now.`,
+				type: "error",
+				tag: "Character Limit",
+			});
 		}
 
 		interaction.client.fileCache.set(interaction.user.id, {

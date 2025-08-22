@@ -8,13 +8,18 @@ import {
 	MessageFlags,
 } from "discord.js";
 import type { BotComponent } from "../../interfaces/botTypes.js";
-import { getEmoji, sendErrorMessage } from "../../utils/export.js";
+import { sendAlertMessage } from "../../utils/export.js";
 
 const ticketLockButton: BotComponent = {
 	customId: "ticket-lock-conversation",
 	execute: async (interaction: ButtonInteraction) => {
 		if (!interaction.guild?.members.me?.permissions.has(PermissionFlagsBits.ManageThreads)) {
-			return sendErrorMessage(interaction, `No permission to lock`, "danger");
+			return sendAlertMessage({
+				interaction,
+				content: `No permission to lock. I need manage threads permission.`,
+				type: "error",
+				tag: "Missing Permission",
+			});
 		}
 
 		const lockButtonExplanation = new EmbedBuilder()

@@ -7,7 +7,7 @@ import {
 	MessageFlags,
 } from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
-import { sendErrorMessage } from "../../utils/sendErrorMessage.js";
+import { sendAlertMessage } from "../../utils/error&containerMessage.js";
 
 const collabButton: BotComponent = {
 	customId: /^collab_(edit|view)_/,
@@ -16,7 +16,12 @@ const collabButton: BotComponent = {
 
 		const fileData = interaction.client.fileCache.get(collabKey);
 		if (!fileData) {
-			return sendErrorMessage(interaction, "File data not found.");
+			return sendAlertMessage({
+				interaction,
+				content: `File data not found.`,
+				type: "error",
+				tag: "File Data",
+			});
 		}
 
 		const isOwner = interaction.user.id === fileData.owner;
@@ -24,7 +29,13 @@ const collabButton: BotComponent = {
 
 		if (type === "edit") {
 			if (!isOwner && !isCollaborator) {
-				return sendErrorMessage(interaction, "You don't have permission to edit this file.");
+				return sendAlertMessage({
+					interaction,
+					title: "No-no! You look confused",
+					content: `You don't have permission to edit this file.`,
+					type: "error",
+					tag: "Missing Permission",
+				});
 			}
 
 			const modal = new ModalBuilder()
@@ -48,7 +59,13 @@ const collabButton: BotComponent = {
 
 		if (type === "view") {
 			if (!fileData.isViewable && !isOwner && !isCollaborator) {
-				return sendErrorMessage(interaction, "You don't have permission to view this file.");
+				return sendAlertMessage({
+					interaction,
+					title: "They made this superrr hidden",
+					content: `You don't have permission to view this file.`,
+					type: "error",
+					tag: "Missing Permission",
+				});
 			}
 
 			return interaction.reply({

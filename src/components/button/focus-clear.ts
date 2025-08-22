@@ -6,7 +6,7 @@ import {
 	PermissionsBitField,
 } from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
-import { getEmoji, sendErrorMessage } from "../../utils/export.js";
+import { getEmoji, sendAlertMessage } from "../../utils/export.js";
 import { RULE_NAME } from "../../commands/general/focus.js";
 
 const focusClear: BotComponent = {
@@ -31,11 +31,12 @@ const focusClear: BotComponent = {
 				: new PermissionsBitField(BigInt(member.permissions as string));
 
 		if (!perms.has(PermissionFlagsBits.ManageGuild)) {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				`Permission missing... Oof.`,
-				"reactions.user.emphasize",
-			);
+				content: `You, simply, cannot.`,
+				type: "error",
+				tag: "Missing Permission",
+			});
 		}
 
 		await rule?.edit({ triggerMetadata: { keywordFilter: [] } });

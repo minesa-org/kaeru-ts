@@ -7,7 +7,7 @@ import {
 	ModalSubmitInteraction,
 	PermissionFlagsBits,
 } from "discord.js";
-import { getEmoji, sendErrorMessage } from "../../utils/export.js";
+import { getEmoji, sendAlertMessage } from "../../utils/export.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
 
 const createTicketModal: BotComponent = {
@@ -15,11 +15,13 @@ const createTicketModal: BotComponent = {
 
 	execute: async (interaction: ModalSubmitInteraction): Promise<void> => {
 		if (!interaction.guild?.members.me?.permissions.has(PermissionFlagsBits.ManageThreads)) {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				`No permission to manage threads aka no closing.`,
-				"danger",
-			);
+				content: `I cannot manage threads aka no closing.`,
+				type: "error",
+				tag: "Missing Permission",
+				alertReaction: "danger",
+			});
 		}
 
 		await interaction.deferReply();

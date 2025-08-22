@@ -8,11 +8,9 @@ import {
 	InteractionContextType,
 	MediaGalleryBuilder,
 	MediaGalleryItemBuilder,
-	MessageContextMenuCommandInteraction,
 	MessageFlags,
 	NewsChannel,
 	PermissionFlagsBits,
-	SectionBuilder,
 	SeparatorBuilder,
 	SeparatorSpacingSize,
 	SlashCommandBuilder,
@@ -20,9 +18,7 @@ import {
 	StringSelectMenuOptionBuilder,
 	TextChannel,
 	TextDisplayBuilder,
-	ThumbnailBuilder,
 	underline,
-	UserContextMenuCommandInteraction,
 } from "discord.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
 import {
@@ -31,7 +27,7 @@ import {
 	formatMultiline,
 	isValidImageUrl,
 	saveStaffRoleId,
-	sendErrorMessage,
+	sendAlertMessage,
 	setHubChannel,
 	setImageChannel,
 } from "../../utils/export.js";
@@ -251,15 +247,23 @@ const setup: BotCommand = {
 
 		const ticketCommand = async () => {
 			if (!guild?.members.me?.permissions.has("ManageThreads")) {
-				return sendErrorMessage(interaction, `I don't have permission to manage threads.`, "error");
+				return sendAlertMessage({
+					interaction,
+					content: `It seems like I can't manage threads.\n> ${getEmoji("reactions.user.thumbsup")} Got it! I will give you the permission to manage, soon.`,
+					type: "error",
+					tag: "Missing Permissions",
+					alertReaction: "reactions.kaeru.emphasize",
+				});
 			}
 
 			if (!guild?.members.me?.permissions.has("CreatePrivateThreads")) {
-				return sendErrorMessage(
+				return sendAlertMessage({
 					interaction,
-					`I don't have permission to create private threads.`,
-					"error",
-				);
+					content: `It seems like I can't create private threads.\n> ${getEmoji("reactions.user.thumbsup")} Got it! I will give you the permission to manage, soon.`,
+					type: "error",
+					tag: "Missing Permissions",
+					alertReaction: "reactions.kaeru.emphasize",
+				});
 			}
 
 			const sendingChannel =
@@ -376,40 +380,36 @@ const setup: BotCommand = {
 		};
 
 		const imageChannel = async () => {
-			if (!guild?.members.me?.permissions.has("ManageThreads")) {
-				return sendErrorMessage(interaction, `I don't have permission to manage threads.`, "error");
-			}
-			if (!guild?.members.me?.permissions.has("CreatePrivateThreads")) {
-				return sendErrorMessage(
+			if (!guild?.members.me?.permissions.has("CreatePublicThreads")) {
+				return sendAlertMessage({
 					interaction,
-					`I don't have permission to create private threads.`,
-					"error",
-				);
+					content: `It seems like I can't create public threads to people comment on image.\n> ${getEmoji("reactions.user.thumbsup")} Got it! I will give you the permission to manage, soon.`,
+					type: "error",
+					tag: "Missing Permissions",
+					alertReaction: "reactions.kaeru.emphasize",
+				});
 			}
 
 			const selectedChannel = guild.channels.cache.get(channelOption!.id);
-			if (!selectedChannel) {
-				return sendErrorMessage(
+			if (
+				!selectedChannel ||
+				!selectedChannel.permissionsFor(guild.members.me!)?.has("ViewChannel")
+			) {
+				return sendAlertMessage({
 					interaction,
-					`I cannot find or access the selected channel.`,
-					"error",
-				);
-			}
-
-			if (!selectedChannel.permissionsFor(guild.members.me!)?.has("ViewChannel")) {
-				return sendErrorMessage(
-					interaction,
-					`I don't have permission to view the selected channel.`,
-					"error",
-				);
+					content: `I can't find/access to the selected channel. Perhaps give me view channel permission?`,
+					type: "error",
+					tag: "Missing Permissions",
+				});
 			}
 
 			if (!selectedChannel.permissionsFor(guild.members.me!)?.has("ManageMessages")) {
-				return sendErrorMessage(
+				return sendAlertMessage({
 					interaction,
-					`I don't have permission to manage messages in the selected channel.`,
-					"error",
-				);
+					content: `I need manage messages permission to put a cooldown on channel. You can change this permission for me later.`,
+					type: "error",
+					tag: "Missing Permissions",
+				});
 			}
 
 			await interaction.deferReply();
@@ -430,11 +430,13 @@ const setup: BotCommand = {
 				});
 			} catch (error) {
 				console.error("Error setting up image channel:", error);
-				return sendErrorMessage(
+
+				return sendAlertMessage({
 					interaction,
-					`Failed to set up the image channel system. Please try again.`,
-					"error",
-				);
+					content: `Failed to set up image channel system. Try again later.`,
+					type: "error",
+					tag: "Error",
+				});
 			}
 		};
 

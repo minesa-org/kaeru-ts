@@ -58,7 +58,7 @@ const askKaru: BotCommand = {
 		) as SlashCommandBuilder,
 
 	execute: async (interaction: ChatInputCommandInteraction) => {
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+		interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
 		const prompt = interaction.options.getString("question")?.trim();
 		if (!prompt) {

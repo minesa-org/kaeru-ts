@@ -52,7 +52,7 @@ const timelapse: BotCommand = {
 		if (!(channel instanceof TextChannel || channel instanceof ThreadChannel)) {
 			return sendAlertMessage({
 				interaction,
-				content: `-# Kaeru can only summarize text and thread type channels.\n\n> ${getEmoji("reactions.user.thumbsup")} Okay!`,
+				content: `Kaeru can only summarize text and thread type channels.\n\n> ${getEmoji("reactions.user.thumbsup")} Okay!`,
 				type: "error",
 				tag: "Channel Type",
 			});

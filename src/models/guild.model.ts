@@ -5,6 +5,7 @@ export interface IGuild extends Document {
 	staffRoleId?: string | null;
 	loggingChannelId?: string | null;
 	hubChannelId?: string | null;
+	imageChannelId?: string | null;
 	warnings: Map<string, number>;
 }
 
@@ -13,6 +14,7 @@ const guildSchema = new Schema<IGuild>({
 	staffRoleId: { type: String, default: null },
 	loggingChannelId: { type: String, default: null },
 	hubChannelId: { type: String, default: null },
+	imageChannelId: { type: String, default: null },
 	warnings: {
 		type: Map,
 		of: Number,

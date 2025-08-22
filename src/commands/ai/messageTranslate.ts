@@ -5,13 +5,18 @@ import {
 	InteractionContextType,
 	MessageFlags,
 	MessageContextMenuCommandInteraction,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-	SeparatorBuilder,
 } from "discord.js";
 import { karu } from "../../config/karu.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
 import { getEmoji, log, langMap, sendAlertMessage } from "../../utils/export.js";
+
+function splitMessageBy2000(str: string) {
+	const chunks: string[] = [];
+	for (let i = 0; i < str.length; i += 2000) {
+		chunks.push(str.slice(i, i + 2000));
+	}
+	return chunks;
+}
 
 const messageTranslate: BotCommand = {
 	data: new ContextMenuCommandBuilder()
@@ -103,23 +108,22 @@ Do NOT add anything else.
 			const formattedCleaned = cleaned.replace(/\\n/g, "\n");
 			const formattedTranslated = translated.replace(/\\n/g, "\n");
 
-			const sectionOriginal = new TextDisplayBuilder().setContent(
-				`### ${getEmoji("globe")} Original Message\n${formattedCleaned}`,
-			);
+			const finalOutput = `### ${getEmoji("globe")} Cleaned\n${formattedCleaned}\n\n### ${getEmoji("swap")} Translated\n${formattedTranslated}`;
 
-			const separator = new SeparatorBuilder()
-				.setSpacing(SeparatorSpacingSize.Large)
-				.setDivider(true);
-
-			const sectionTranslated = new TextDisplayBuilder().setContent(
-				`### ${getEmoji("swap")} Translated\n${formattedTranslated}`,
-			);
+			const chunks = splitMessageBy2000(finalOutput);
 
 			await interaction.editReply({
-				components: [sectionOriginal, separator, sectionTranslated],
-				flags: MessageFlags.IsComponentsV2,
+				content: chunks[0],
 				allowedMentions: { parse: [] },
 			});
+
+			for (let i = 1; i < chunks.length; i++) {
+				await interaction.followUp({
+					content: chunks[i],
+					flags: MessageFlags.Ephemeral,
+					allowedMentions: { parse: [] },
+				});
+			}
 		} catch (err) {
 			log("error", "Failed to translate the message:", err);
 

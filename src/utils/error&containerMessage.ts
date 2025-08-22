@@ -68,7 +68,7 @@ async function sendAlertMessage({
 	interaction,
 	content,
 	tag = "Alert",
-	title = "Notification",
+	title = "Attention!",
 	ephemeral = true,
 	type = "info",
 	alertReaction,

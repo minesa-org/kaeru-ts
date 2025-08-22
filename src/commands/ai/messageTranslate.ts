@@ -27,7 +27,7 @@ const messageTranslate: BotCommand = {
 			ro: "Traduceți Mesajul",
 			el: "Μετάφραση Μηνύματος",
 			"zh-CN": "翻译消息",
-			"pt-BR": "Traduzir Mensagem",
+			"pt-BR": "Traduzir Messaggio",
 		})
 		.setType(ApplicationCommandType.Message)
 		.setIntegrationTypes([

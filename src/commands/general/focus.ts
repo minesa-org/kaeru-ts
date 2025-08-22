@@ -197,28 +197,15 @@ const focusMode: BotCommand = {
 
 				const usersList = keywords.map((m, i) => `${i + 1}. ${m}`).join("\n");
 
-				const container = new ContainerBuilder()
-					.addSectionComponents(
-						new SectionBuilder()
-							.setThumbnailAccessory(new ThumbnailBuilder().setURL(getEmojiURL(getEmoji("dnd"))))
-							.addTextDisplayComponents(
-								new TextDisplayBuilder().setContent(`## Focused Users`),
-								new TextDisplayBuilder().setContent(usersList),
-							),
-					)
-					.addActionRowComponents(
-						new ActionRowBuilder<ButtonBuilder>().addComponents(
-							new ButtonBuilder()
-								.setCustomId("focus-list-clear")
-								.setLabel("Clear list")
-								.setStyle(ButtonStyle.Danger),
-						),
-					)
-					.setAccentColor(0x5e5cde);
+				const clearButton = new ActionRowBuilder<ButtonBuilder>().addComponents(
+					new ButtonBuilder()
+						.setCustomId("focus-list-clear")
+						.setLabel("Clear list")
+						.setStyle(ButtonStyle.Danger),
+				);
 
 				return await interaction.reply({
 					components: [
-						container,
 						containerTemplate({
 							tag: "Focus System",
 							title: "Focused Users",
@@ -226,6 +213,7 @@ const focusMode: BotCommand = {
 							thumbnail:
 								"https://media.discordapp.net/attachments/736571695170584576/1408569663046029414/DND.png?ex=68aa3839&is=68a8e6b9&hm=8c6c123d4d1fa7e158c6cada574a70751992b6b456bec971267d33f1f0033272&=&format=webp&quality=lossless&width=706&height=706",
 						}),
+						clearButton,
 					],
 					flags: MessageFlags.IsComponentsV2,
 					allowedMentions: {

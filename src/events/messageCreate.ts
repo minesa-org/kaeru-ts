@@ -3,7 +3,17 @@ import MessageModel from "../models/message.model.js";
 import { EventModule } from "../interfaces/botTypes.js";
 import { karu } from "../config/karu.js";
 import { getMongooseConnection } from "../database/mongoose.js";
-import { log, handleKaruMessage } from "../utils/export.js";
+import {
+	log,
+	handleKaruMessage,
+	getImageChannel,
+	incrementPostCount,
+	getEmoji,
+} from "../utils/export.js";
+
+const IMAGE_EXTENSIONS = /\.(png|jpe?g|gif|webp|mp4|webm|mov)$/i;
+const DISCORD_MEDIA_REGEX =
+	/(https?:\/\/)?(media\.discordapp\.net|cdn\.discordapp\.com|discord\.com\/attachments)/i;
 
 const messageCreateEvent: EventModule<Events.MessageCreate> = {
 	name: Events.MessageCreate,
@@ -13,6 +23,58 @@ const messageCreateEvent: EventModule<Events.MessageCreate> = {
 		if (message.author.bot) return;
 		if (!message.guild.members.me?.permissions.has("CreatePrivateThreads")) return;
 
+		// ------------------ IMAGE CHANNEL MEDIA GUARD ------------------ //
+		const imageChannelId = await getImageChannel(message.guild.id);
+		const targetChannel = imageChannelId
+			? (message.guild.channels.cache.get(imageChannelId) as TextChannel | null)
+			: null;
+
+		const isInImageChannel = message.channel.id === imageChannelId && !message.channel.isThread();
+
+		if (targetChannel && isInImageChannel) {
+			const hasMediaAttachment = message.attachments.some(
+				att => att.contentType?.startsWith("image/") || att.contentType?.startsWith("video/"),
+			);
+
+			const hasMediaLink =
+				IMAGE_EXTENSIONS.test(message.content) || DISCORD_MEDIA_REGEX.test(message.content);
+
+			if (!hasMediaAttachment && !hasMediaLink) {
+				try {
+					await message.delete();
+					return;
+				} catch (error) {
+					console.error("Failed to delete message:", error);
+				}
+			} else {
+				const postNumber = await incrementPostCount(message.guild.id);
+
+				try {
+					const reactions = [
+						getEmoji("reactions.user.heart"),
+						getEmoji("reactions.user.thumbsup"),
+						getEmoji("reactions.user.thumbsdown"),
+						getEmoji("reactions.user.haha"),
+						getEmoji("reactions.user.emphasize"),
+						getEmoji("reactions.user.question"),
+					];
+					for (const reaction of reactions) {
+						await message.react(reaction);
+					}
+
+					await message.startThread({
+						name: `Post #${postNumber}`,
+						autoArchiveDuration: 60,
+					});
+				} catch (error) {
+					console.error("Error creating thread or reactions:", error);
+				}
+			}
+
+			return;
+		}
+
+		// ------------------ KARU THREAD HANDLING ------------------ //
 		const isKaruThread = message.channel.isThread() && message.channel.name.startsWith("💭");
 
 		let userPrompt = message.content?.trim() || "";
@@ -43,7 +105,6 @@ const messageCreateEvent: EventModule<Events.MessageCreate> = {
 			}
 
 			await handleKaruMessage(message, message.channel as ThreadChannel, userPrompt);
-
 			return;
 		}
 
@@ -60,21 +121,25 @@ const messageCreateEvent: EventModule<Events.MessageCreate> = {
 
 			const summaryPrompt = `Summarize the following user message in under 5 words for use as a thread title:\n"${userPrompt}"`;
 
-			const summaryResult = await summaryModel.generateContent(summaryPrompt);
-			let threadName = summaryResult.response
-				.text()
-				?.replace(/[*_~`>#\n\r]/g, "")
-				.trim()
-				.slice(0, 80);
+			try {
+				const summaryResult = await summaryModel.generateContent(summaryPrompt);
+				let threadName = summaryResult.response
+					.text()
+					?.replace(/[*_~`>#\n\r]/g, "")
+					.trim()
+					.slice(0, 80);
 
-			if (!threadName) threadName = `💭 Käru & ${message.author.username}`;
+				if (!threadName) threadName = `💭 Käru & ${message.author.username}`;
 
-			const thread = await message.startThread({
-				name: `💭 ${threadName}`,
-				autoArchiveDuration: 60,
-			});
+				const thread = await message.startThread({
+					name: `💭 ${threadName}`,
+					autoArchiveDuration: 60,
+				});
 
-			await handleKaruMessage(message, thread, userPrompt);
+				await handleKaruMessage(message, thread, userPrompt);
+			} catch (error) {
+				console.error("Error in thread creation or AI generation:", error);
+			}
 		}
 	},
 };

@@ -8,11 +8,9 @@ import {
 	InteractionContextType,
 	MediaGalleryBuilder,
 	MediaGalleryItemBuilder,
-	MessageContextMenuCommandInteraction,
 	MessageFlags,
 	NewsChannel,
 	PermissionFlagsBits,
-	SectionBuilder,
 	SeparatorBuilder,
 	SeparatorSpacingSize,
 	SlashCommandBuilder,
@@ -20,9 +18,7 @@ import {
 	StringSelectMenuOptionBuilder,
 	TextChannel,
 	TextDisplayBuilder,
-	ThumbnailBuilder,
 	underline,
-	UserContextMenuCommandInteraction,
 } from "discord.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
 import {
@@ -31,34 +27,35 @@ import {
 	formatMultiline,
 	isValidImageUrl,
 	saveStaffRoleId,
-	sendErrorMessage,
+	sendAlertMessage,
 	setHubChannel,
 	setImageChannel,
+	containerTemplate,
 } from "../../utils/export.js";
 
 const setup: BotCommand = {
 	data: new SlashCommandBuilder()
 		.setName("setup")
 		.setNameLocalizations({
-			it: "imposta",
-			tr: "kurulum",
+			it: "configura",
+			tr: "kur",
 			"zh-CN": "设置",
 			"pt-BR": "configurar",
-			ro: "setare",
-			el: "ρύθμιση",
-			de: "einrichten",
+			ro: "setari",
+			el: "ρυθμίσεις",
+			de: "setup",
 			ru: "настройка",
 		})
 		.setDescription("Setup things!")
 		.setDescriptionLocalizations({
-			it: "Imposta le cose!",
-			tr: "Şeyleri kur!",
-			"zh-CN": "设置事物！",
-			"pt-BR": "Configure as coisas!",
-			ro: "Setează lucrurile!",
-			el: "Ρυθμίστε τα πράγματα!",
-			de: "Richte Dinge ein!",
-			ru: "Настройте вещи!",
+			it: "Configura facilmente il server!",
+			tr: "Sunucunu kolayca yapılandır!",
+			"zh-CN": "快速设置服务器！",
+			"pt-BR": "Configure facilmente seu servidor!",
+			ro: "Configurează-ți serverul rapid!",
+			el: "Ρυθμίστε εύκολα τον διακομιστή σας!",
+			de: "Richte deinen Server schnell ein!",
+			ru: "Легко настрой свой сервер!",
 		})
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
 		.setIntegrationTypes([ApplicationIntegrationType.GuildInstall])
@@ -67,49 +64,49 @@ const setup: BotCommand = {
 			subcommand
 				.setName("ticket")
 				.setNameLocalizations({
-					it: "biglietto",
-					tr: "talep",
+					it: "ticket",
+					tr: "destek-formu",
 					"zh-CN": "工单",
-					"pt-BR": "bilhete",
-					ro: "bilet",
-					el: "εισιτήριο",
+					"pt-BR": "ticket",
+					ro: "tichet",
+					el: "ticket",
 					de: "ticket",
-					ru: "билет",
+					ru: "тикет",
 				})
 				.setDescription("Setup ticket system with threads!")
 				.setDescriptionLocalizations({
-					it: "Configura il sistema dei biglietti con i thread!",
-					tr: "Talep sistemiyle thread'leri kur!",
+					it: "Configura un sistema di ticket con i thread!",
+					tr: "Thread tabanlı destek sistemi kur!",
 					"zh-CN": "使用线程设置工单系统！",
-					"pt-BR": "Configure o sistema de bilhetes com threads!",
-					ro: "Configurați sistemul de bilet cu fire de execuție!",
-					el: "Ρυθμίστε το σύστημα εισιτηρίων με νήματα!",
-					de: "Richten Sie das Ticket-System mit Threads ein!",
-					ru: "Настройте систему тикетов с потоками!",
+					"pt-BR": "Configure um sistema de tickets com threads!",
+					ro: "Configurează un sistem de tichete cu thread-uri!",
+					el: "Ρυθμίστε σύστημα ticket με νήματα!",
+					de: "Richte ein Ticket-System mit Threads ein!",
+					ru: "Настрой систему тикетов с тредами!",
 				})
 				.addRoleOption(option =>
 					option
 						.setName("staff_role")
 						.setNameLocalizations({
 							it: "ruolo_staff",
-							tr: "personel_rolü",
-							"zh-CN": "staff_角色",
+							tr: "yetkili_rolü",
+							"zh-CN": "管理角色",
 							"pt-BR": "cargo_de_staff",
-							ro: "rol_de_staff",
-							el: "ρόλος_σταφφ",
+							ro: "rol_staff",
+							el: "ρόλος_staff",
 							de: "staff_rolle",
-							ru: "роль_стажера",
+							ru: "роль_персонала",
 						})
 						.setDescription("Role to be tagged when ticket channel is created")
 						.setDescriptionLocalizations({
-							it: "Ruolo da menzionare quando viene creato il canale del ticket",
-							tr: "Talep kanalı oluşturulduğunda etiketlenecek rol",
-							"zh-CN": "创建工单频道时要提及的角色",
-							"pt-BR": "Cargo a ser mencionado quando o canal de bilhete é criado",
-							ro: "Rolul care trebuie menționat atunci când este creat canalul de bilet",
-							el: "Ρόλος που θα πρέπει να αναφερθεί όταν δημιουργείται ένας κανάλις εισιτηρίου",
-							de: "Rolle, die bei der Erstellung des Ticket-Kanals erwähnt werden soll",
-							ru: "Роль, которая будет упомянута при создании канала тикета",
+							it: "Ruolo da menzionare quando viene creato un canale ticket",
+							tr: "Destek kanalı açıldığında etiketlenecek rol",
+							"zh-CN": "在创建工单频道时要提及的角色",
+							"pt-BR": "Cargo a ser mencionado quando um canal de ticket for criado",
+							ro: "Rolul menționat când se creează canalul de tichete",
+							el: "Ρόλος που θα αναφέρεται όταν δημιουργείται κανάλι ticket",
+							de: "Rolle, die erwähnt wird, wenn ein Ticket-Kanal erstellt wird",
+							ru: "Роль, упоминаемая при создании тикет-канала",
 						})
 						.setRequired(true),
 				)
@@ -133,9 +130,9 @@ const setup: BotCommand = {
 							tr: "Lütfen bir kanal seçin",
 							"zh-CN": "请选择频道",
 							"pt-BR": "Selecione um canal",
-							ro: "Selectați un canal",
-							el: "Επιλέξτε ένα κανάλι",
-							de: "Wählen Sie einen Kanal aus",
+							ro: "Selectează un canal",
+							el: "Επιλέξτε κανάλι",
+							de: "Bitte wähle einen Kanal",
 							ru: "Выберите канал",
 						})
 						.setRequired(true),
@@ -158,13 +155,13 @@ const setup: BotCommand = {
 						)
 						.setDescriptionLocalizations({
 							it: "Imposta la descrizione (markdown supportato, vai a capo con due spazi).",
-							tr: "Açıklamayı ayarla (markdown destekli, yeni satır için iki boşluk kullan).",
-							"zh-CN": "设置描述（支持markdown，使用两个空格换行）",
-							"pt-BR": "Defina a descrição (suporta markdown, nova linha com dois espaços).",
-							ro: "Setați descrierea (acceptă markdown, două spații pentru rând nou).",
-							el: "Ρύθμιση περιγραφής (υποστηρίζει markdown, δύο κενά για νέα γραμμή).",
+							tr: "Mesaj açıklamasını ayarla (Markdown destekli, yeni satır için iki boşluk kullan).",
+							"zh-CN": "设置消息描述（支持markdown，使用两个空格换行）",
+							"pt-BR": "Defina a descrição (suporta Markdown, nova linha com dois espaços).",
+							ro: "Setează descrierea (acceptă markdown, două spații pentru linie nouă).",
+							el: "Ορίστε περιγραφή (υποστηρίζει Markdown, δύο κενά για νέα γραμμή).",
 							de: "Beschreibung festlegen (Markdown unterstützt, zwei Leerzeichen für neue Zeile).",
-							ru: "Укажите описание (поддерживает markdown, два пробела — новая строка).",
+							ru: "Задай описание (поддержка Markdown, два пробела для новой строки).",
 						})
 						.setRequired(false),
 				)
@@ -173,24 +170,24 @@ const setup: BotCommand = {
 						.setName("image_url")
 						.setNameLocalizations({
 							it: "immagine_url",
-							tr: "afiş_linki",
+							tr: "görsel_linki",
 							"zh-CN": "图片链接",
-							"pt-BR": "url_da_imagem",
-							ro: "url_imagine",
-							el: "εικόνα_url",
+							"pt-BR": "url_imagem",
+							ro: "link_imagine",
+							el: "url_εικόνας",
 							de: "bild_url",
 							ru: "url_изображения",
 						})
 						.setDescription("Provide a custom image URL for the ticket banner!")
 						.setDescriptionLocalizations({
-							it: "Fornisci un URL di immagine personalizzato per la bandiera del ticket!",
-							tr: "Talep afişi için özel bir görüntü URL'si sağlayın!",
+							it: "Fornisci un URL immagine personalizzato per il banner del ticket!",
+							tr: "Destek formu için özel bir görsel linki ekle!",
 							"zh-CN": "为工单横幅提供自定义图片链接！",
-							"pt-BR": "Forneça uma URL de imagem personalizada para o banner do ticket!",
-							ro: "Furnizați o URL imagine personalizată pentru banerul de bilet!",
-							el: "Παρέχετε μια εικονική διεύθυνση για την εικόνα του εισιτηρίου!",
-							de: "Stellen Sie eine benutzerdefinierte Bild-URL für die Ticket-Banner bereit!",
-							ru: "Укажите пользовательский URL изображения для баннера тикета!",
+							"pt-BR": "Forneça um link de imagem personalizado para o banner do ticket!",
+							ro: "Adaugă un link imagine personalizat pentru banner-ul tichetului!",
+							el: "Δώστε ένα προσαρμοσμένο URL εικόνας για το banner ticket!",
+							de: "Eigene Bild-URL für das Ticket-Banner angeben!",
+							ru: "Укажи URL изображения для баннера тикета!",
 						})
 						.setRequired(false),
 				),
@@ -198,11 +195,51 @@ const setup: BotCommand = {
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName("image-channel")
+				.setNameLocalizations({
+					it: "canale-immagini",
+					tr: "görsel-kanalı",
+					"zh-CN": "图片频道",
+					"pt-BR": "canal-imagem",
+					ro: "canal-imagini",
+					el: "κανάλι-εικόνων",
+					de: "bild-kanal",
+					ru: "канал-изображений",
+				})
 				.setDescription("Set up an image channel that people can post only images and videos!")
+				.setDescriptionLocalizations({
+					it: "Crea un canale dove si possono inviare solo immagini e video!",
+					tr: "Sadece görsel ve video paylaşımı yapılabilecek bir kanal oluştur",
+					"zh-CN": "建立一个只能发图片和视频的频道！",
+					"pt-BR": "Crie um canal onde só se pode postar imagens e vídeos!",
+					ro: "Creează un canal unde se pot posta doar imagini și videoclipuri!",
+					el: "Δημιουργήστε κανάλι μόνο για εικόνες και βίντεο!",
+					de: "Erstelle einen Kanal, in dem nur Bilder und Videos erlaubt sind!",
+					ru: "Создай канал, где можно публиковать только изображения и видео!",
+				})
 				.addChannelOption(option =>
 					option
 						.setName("channel")
+						.setNameLocalizations({
+							it: "canale",
+							tr: "kanal",
+							"zh-CN": "频道",
+							"pt-BR": "canal",
+							ro: "canal",
+							el: "κανάλι",
+							de: "kanal",
+							ru: "канал",
+						})
 						.setDescription("Which channel will it be?")
+						.setDescriptionLocalizations({
+							it: "Quale canale sarà?",
+							tr: "Hangi kanal olacak?",
+							"zh-CN": "选择哪个频道？",
+							"pt-BR": "Qual será o canal?",
+							ro: "Care va fi canalul?",
+							el: "Ποιο κανάλι θα είναι;",
+							de: "Welcher Kanal soll es sein?",
+							ru: "Какой канал выбрать?",
+						})
 						.addChannelTypes(ChannelType.GuildText)
 						.setRequired(true),
 				),
@@ -214,30 +251,46 @@ const setup: BotCommand = {
 					tr: "ses-merkezi",
 					"zh-CN": "语音中心",
 					it: "hub-vocale",
-					"pt-BR": "hub-de-voz",
+					"pt-BR": "hub-voz",
+					ro: "hub-vocal",
+					el: "φωνητικό-hub",
+					de: "voice-hub",
+					ru: "голосовой-хаб",
 				})
 				.setDescription("Set up a voice hub that people can create their vc!")
 				.setDescriptionLocalizations({
-					tr: "Kullanıcıların kendi ses kanallarını oluşturabileceği bir ses merkezi kur",
-					"zh-CN": "建立一个语音中心，让用户可以创建自己的语音频道",
-					it: "Imposta un hub vocale in cui le persone possono creare il proprio canale vocale",
-					"pt-BR": "Configure um hub de voz onde as pessoas possam criar seu canal de voz",
+					it: "Crea un hub vocale dove gli utenti possono aprire i propri canali vocali!",
+					tr: "Kullanıcıların kendi ses kanallarını açabileceği bir ses merkezi oluştur",
+					"zh-CN": "建立一个语音中心，让用户可以创建自己的语音频道！",
+					"pt-BR": "Crie um hub de voz onde os usuários possam abrir seus canais de voz!",
+					ro: "Creează un hub vocal unde utilizatorii își pot face propriul canal vocal!",
+					el: "Δημιουργήστε ένα hub φωνής όπου οι χρήστες μπορούν να ανοίγουν τα δικά τους κανάλια!",
+					de: "Erstelle ein Voice-Hub, in dem Nutzer eigene Sprachkanäle erstellen können!",
+					ru: "Создай голосовой хаб, где пользователи могут открывать свои каналы!",
 				})
 				.addChannelOption(option =>
 					option
 						.setName("channel")
 						.setNameLocalizations({
+							it: "canale",
 							tr: "kanal",
 							"zh-CN": "频道",
-							it: "canale",
 							"pt-BR": "canal",
+							ro: "canal",
+							el: "κανάλι",
+							de: "kanal",
+							ru: "канал",
 						})
 						.setDescription("Select the channel that will become hub")
 						.setDescriptionLocalizations({
+							it: "Seleziona il canale che diventerà l'hub",
 							tr: "Merkez olacak kanalı seç",
 							"zh-CN": "选择将成为中心的频道",
-							it: "Seleziona il canale che diventerà l'hub",
-							"pt-BR": "Selecione o canal que se tornará o hub",
+							"pt-BR": "Selecione o canal que será o hub",
+							ro: "Selectează canalul care va fi hub-ul",
+							el: "Επιλέξτε το κανάλι που θα γίνει hub",
+							de: "Wähle den Kanal, der das Hub wird",
+							ru: "Выбери канал, который станет хабом",
 						})
 						.addChannelTypes(ChannelType.GuildVoice)
 						.setRequired(true),
@@ -251,15 +304,23 @@ const setup: BotCommand = {
 
 		const ticketCommand = async () => {
 			if (!guild?.members.me?.permissions.has("ManageThreads")) {
-				return sendErrorMessage(interaction, `I don't have permission to manage threads.`, "error");
+				return sendAlertMessage({
+					interaction,
+					content: `It seems like I can't manage threads.\n> ${getEmoji("reactions.user.thumbsup")} Got it! I will give you the permission to manage, soon.`,
+					type: "error",
+					tag: "Missing Permissions",
+					alertReaction: "reactions.kaeru.emphasize",
+				});
 			}
 
 			if (!guild?.members.me?.permissions.has("CreatePrivateThreads")) {
-				return sendErrorMessage(
+				return sendAlertMessage({
 					interaction,
-					`I don't have permission to create private threads.`,
-					"error",
-				);
+					content: `It seems like I can't create private threads.\n> ${getEmoji("reactions.user.thumbsup")} Got it! I will give you the permission to manage, soon.`,
+					type: "error",
+					tag: "Missing Permissions",
+					alertReaction: "reactions.kaeru.emphasize",
+				});
 			}
 
 			const sendingChannel =
@@ -362,54 +423,52 @@ const setup: BotCommand = {
 			await saveStaffRoleId(interaction.guild!.id, staffRole);
 
 			await interaction.editReply({
-				content: `${getEmoji("ticket.create")} Created the ticket system successfully in ${sendingChannel}.`,
+				components: [
+					containerTemplate({
+						tag: "System Created",
+						title: `${getEmoji("ticket.create")} Created the ticket system successfully in ${sendingChannel}.`,
+						description: [
+							`- Users can create tickets as thread with selecting label`,
+							`- It will auto-name the thread for their issue.`,
+							`- Experience PRO ticket handling.`,
+						].join("\n"),
+					}),
+				],
+				flags: [MessageFlags.IsComponentsV2],
 			});
 
 			if (!interaction.guild!.members.me?.permissions.has(PermissionFlagsBits.ManageMessages)) {
-				await interaction.followUp({
+				return sendAlertMessage({
+					interaction,
 					content: `## ${getEmoji("danger") + " " + underline("Recommending")}\nIf Kaeru has ${bold(
 						"Manage Messages",
 					)} permission, it will be very easy to reach the first message with pinned messages for staff members.`,
-					flags: MessageFlags.Ephemeral,
 				});
 			}
 		};
 
 		const imageChannel = async () => {
-			if (!guild?.members.me?.permissions.has("ManageThreads")) {
-				return sendErrorMessage(interaction, `I don't have permission to manage threads.`, "error");
-			}
-			if (!guild?.members.me?.permissions.has("CreatePrivateThreads")) {
-				return sendErrorMessage(
+			const selectedChannel = guild?.channels.cache.get(channelOption!.id);
+			if (
+				!selectedChannel ||
+				!selectedChannel.permissionsFor(guild?.members.me!)?.has("ViewChannel")
+			) {
+				return sendAlertMessage({
 					interaction,
-					`I don't have permission to create private threads.`,
-					"error",
-				);
-			}
-
-			const selectedChannel = guild.channels.cache.get(channelOption!.id);
-			if (!selectedChannel) {
-				return sendErrorMessage(
-					interaction,
-					`I cannot find or access the selected channel.`,
-					"error",
-				);
+					content: `I can't find/access to the selected channel. Perhaps give me view channel permission?`,
+					type: "error",
+					tag: "Missing Permissions",
+				});
 			}
 
-			if (!selectedChannel.permissionsFor(guild.members.me!)?.has("ViewChannel")) {
-				return sendErrorMessage(
+			if (!guild?.members.me?.permissions.has("CreatePublicThreads")) {
+				return sendAlertMessage({
 					interaction,
-					`I don't have permission to view the selected channel.`,
-					"error",
-				);
-			}
-
-			if (!selectedChannel.permissionsFor(guild.members.me!)?.has("ManageMessages")) {
-				return sendErrorMessage(
-					interaction,
-					`I don't have permission to manage messages in the selected channel.`,
-					"error",
-				);
+					content: `It seems like I can't create public threads to people comment on image.\n> ${getEmoji("reactions.user.thumbsup")} Got it! I will give you the permission to manage, soon.`,
+					type: "error",
+					tag: "Missing Permissions",
+					alertReaction: "reactions.kaeru.emphasize",
+				});
 			}
 
 			await interaction.deferReply();
@@ -417,24 +476,28 @@ const setup: BotCommand = {
 			try {
 				await setImageChannel(guild!.id, channelOption!.id);
 
-				if (selectedChannel.isTextBased() && "setRateLimitPerUser" in selectedChannel) {
-					await selectedChannel.setRateLimitPerUser(30, "Image channel slowmode set by Kaeru");
-				}
-
 				return interaction.editReply({
-					content:
-						`${getEmoji("reactions.user.thumbsup")} Image-only channel system created successfully!\n` +
-						`- Channel slowmode set to 30 seconds\n` +
-						`- Only media content will be allowed\n` +
-						`- Automatic threads will be created for posts`,
+					components: [
+						containerTemplate({
+							tag: "System Created",
+							title: `${getEmoji("banner")} Media channel system created successfully!`,
+							description: [
+								`- Only media content will be allowed`,
+								`- Automatic threads will be created for posts`,
+							].join("\n"),
+						}),
+					],
+					flags: [MessageFlags.IsComponentsV2],
 				});
 			} catch (error) {
 				console.error("Error setting up image channel:", error);
-				return sendErrorMessage(
+
+				return sendAlertMessage({
 					interaction,
-					`Failed to set up the image channel system. Please try again.`,
-					"error",
-				);
+					content: `Failed to set up image channel system. Try again later.`,
+					type: "error",
+					tag: "Error",
+				});
 			}
 		};
 
@@ -444,7 +507,17 @@ const setup: BotCommand = {
 			await setHubChannel(guild!.id, channelOption!.id);
 
 			return interaction.editReply({
-				content: `${getEmoji("reactions.user.thumbsup")} Created the voice hub system successfully.`,
+				components: [
+					containerTemplate({
+						tag: "System Created",
+						title: `${getEmoji("up")} Voice Hub channel system created successfully!`,
+						description: [
+							`- Users can create their vc`,
+							`- It is ultra-private — so only admins can join`,
+						].join("\n"),
+					}),
+				],
+				flags: [MessageFlags.IsComponentsV2],
 			});
 		};
 

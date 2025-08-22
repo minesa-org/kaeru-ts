@@ -13,7 +13,7 @@ import {
 	UserSelectMenuBuilder,
 } from "discord.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
-import { sendErrorMessage } from "../../utils/sendErrorMessage.js";
+import { containerTemplate, sendAlertMessage } from "../../utils/error&containerMessage.js";
 import { getEmoji } from "../../utils/emojis.js";
 
 const SUPPORTED_EXTENSIONS = [
@@ -93,17 +93,24 @@ const collabTogether: BotCommand = {
 		const isViewable = options.getBoolean("view") ?? false;
 
 		if (!ext) {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				`Unsupported file type. Supported: ${SUPPORTED_EXTENSIONS.join(", ")}`,
-			);
+				content: `Unsupported file type. Supported: ${SUPPORTED_EXTENSIONS.join(", ")}`,
+				type: "error",
+				tag: "Non-Supported File",
+			});
 		}
 
 		const response = await fetch(file!.url);
 		const text = await response.text();
 
 		if (text.length > 4000) {
-			return sendErrorMessage(interaction, "File too large. Max **4000** characters for now.");
+			return sendAlertMessage({
+				interaction,
+				content: `File is too large to send to Discord. Max **4,000** characters for now.`,
+				type: "error",
+				tag: "Character Limit",
+			});
 		}
 
 		interaction.client.fileCache.set(interaction.user.id, {
@@ -115,39 +122,27 @@ const collabTogether: BotCommand = {
 			owner: interaction.user.id,
 		});
 
-		const container = new ContainerBuilder()
-			.addTextDisplayComponents(
-				new TextDisplayBuilder().setContent(`-# ${getEmoji("people")} Collaborate with People`),
-			)
-			.addSeparatorComponents(new SeparatorBuilder().setDivider(true))
-			.addSectionComponents(
-				new SectionBuilder()
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							[
-								`# Welcome to collab onboarding!`,
-								`Here you can select members to collab with your file. Other's will not able to edit or view file.`,
-							].join("\n"),
-						),
-					)
-					.setThumbnailAccessory(
-						new ThumbnailBuilder().setURL(
-							"https://media.discordapp.net/attachments/736571695170584576/1407664558323007518/Frame_15.png?ex=68a6ed47&is=68a59bc7&hm=40e37f945a9bbbb7d65870c2010648548b25bd552ea182b8065162386945e8b6&=&format=webp&quality=lossless&width=614&height=610",
-						),
-					),
-			)
-			.addActionRowComponents(
-				new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(
-					new UserSelectMenuBuilder()
-						.setCustomId("collab_menu")
-						.setPlaceholder("Select members to collaborate with...")
-						.setMaxValues(10)
-						.setMinValues(1),
-				),
-			);
+		const userMenu = new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(
+			new UserSelectMenuBuilder()
+				.setCustomId("collab_menu")
+				.setPlaceholder("Select members to collaborate with...")
+				.setMaxValues(10)
+				.setMinValues(1),
+		);
 
 		return interaction.reply({
-			components: [container],
+			components: [
+				containerTemplate({
+					tag: `${getEmoji("people")} Collaborating with People`,
+					title: "Welcome to collab onboarding!",
+					description: [
+						`Here you can select members to collab with your file. Other's will not able to edit or view file.`,
+					],
+					thumbnail:
+						"https://media.discordapp.net/attachments/736571695170584576/1407664558323007518/Frame_15.png?ex=68a6ed47&is=68a59bc7&hm=40e37f945a9bbbb7d65870c2010648548b25bd552ea182b8065162386945e8b6&=&format=webp&quality=lossless&width=614&height=610",
+				}),
+				userMenu,
+			],
 			flags: [MessageFlags.IsComponentsV2, MessageFlags.Ephemeral],
 		});
 	},

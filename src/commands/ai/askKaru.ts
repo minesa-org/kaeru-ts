@@ -7,7 +7,7 @@ import {
 } from "discord.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
 import { karu } from "../../config/karu.js";
-import { getEmoji, log, langMap, sendErrorMessage } from "../../utils/export.js";
+import { containerTemplate, getEmoji, langMap, log, sendAlertMessage } from "../../utils/export.js";
 
 const askKaru: BotCommand = {
 	data: new SlashCommandBuilder()
@@ -58,15 +58,16 @@ const askKaru: BotCommand = {
 		) as SlashCommandBuilder,
 
 	execute: async (interaction: ChatInputCommandInteraction) => {
-		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+		interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
 		const prompt = interaction.options.getString("question")?.trim();
 		if (!prompt) {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				"No message provided? Huh? Then why...",
-				"reactions.kaeru.question",
-			);
+				content: "No message provided? Huh? Then why...",
+				tag: "???",
+				type: "error",
+			});
 		}
 
 		try {
@@ -125,15 +126,20 @@ Always assume the user wants high-signal help — no fluff.
 
 			const content = `${getEmoji("intelligence")} ${output}`;
 
-			await interaction.editReply({ content });
+			return interaction.editReply({
+				components: [
+					containerTemplate({ tag: `${getEmoji("magic")} Kāru AI`, description: content }),
+				],
+				flags: MessageFlags.IsComponentsV2,
+			});
 		} catch (err) {
-			log("error", "Failed to ask Kaeru:", err);
-
-			return sendErrorMessage(
+			log("error", `Ask Karu error: ${err}`);
+			return sendAlertMessage({
 				interaction,
-				"Failed to ask Karu. The system might be confused — try again in a moment.",
-				"error",
-			);
+				content: "Failed to ask Karu. The system might be confused — try again in a moment.",
+				type: "error",
+				tag: "AI Issue",
+			});
 		}
 	},
 };

@@ -11,7 +11,7 @@ import {
 } from "discord.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
 import { karu } from "../../config/karu.js";
-import { getEmoji, useCooldown, sendErrorMessage } from "../../utils/export.js";
+import { getEmoji, useCooldown, sendAlertMessage, containerTemplate } from "../../utils/export.js";
 
 const timelapse: BotCommand = {
 	data: new SlashCommandBuilder()
@@ -50,11 +50,12 @@ const timelapse: BotCommand = {
 			return;
 
 		if (!(channel instanceof TextChannel || channel instanceof ThreadChannel)) {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				`-# Kaeru can only summarize text and thread type channels.\n\n> ${getEmoji("reactions.user.thumbsup")} Okay! I have to go to **message** then apps and click __Summarize & Key Points__ on the message.`,
-				"reactions.kaeru.question",
-			);
+				content: `Kaeru can only summarize text and thread type channels.\n\n> ${getEmoji("reactions.user.thumbsup")} Okay!`,
+				type: "error",
+				tag: "Channel Type",
+			});
 		}
 
 		await interaction.deferReply();
@@ -90,17 +91,19 @@ ${content}
 		const result = await model.generateContent(fullPrompt);
 		const output = result.response.text().trim();
 
-		const container = new ContainerBuilder().addTextDisplayComponents(
-			new TextDisplayBuilder().setContent(`-# ${getEmoji("magic")} Kāru Timelapse Summary`),
-			new TextDisplayBuilder().setContent(`>>> ${output}`),
-		);
+		messages.clear();
 
-		await interaction.editReply({
-			components: [container],
+		return interaction.editReply({
+			components: [
+				containerTemplate({
+					tag: `${getEmoji("magic")} Kāru Timelapse Summary`,
+					description: `>>> ${output}`,
+					thumbnail:
+						"https://media.discordapp.net/attachments/736571695170584576/1408561935041036298/Normal.png?ex=68aa3107&is=68a8df87&hm=dc29cb372f6f3f9429943429ac9db5d24772d4d2c54a7d40ddb9a6c1b9d6fc26&=&format=webp&quality=lossless&width=1410&height=1410",
+				}),
+			],
 			flags: MessageFlags.IsComponentsV2,
 		});
-
-		messages.clear();
 	},
 };
 

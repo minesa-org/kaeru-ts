@@ -7,6 +7,7 @@ import {
 	PermissionFlagsBits,
 } from "discord.js";
 import { getEmoji } from "../utils/emojis.js";
+import { containerTemplate } from "./error&containerMessage.js";
 
 export async function setLockedAndUpdateMessage(interaction: any, reason: string = "") {
 	if (!interaction.guild?.members.me?.permissions.has(PermissionFlagsBits.ManageThreads)) {
@@ -26,9 +27,12 @@ export async function setLockedAndUpdateMessage(interaction: any, reason: string
 
 	try {
 		await interaction.update({
-			content: `Locked this ticket successfully. To unlock this ticket, please enable it manually on "unlock" button.`,
-			components: [],
-			embeds: [],
+			components: [
+				containerTemplate({
+					tag: "Locking Ticket",
+					description: `Locked this ticket successfully. To unlock this ticket, please enable it manually on "unlock" button.`,
+				}),
+			],
 		});
 	} catch {
 		await interaction.channel.send(

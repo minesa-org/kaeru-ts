@@ -7,7 +7,7 @@ export * from "./getEmojiURL.js";
 export * from "./isValidImageUrl.js";
 export * from "./karuHandleMessage.js";
 export * from "./languageMap.js";
-export * from "./sendErrorMessage.js";
+export * from "./error&containerMessage.js";
 export * from "./summarizeTicketTitle.js";
 export * from "./ticketButtons.js";
 export * from "./ticketContainerData.js";

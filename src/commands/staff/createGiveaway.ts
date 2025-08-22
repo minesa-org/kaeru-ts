@@ -9,11 +9,16 @@ import {
 	InteractionContextType,
 	underline,
 	ChatInputCommandInteraction,
-	TextDisplayBuilder,
 	User,
 } from "discord.js";
 import moment from "moment-timezone";
-import { getEmoji, timezoneChecking, timeChecking, sendErrorMessage } from "../../utils/export.js";
+import {
+	getEmoji,
+	timezoneChecking,
+	timeChecking,
+	sendAlertMessage,
+	containerTemplate,
+} from "../../utils/export.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
 
 const createGiveaway: BotCommand = {
@@ -275,13 +280,14 @@ const createGiveaway: BotCommand = {
 		) as SlashCommandBuilder,
 
 	execute: async (interaction: ChatInputCommandInteraction) => {
-		// Permission check
 		if (!interaction.guild?.members.me?.permissions.has(PermissionFlagsBits.ManageEvents)) {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				`-# It seems like I can't create events.\n> ${getEmoji("reactions.user.thumbsup")} Got it! I will give you the permission to create, soon.`,
-				"danger",
-			);
+				content: `It seems like I can't create events.\n> ${getEmoji("reactions.user.thumbsup")} Got it! I will give you the permission to create, soon.`,
+				type: "error",
+				tag: "Missing Permissions",
+				alertReaction: "reactions.kaeru.emphasize",
+			});
 		}
 
 		await interaction.deferReply({ flags: MessageFlags.Ephemeral });
@@ -295,9 +301,8 @@ const createGiveaway: BotCommand = {
 
 		const seconds = timeChecking(duration);
 
-		// Preferred locale → timezone
 		const discordLocale = interaction.guild?.preferredLocale;
-		const timezone = timezoneChecking(discordLocale); // Returns string like "Europe/Istanbul"
+		const timezone = timezoneChecking(discordLocale);
 
 		const scheduledStartTime = moment().tz(timezone).add(seconds, "seconds");
 		const scheduledEndTime = moment(scheduledStartTime).add(1, "hours");
@@ -318,28 +323,43 @@ const createGiveaway: BotCommand = {
 			reason: `Giveaway created by ${interaction.user.tag} for ${giveawayName}.`,
 		});
 
-		// Create invite URL
 		let inviteLink: string;
 		try {
 			inviteLink = await giveaway.createInviteURL({ channel: interaction.channelId });
 		} catch (err) {
 			console.error("Error creating invite link:", err);
-			return interaction.editReply({
+
+			return sendAlertMessage({
+				interaction,
 				content: `${getEmoji("danger")} Failed to create invite URL.`,
+				type: "error",
 			});
 		}
 
 		await interaction.editReply({
-			content: `${getEmoji("giftCard")} Creating the giveaway...`,
+			components: [
+				containerTemplate({
+					tag: "Giveaway System",
+					description: `${getEmoji("giftCard")} Creating the giveaway...`,
+				}),
+			],
+			flags: [MessageFlags.IsComponentsV2],
 		});
 
 		await interaction.editReply({
-			content: `# ${getEmoji("giftCard")} Giveaway Created: ${underline(giveawayName)}
-Giveaway will be triggered when the time arrives. Winner will be revealed automatically.\n
-🔗 Invite Link: ${inviteLink}`,
+			components: [
+				containerTemplate({
+					tag: "Giveaway System",
+					description: [
+						`Giveaway will be triggered when the time arrives. Winner will be revealed automatically.`,
+						`> Invite Link: ${inviteLink}`,
+					],
+					title: `${getEmoji("giftCard")} Giveaway Created: ${underline(giveawayName)}`,
+				}),
+			],
+			flags: [MessageFlags.IsComponentsV2],
 		});
 
-		// Schedule result logic
 		setTimeout(
 			async () => {
 				try {
@@ -380,8 +400,8 @@ export default createGiveaway;
 
 /**
  * Shuffles the subscribers array to randomly select a winner.
- * ../param array Array of users to shuffle
- * ../returns Shuffled array of users
+ * @param array Array of users to shuffle
+ * @returns Shuffled array of users
  */
 function shuffleSubscribers(array: User[]): User[] {
 	for (let i = array.length - 1; i > 0; i--) {

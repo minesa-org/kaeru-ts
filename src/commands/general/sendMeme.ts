@@ -10,7 +10,7 @@ import {
 	TextDisplayBuilder,
 } from "discord.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
-import { getEmoji, sendErrorMessage } from "../../utils/export.js";
+import { containerTemplate, getEmoji, sendAlertMessage } from "../../utils/export.js";
 
 const sendMeme: BotCommand = {
 	data: new SlashCommandBuilder()
@@ -50,21 +50,24 @@ const sendMeme: BotCommand = {
 		const image = memeData.data?.image ?? memeData.image ?? null;
 
 		if (!image) {
-			return sendErrorMessage(interaction, "No mamez...", "info");
+			return sendAlertMessage({
+				interaction,
+				content: `No mamez`,
+				type: "info",
+				tag: "No meme?",
+			});
 		}
 
 		await interaction.deferReply();
 
-		const container = new ContainerBuilder()
-			.addTextDisplayComponents(
-				new TextDisplayBuilder().setContent(`# ${getEmoji("brain")} ${title}`),
-			)
-			.addMediaGalleryComponents(
-				new MediaGalleryBuilder().addItems(new MediaGalleryItemBuilder().setURL(image)),
-			);
-
 		return interaction.editReply({
-			components: [container],
+			components: [
+				containerTemplate({
+					tag: "Memes",
+					description: `# ${getEmoji("brain")} ${title}`,
+					images: [image],
+				}),
+			],
 			allowedMentions: { parse: [] },
 			flags: MessageFlags.IsComponentsV2,
 		});

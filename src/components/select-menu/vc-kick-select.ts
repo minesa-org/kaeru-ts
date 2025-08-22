@@ -3,12 +3,9 @@ import {
 	PermissionFlagsBits,
 	MessageFlags,
 	GuildMember,
-	ContainerBuilder,
-	TextDisplayBuilder,
-	SeparatorBuilder,
 } from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
-import { sendErrorMessage } from "../../utils/sendErrorMessage.js";
+import { containerTemplate, sendAlertMessage } from "../../utils/error&containerMessage.js";
 
 const vcKickSelect: BotComponent = {
 	customId: "vc_kick_select",
@@ -18,17 +15,21 @@ const vcKickSelect: BotComponent = {
 		const member = interaction.member as GuildMember;
 		const channel = member.voice.channel;
 		if (!channel) {
-			await sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				"Voice channel! Where are you!?",
-				"reactions.user.question",
-			);
-			return;
+				content: `Voice channel! Where are you!?`,
+				type: "error",
+				tag: "whaaaaat",
+			});
 		}
 
 		if (!interaction.guild?.members.me?.permissions.has(PermissionFlagsBits.ManageChannels)) {
-			await sendErrorMessage(interaction, "No permission, give me permission!");
-			return;
+			return sendAlertMessage({
+				interaction,
+				content: `No permission, give me permission. (Manage Channels)`,
+				type: "error",
+				tag: "Missing Permission",
+			});
 		}
 
 		const kickedMembers: string[] = [];
@@ -50,26 +51,21 @@ const vcKickSelect: BotComponent = {
 			}
 		}
 
-		const container = new ContainerBuilder()
-			.addTextDisplayComponents(new TextDisplayBuilder().setContent("-# Kicked && Blacklisted"))
-			.addSeparatorComponents(new SeparatorBuilder().setDivider(true))
-			.addTextDisplayComponents(
-				new TextDisplayBuilder().setContent(
-					kickedMembers.length > 0
-						? [`# Bye bye...`, `- ${kickedMembers.join("\n- ")}`].join("\n")
-						: [
-								`# No members were kicked`,
-								`Did you just try to kick someone not in the channel?`,
-							].join("\n"),
-				),
-			);
-
 		await interaction.editReply({
-			components: [container],
+			components: [
+				containerTemplate({
+					tag: "Kicked && Blacklisted",
+					description:
+						kickedMembers.length > 0
+							? [`# Bye bye...`, `- ${kickedMembers.join("\n- ")}`]
+							: [
+									`# No members were kicked`,
+									`Did you just try to kick someone not in the channel?`,
+								],
+				}),
+			],
 			flags: MessageFlags.IsComponentsV2,
 		});
-
-		return;
 	},
 };
 

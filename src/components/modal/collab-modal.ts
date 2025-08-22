@@ -1,6 +1,6 @@
 import { MessageFlags, ModalSubmitInteraction } from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
-import { sendErrorMessage } from "../../utils/sendErrorMessage.js";
+import { containerTemplate, sendAlertMessage } from "../../utils/error&containerMessage.js";
 import { getEmoji } from "../../utils/emojis.js";
 
 const collabModal: BotComponent = {
@@ -12,14 +12,24 @@ const collabModal: BotComponent = {
 
 		const fileData = interaction.client.fileCache.get(collabKey);
 		if (!fileData) {
-			return sendErrorMessage(interaction, "File data not found.");
+			return sendAlertMessage({
+				interaction,
+				content: `File data not found`,
+				type: "error",
+				tag: "Non-supported Data",
+			});
 		}
 
 		const isOwner = interaction.user.id === fileData.owner;
 		const isCollaborator = fileData.collaborators.includes(interaction.user.id);
 
 		if (!isOwner && !isCollaborator) {
-			return sendErrorMessage(interaction, "You don't have permission to edit this file.");
+			return sendAlertMessage({
+				interaction,
+				content: `You don't have permission to edit this file.`,
+				type: "error",
+				tag: "Missing Permission",
+			});
 		}
 
 		const newContent = interaction.fields.getTextInputValue("file_content");
@@ -30,14 +40,26 @@ const collabModal: BotComponent = {
 			const thread = interaction.guild?.channels.cache.get(fileData.threadId);
 			if (thread && thread.isThread()) {
 				await thread.send({
-					content: `${getEmoji("reactions.user.thumbsup")} **${fileData.name}** was updated by <@${interaction.user.id}>`,
+					components: [
+						containerTemplate({
+							tag: "Changes happened",
+							description: `${getEmoji("reactions.user.thumbsup")} File was updated by <@${interaction.user.id}>`,
+						}),
+					],
+					flags: MessageFlags.IsComponentsV2,
 				});
 			}
 		}
 
 		return interaction.reply({
-			content: `${getEmoji("ticket.circle.done")} File **${fileData.name}** has been updated successfully!`,
-			flags: MessageFlags.Ephemeral,
+			components: [
+				containerTemplate({
+					tag: "Changes",
+					title: getEmoji("reactions.user.thumbsup"),
+					description: `> Okay. Updated. I know that Kaeru saves changes history in thread, now.`,
+				}),
+			],
+			flags: [MessageFlags.IsComponentsV2, MessageFlags.Ephemeral],
 		});
 	},
 };

@@ -11,7 +11,7 @@ import {
 	ThumbnailBuilder,
 } from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
-import { sendErrorMessage } from "../../utils/sendErrorMessage.js";
+import { containerTemplate, sendAlertMessage } from "../../utils/error&containerMessage.js";
 
 export const vcKickButton: BotComponent = {
 	customId: /^vc-kick-\d+$/,
@@ -21,26 +21,36 @@ export const vcKickButton: BotComponent = {
 			const channel = interaction.guild?.channels.cache.get(channelId);
 
 			if (!channel?.isVoiceBased()) {
-				return sendErrorMessage(interaction, "Voice channel is not found, impossible!", "error");
+				return sendAlertMessage({
+					interaction,
+					content: `Voice channel is not found, impossible!`,
+					type: "error",
+					tag: "What the fuck?",
+				});
 			}
 
 			if (!channel.permissionsFor(interaction.user)?.has(PermissionFlagsBits.ManageChannels)) {
-				return sendErrorMessage(
+				return sendAlertMessage({
 					interaction,
-					"Is your name channel's name? yeah it's not.\n-# Don't do something crazy to change your name to channel's name. :D",
-					"reactions.kaeru.question",
-				);
+					content:
+						"Is your name channel's name? yeah it's not.\n-# Don't do something crazy to change your name to channel's name. :D",
+					type: "error",
+					tag: "Missing Permission",
+					alertReaction: "reactions.kaeru.question",
+				});
 			}
 
 			const members = Array.from(channel.members.values());
 
 			if (members.length === 0 || members.length === 1) {
-				return sendErrorMessage(
+				return sendAlertMessage({
 					interaction,
-					"Umm... are you trying to... kick Natalia, lol\n> Nice one asdkalsjd, Natalia from MLBB haha",
-					"reactions.kaeru.haha",
-					0xac8e68,
-				);
+					content:
+						"Umm... are you trying to... kick Natalia, lol\n> Nice one asdkalsjd, Natalia from MLBB haha",
+					alertReaction: "reactions.kaeru.haha",
+					type: "error",
+					tag: "Missing Permission",
+				});
 			}
 
 			const selectMenu = new UserSelectMenuBuilder()
@@ -51,24 +61,12 @@ export const vcKickButton: BotComponent = {
 
 			const row = new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(selectMenu);
 
-			const container = new ContainerBuilder()
-				.addTextDisplayComponents(
-					new TextDisplayBuilder().setContent(`-# Kicking Member Out of Channel`),
-				)
-				.addSeparatorComponents(new SeparatorBuilder().setDivider(true))
-				.addSectionComponents(
-					new SectionBuilder()
-						.addTextDisplayComponents(
-							new TextDisplayBuilder().setContent(
-								"Select members from menu to **kick** and **blacklist** for this private chat",
-							),
-						)
-						.setThumbnailAccessory(
-							new ThumbnailBuilder().setURL(
-								"https://media.discordapp.net/attachments/736571695170584576/1407092130215887040/Frame_15.png?ex=68a4d82a&is=68a386aa&hm=2ea7073543f643e9ce96fd6a54bd9b5bc9005234fe76fbf09fbf4d759fb7a15c&=&width=614&height=610",
-							),
-						),
-				);
+			const container = containerTemplate({
+				tag: "Kicking Member Out of Channel",
+				description: "Select members from menu to **kick** and **blacklist** for this private chat",
+				thumbnail:
+					"https://media.discordapp.net/attachments/736571695170584576/1407092130215887040/Frame_15.png?ex=68a4d82a&is=68a386aa&hm=2ea7073543f643e9ce96fd6a54bd9b5bc9005234fe76fbf09fbf4d759fb7a15c&=&width=614&height=610",
+			});
 
 			return interaction.reply({
 				components: [container, row],
@@ -76,10 +74,8 @@ export const vcKickButton: BotComponent = {
 			});
 		} catch (err) {
 			console.error("vcKickButton error:", err);
-			return interaction.reply({
-				content: "An error occurred.",
-				flags: MessageFlags.Ephemeral,
-			});
+			
+			return sendAlertMessage({ interaction, content: "An error occured." });
 		}
 	},
 };

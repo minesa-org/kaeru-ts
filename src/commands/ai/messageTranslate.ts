@@ -5,13 +5,18 @@ import {
 	InteractionContextType,
 	MessageFlags,
 	MessageContextMenuCommandInteraction,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-	SeparatorBuilder,
 } from "discord.js";
 import { karu } from "../../config/karu.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
-import { getEmoji, log, langMap, sendErrorMessage } from "../../utils/export.js";
+import { getEmoji, log, langMap, sendAlertMessage } from "../../utils/export.js";
+
+function splitMessageBy2000(str: string) {
+	const chunks: string[] = [];
+	for (let i = 0; i < str.length; i += 2000) {
+		chunks.push(str.slice(i, i + 2000));
+	}
+	return chunks;
+}
 
 const messageTranslate: BotCommand = {
 	data: new ContextMenuCommandBuilder()
@@ -22,7 +27,7 @@ const messageTranslate: BotCommand = {
 			ro: "Traduceți Mesajul",
 			el: "Μετάφραση Μηνύματος",
 			"zh-CN": "翻译消息",
-			"pt-BR": "Traduzir Mensagem",
+			"pt-BR": "Traduzir Messaggio",
 		})
 		.setType(ApplicationCommandType.Message)
 		.setIntegrationTypes([
@@ -39,11 +44,12 @@ const messageTranslate: BotCommand = {
 		const message = interaction.targetMessage;
 
 		if (!message || typeof message.content !== "string" || message.content.trim() === "") {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				"This message seems to hold no content—nothing to translate so... this means nothing to translate. \n-# Message shouldn't be inside an embed or container telling it in case c:",
-				"info",
-			);
+				content:
+					"This message seems to hold no content—nothing to translate so... this means nothing to translate. \n-# Message shouldn't be inside an embed or container telling it in case c:",
+				type: "info",
+			});
 		}
 
 		try {
@@ -102,31 +108,31 @@ Do NOT add anything else.
 			const formattedCleaned = cleaned.replace(/\\n/g, "\n");
 			const formattedTranslated = translated.replace(/\\n/g, "\n");
 
-			const sectionOriginal = new TextDisplayBuilder().setContent(
-				`### ${getEmoji("globe")} Original Message\n${formattedCleaned}`,
-			);
+			const finalOutput = `### ${getEmoji("globe")} Cleaned\n${formattedCleaned}\n\n### ${getEmoji("swap")} Translated\n${formattedTranslated}`;
 
-			const separator = new SeparatorBuilder()
-				.setSpacing(SeparatorSpacingSize.Large)
-				.setDivider(true);
-
-			const sectionTranslated = new TextDisplayBuilder().setContent(
-				`### ${getEmoji("swap")} Translated\n${formattedTranslated}`,
-			);
+			const chunks = splitMessageBy2000(finalOutput);
 
 			await interaction.editReply({
-				components: [sectionOriginal, separator, sectionTranslated],
-				flags: MessageFlags.IsComponentsV2,
+				content: chunks[0],
 				allowedMentions: { parse: [] },
 			});
+
+			for (let i = 1; i < chunks.length; i++) {
+				await interaction.followUp({
+					content: chunks[i],
+					flags: MessageFlags.Ephemeral,
+					allowedMentions: { parse: [] },
+				});
+			}
 		} catch (err) {
 			log("error", "Failed to translate the message:", err);
 
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				"Failed to ask Karu. The system might be confused — try again in a moment.",
-				"error",
-			);
+				content: "Failed to translate Karu. The system might be confused — try again in a moment.",
+				type: "error",
+				tag: "AI Issue",
+			});
 		}
 	},
 };

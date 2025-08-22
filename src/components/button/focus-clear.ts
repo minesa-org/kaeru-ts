@@ -6,7 +6,7 @@ import {
 	PermissionsBitField,
 } from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
-import { getEmoji, sendErrorMessage } from "../../utils/export.js";
+import { containerTemplate, getEmoji, sendAlertMessage } from "../../utils/export.js";
 import { RULE_NAME } from "../../commands/general/focus.js";
 
 const focusClear: BotComponent = {
@@ -16,9 +16,10 @@ const focusClear: BotComponent = {
 		const { member, guild } = interaction;
 
 		if (!guild || !member) {
-			return await interaction.reply({
-				content: `${getEmoji("error")}`,
-				flags: MessageFlags.Ephemeral,
+			return await sendAlertMessage({
+				interaction,
+				content: getEmoji("error"),
+				tag: "???",
 			});
 		}
 
@@ -31,17 +32,24 @@ const focusClear: BotComponent = {
 				: new PermissionsBitField(BigInt(member.permissions as string));
 
 		if (!perms.has(PermissionFlagsBits.ManageGuild)) {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				`Permission missing... Oof.`,
-				"reactions.user.emphasize",
-			);
+				content: `You, simply, cannot.`,
+				type: "error",
+				tag: "Missing Permission",
+			});
 		}
 
 		await rule?.edit({ triggerMetadata: { keywordFilter: [] } });
 		return await interaction.reply({
-			content: `# ${getEmoji("reactions.kaeru.thumbsup")}\n-# Focus mode cleared for everyone. Happy!`,
-			flags: MessageFlags.Ephemeral,
+			components: [
+				containerTemplate({
+					tag: "Cleared Focused People",
+					description: "Focus mode cleared for everyone. You must be happy now!",
+					title: getEmoji("reactions.kaeru.thumbsdown"),
+				}),
+			],
+			flags: [MessageFlags.Ephemeral, MessageFlags.IsComponentsV2],
 		});
 	},
 };

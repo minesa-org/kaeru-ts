@@ -17,7 +17,7 @@ import {
 	PermissionFlagsBits,
 } from "discord.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
-import { getEmoji, getEmojiURL, sendErrorMessage } from "../../utils/export.js";
+import { containerTemplate, getEmoji, getEmojiURL, sendAlertMessage } from "../../utils/export.js";
 
 export const RULE_NAME = "Focused People";
 
@@ -29,7 +29,7 @@ const focusMode: BotCommand = {
 		.setNameLocalizations({
 			tr: "odak",
 			"zh-CN": "专注",
-			it: "concentra", 
+			it: "concentra",
 			"pt-BR": "foco",
 		})
 		.setDescription("Manage your focus mode")
@@ -98,19 +98,23 @@ const focusMode: BotCommand = {
 		const mention = `<@${user.id}>`;
 
 		if (!guild?.members.me?.permissions.has(PermissionFlagsBits.ManageGuild)) {
-			return await sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				"I don't have permission to create automod rule to put you in focus mode. I am sorry.",
-				"reactions.kaeru.thumbsdown",
-			);
+				content:
+					"I don't have permission to create automod rule to put you in focus mode. I am sorry.",
+				type: "info",
+				tag: "Missing Permission",
+			});
 		}
+
 		if (!guild || !member) {
 			// This command can be used in guild only but yeah
-			return await sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				"> Be in guild. Alright got it.",
-				"reactions.user.thumbsup",
-			);
+				content: "> Be in guild. Alright got it.",
+				type: "info",
+				tag: "Missing Permission",
+			});
 		}
 
 		let rules = await guild.autoModerationRules.fetch();
@@ -143,19 +147,23 @@ const focusMode: BotCommand = {
 				const alreadySet = keywords.includes(mention);
 
 				if (enable && alreadySet) {
-					return await sendErrorMessage(
+					return sendAlertMessage({
 						interaction,
-						`You are already in __focus__ mode\n> ${getEmoji("reactions.user.haha")} Ohhh, okay. My bad lol`,
-						"reactions.kaeru.question",
-					);
+						content: `You are already in __focus__ mode\n> ${getEmoji("reactions.user.haha")} Ohhh, okay. My bad lol`,
+						type: "info",
+						tag: "What?",
+						alertReaction: "reactions.kaeru.question",
+					});
 				}
 
 				if (!enable && !alreadySet) {
-					return await sendErrorMessage(
+					return sendAlertMessage({
 						interaction,
-						`You are not in __focus__ mode though...\n> ${getEmoji("reactions.user.haha")} Ohhh, okay. My bad haha`,
-						"reactions.kaeru.question",
-					);
+						content: `You are not in __focus__ mode though\n> ${getEmoji("reactions.user.haha")} Ohhh, okay. My bad haha`,
+						type: "info",
+						tag: "What?",
+						alertReaction: "reactions.kaeru.question",
+					});
 				}
 
 				const updatedKeywords = enable
@@ -167,44 +175,46 @@ const focusMode: BotCommand = {
 				});
 
 				return await interaction.reply({
-					content: enable
-						? `# ${getEmoji("reactions.kaeru.emphasize")}\n-# Focus mode __activated__.`
-						: `# ${getEmoji("reactions.kaeru.emphasize")}\n-# Focus mode __disabled__.`,
-					flags: MessageFlags.Ephemeral,
+					components: [
+						containerTemplate({
+							tag: "Focus System",
+							title: getEmoji("reactions.kaeru.emphasize"),
+							description: enable ? "Focus mode __activated__." : "Focus mode __disabled__.",
+						}),
+					],
+					flags: [MessageFlags.Ephemeral, MessageFlags.IsComponentsV2],
 				});
 
 			case "list":
 				if (keywords.length === 0) {
-					return await sendErrorMessage(
+					return sendAlertMessage({
 						interaction,
-						`Everyone is fine to get disturbed.\n> ${getEmoji("reactions.user.thumbsup")} Ah, so no one is focused.`,
-						"reactions.kaeru.thumbsup",
-					);
+						content: `Seems like everyone is fine to get disturbed now.\n> ${getEmoji("reactions.user.thumbsup")} Ah, so no one is focused. Got it.`,
+						type: "info",
+						tag: "Focus Chaos Begins",
+					});
 				}
 
 				const usersList = keywords.map((m, i) => `${i + 1}. ${m}`).join("\n");
 
-				const container = new ContainerBuilder()
-					.addSectionComponents(
-						new SectionBuilder()
-							.setThumbnailAccessory(new ThumbnailBuilder().setURL(getEmojiURL(getEmoji("dnd"))))
-							.addTextDisplayComponents(
-								new TextDisplayBuilder().setContent(`## Focused Users`),
-								new TextDisplayBuilder().setContent(usersList),
-							),
-					)
-					.addActionRowComponents(
-						new ActionRowBuilder<ButtonBuilder>().addComponents(
-							new ButtonBuilder()
-								.setCustomId("focus-list-clear")
-								.setLabel("Clear list")
-								.setStyle(ButtonStyle.Danger),
-						),
-					)
-					.setAccentColor(0x5e5cde);
+				const clearButton = new ActionRowBuilder<ButtonBuilder>().addComponents(
+					new ButtonBuilder()
+						.setCustomId("focus-list-clear")
+						.setLabel("Clear list")
+						.setStyle(ButtonStyle.Danger),
+				);
 
 				return await interaction.reply({
-					components: [container],
+					components: [
+						containerTemplate({
+							tag: "Focus System",
+							title: "Focused Users",
+							description: usersList,
+							thumbnail:
+								"https://media.discordapp.net/attachments/736571695170584576/1408569663046029414/DND.png?ex=68aa3839&is=68a8e6b9&hm=8c6c123d4d1fa7e158c6cada574a70751992b6b456bec971267d33f1f0033272&=&format=webp&quality=lossless&width=706&height=706",
+						}),
+						clearButton,
+					],
 					flags: MessageFlags.IsComponentsV2,
 					allowedMentions: {
 						parse: [],

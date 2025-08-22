@@ -19,7 +19,12 @@ import {
 	ChatInputCommandInteraction,
 } from "discord.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
-import { formatMultiline, getEmoji, sendErrorMessage } from "../../utils/export.js";
+import {
+	containerTemplate,
+	formatMultiline,
+	getEmoji,
+	sendAlertMessage,
+} from "../../utils/export.js";
 
 const announce: BotCommand = {
 	data: new SlashCommandBuilder()
@@ -178,11 +183,13 @@ const announce: BotCommand = {
 				PermissionFlagsBits.CreatePublicThreads,
 			])
 		) {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				`-# Make sure I have permissions of mentioning roles, adding reactions and creating public threads!`,
-				"danger",
-			);
+				content: `Make sure I have permissions of mentioning roles, adding reactions and creating public threads!`,
+				type: "error",
+				tag: "Missing Permissions",
+				alertReaction: "reactions.kaeru.emphasize",
+			});
 		}
 		const channel = interaction.options.getChannel("channel");
 
@@ -327,13 +334,20 @@ const announce: BotCommand = {
 				}
 
 				await interaction.editReply({
-					content: italic(
-						`# ${getEmoji("reactions.kaeru.thumbsup")}\n-# Done! Announcement sent to ${channel}!`,
-					),
+					components: [
+						containerTemplate({
+							tag: "Success",
+							description: `Done! Announcement sent to ${channel}!`,
+							title: getEmoji("reactions.kaeru.thumbsup"),
+						}),
+					],
+					flags: MessageFlags.IsComponentsV2,
 				});
 			} catch (sendError: any) {
 				console.error("Error sending announcement:", sendError);
-				await interaction.editReply({
+
+				return sendAlertMessage({
+					interaction,
 					content: `${getEmoji("error")} There was an error sending the announcement: ${sendError.message}`,
 				});
 			} finally {
@@ -345,8 +359,10 @@ const announce: BotCommand = {
 			}
 		} catch (createError: any) {
 			console.error("Error creating webhook:", createError);
-			await interaction.editReply({
-				content: `# ${getEmoji("error")}\n-# There was an error creating the webhook: ${createError.message}`,
+
+			return sendAlertMessage({
+				interaction,
+				content: `${getEmoji("error")} There was an error sending the announcement: ${createError.message}`,
 			});
 		}
 	},

@@ -1,13 +1,5 @@
-import {
-	time,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-	SeparatorBuilder,
-	MessageFlags,
-	ModalSubmitInteraction,
-	PermissionFlagsBits,
-} from "discord.js";
-import { getEmoji, sendErrorMessage } from "../../utils/export.js";
+import { time, MessageFlags, ModalSubmitInteraction, PermissionFlagsBits } from "discord.js";
+import { containerTemplate, getEmoji, sendAlertMessage } from "../../utils/export.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
 
 const createTicketModal: BotComponent = {
@@ -15,11 +7,13 @@ const createTicketModal: BotComponent = {
 
 	execute: async (interaction: ModalSubmitInteraction): Promise<void> => {
 		if (!interaction.guild?.members.me?.permissions.has(PermissionFlagsBits.ManageThreads)) {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				`No permission to manage threads aka no closing.`,
-				"danger",
-			);
+				content: `I cannot manage threads aka no closing.`,
+				type: "error",
+				tag: "Missing Permission",
+				alertReaction: "danger",
+			});
 		}
 
 		await interaction.deferReply();
@@ -30,13 +24,18 @@ const createTicketModal: BotComponent = {
 
 		await interaction.editReply({
 			components: [
-				new TextDisplayBuilder().setContent(`# ${getEmoji("ticket.bubble.close")}`),
-				new TextDisplayBuilder().setContent(
-					`-# **<@!${interaction.user.id}>** has __force closed__ the thread as completed ${formattedTime}`,
-				),
-				new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Large).setDivider(false),
-				new TextDisplayBuilder().setContent(["### Comment", `>>> ${closeReason}`].join("\n")),
-				new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(true),
+				containerTemplate({
+					tag: "Thread Force Closing",
+					description: [
+						`-# **<@!${interaction.user.id}>** has __force closed__ the thread as completed ${formattedTime}`,
+						``,
+						`### Comment`,
+						`>>> ${closeReason}`,
+					],
+					title: getEmoji("ticket.bubble.close"),
+					thumbnail:
+						"https://media.discordapp.net/attachments/736571695170584576/1408590769131884545/Normal.png?ex=68aa4be1&is=68a8fa61&hm=85d00101cde9570ac49dbdf944b102464128eca503e8156349787f5b158f56ab&=&format=webp&quality=lossless&width=706&height=706",
+				}),
 			],
 			flags: MessageFlags.IsComponentsV2,
 			allowedMentions: {

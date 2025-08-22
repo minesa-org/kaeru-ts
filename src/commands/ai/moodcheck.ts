@@ -12,7 +12,7 @@ import {
 	SeparatorBuilder,
 } from "discord.js";
 import { karu } from "../../config/karu.js";
-import { getEmoji, sendErrorMessage } from "../../utils/export.js";
+import { containerTemplate, getEmoji, sendAlertMessage } from "../../utils/export.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
 
 const moodCheck: BotCommand = {
@@ -40,18 +40,20 @@ const moodCheck: BotCommand = {
 		const { channel } = interaction;
 
 		if (!channel) {
-			return interaction.reply({
-				content: `${getEmoji("reactions.kaeru.question")} Burada mesaj yok, hissedemiyorum...`,
-				flags: MessageFlags.Ephemeral,
+			return sendAlertMessage({
+				interaction,
+				content: `${getEmoji("reactions.kaeru.question")} No message exists in here, I can feel it...`,
+				type: "error",
+				tag: "Message",
 			});
 		}
 
 		if (!(channel instanceof TextChannel || channel instanceof ThreadChannel)) {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				"If it is not a text channel... then I cannot, sorry.",
-				"info",
-			);
+				content: "If it is not a text channel... then I cannot, sorry.",
+				tag: "Channel Type",
+			});
 		}
 
 		await interaction.deferReply();
@@ -93,36 +95,35 @@ ${messageTexts}
 			if (mood && value) moodValues[mood] = value;
 		});
 
-		const container = new ContainerBuilder()
-			.addTextDisplayComponents(
-				new TextDisplayBuilder().setContent(`-# ${getEmoji("magic")} Kāru Moodcheck AI`),
-			)
-			.addSeparatorComponents(new SeparatorBuilder().setDivider(true))
-			.addActionRowComponents(
-				new ActionRowBuilder<ButtonBuilder>().addComponents(
-					new ButtonBuilder()
-						.setCustomId("1")
-						.setDisabled(true)
-						.setEmoji("😊")
-						.setLabel(`${moodValues.Happy || "0%"}`)
-						.setStyle(ButtonStyle.Secondary),
-					new ButtonBuilder()
-						.setCustomId("2")
-						.setDisabled(true)
-						.setEmoji("😐")
-						.setLabel(`${moodValues.Neutral || "0%"}`)
-						.setStyle(ButtonStyle.Secondary),
-					new ButtonBuilder()
-						.setCustomId("3")
-						.setDisabled(true)
-						.setEmoji("😢")
-						.setLabel(`${moodValues.Sad || "0%"}`)
-						.setStyle(ButtonStyle.Secondary),
-				),
-			);
+		const moodButtons = new ActionRowBuilder<ButtonBuilder>().addComponents(
+			new ButtonBuilder()
+				.setCustomId("1")
+				.setDisabled(true)
+				.setEmoji("😊")
+				.setLabel(`${moodValues.Happy || "0%"}`)
+				.setStyle(ButtonStyle.Secondary),
+			new ButtonBuilder()
+				.setCustomId("2")
+				.setDisabled(true)
+				.setEmoji("😐")
+				.setLabel(`${moodValues.Neutral || "0%"}`)
+				.setStyle(ButtonStyle.Secondary),
+			new ButtonBuilder()
+				.setCustomId("3")
+				.setDisabled(true)
+				.setEmoji("😢")
+				.setLabel(`${moodValues.Sad || "0%"}`)
+				.setStyle(ButtonStyle.Secondary),
+		);
 
 		await interaction.editReply({
-			components: [container],
+			components: [
+				containerTemplate({
+					tag: `${getEmoji("magic")} Kāru Moodcheck AI`,
+					description: ["### Moods", "- 😊: Happy", "- 😐: Neutral", "- 😢: Sad"],
+				}),
+				moodButtons,
+			],
 			flags: MessageFlags.IsComponentsV2,
 		});
 

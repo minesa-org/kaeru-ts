@@ -5,13 +5,19 @@ import {
 	InteractionContextType,
 	MessageFlags,
 	MessageContextMenuCommandInteraction,
-	TextDisplayBuilder,
 	SeparatorSpacingSize,
 	SeparatorBuilder,
 } from "discord.js";
 import { karu } from "../../config/karu.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
-import { getEmoji, log, langMap, sendErrorMessage } from "../../utils/export.js";
+import {
+	getEmoji,
+	log,
+	langMap,
+	sendAlertMessage,
+	containerTemplate,
+	separator,
+} from "../../utils/export.js";
 
 const messageSummary: BotCommand = {
 	data: new ContextMenuCommandBuilder()
@@ -41,11 +47,12 @@ const messageSummary: BotCommand = {
 		const message = interaction.targetMessage;
 
 		if (!message || typeof message.content !== "string" || message.content.trim() === "") {
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				"This message seems to hold no content—nothing to summarize so... this means nothing to summarize. \n-# Message shouldn't be inside an embed or container telling it in case c:",
-				"info",
-			);
+				content:
+					"This message seems to hold no content—nothing to summarize so... this means nothing to summarize. \n-# Message shouldn't be inside an embed or container telling it in case c:",
+				tag: "Channel Type",
+			});
 		}
 
 		try {
@@ -68,8 +75,10 @@ const messageSummary: BotCommand = {
 			}
 
 			if (textToSummarize.trim() === "") {
-				return interaction.editReply({
+				return sendAlertMessage({
+					interaction,
 					content: `# ${getEmoji("info")} \nEmbeds, attachments or system messages can't be summarized. Maybe give it a try with a text message?`,
+					tag: "Unsupported Message",
 				});
 			}
 
@@ -120,39 +129,40 @@ Key Points:
 				const summary = summarySection.replace(/^Summary:\n?/i, "").trim();
 				const keyPoints = keyPointSection.trim();
 
-				const summaryTextSection = new TextDisplayBuilder().setContent(
-					[`## ${getEmoji("text_append")} Summarized`, summary].join("\n"),
+				const summaryTextSection = [`## ${getEmoji("text_append")} Summarized`, summary].join("\n");
+				const keyPointsTextSection = [`## ${getEmoji("list_bullet")} Key Points`, keyPoints].join(
+					"\n",
 				);
 
-				const divider = new SeparatorBuilder()
-					.setDivider(true)
-					.setSpacing(SeparatorSpacingSize.Large);
-
-				const keyPointsTextSection = new TextDisplayBuilder().setContent(
-					[`## ${getEmoji("list_bullet")} Key Points`, keyPoints].join("\n"),
-				);
-
-				await interaction.editReply({
-					components: [summaryTextSection, divider, keyPointsTextSection],
+				return await interaction.editReply({
+					components: [
+						containerTemplate({
+							tag: "Summary & Key-Points System",
+							description: [summaryTextSection, "", keyPointsTextSection],
+						}),
+					],
 					flags: MessageFlags.IsComponentsV2,
 				});
 			} catch (err) {
 				log("error", "Failed to summarize the message:", err);
 
-				return sendErrorMessage(
+				return sendAlertMessage({
 					interaction,
-					"Failed to summarize with Karu. The system might be confused — try again in a moment.",
-					"error",
-				);
+					content:
+						"Failed to summarize Karu. The system might be confused — try again in a moment.",
+					type: "error",
+					tag: "AI Issue",
+				});
 			}
 		} catch (err) {
 			log("error", "Failed to summarize the message:", err);
 
-			return sendErrorMessage(
+			return sendAlertMessage({
 				interaction,
-				"Failed to summarize with Karu. The system might be confused — try again in a moment.",
-				"error",
-			);
+				content: "Failed to summarize Karu. The system might be confused — try again in a moment.",
+				type: "error",
+				tag: "AI Issue",
+			});
 		}
 	},
 };

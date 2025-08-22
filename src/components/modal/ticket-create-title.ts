@@ -131,6 +131,7 @@ const createTicketModal: BotComponent = {
 						description: `Now, you can talk about your issue with our staff members.`,
 					}),
 				],
+				flags: [MessageFlags.IsComponentsV2],
 			});
 		} catch (error) {
 			log("error", "Failed to create ticket:", error);

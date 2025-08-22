@@ -7,10 +7,12 @@ import {
 } from "discord.js";
 import type { BotComponent } from "../../interfaces/botTypes.js";
 import {
+	containerTemplate,
 	emojis,
 	getEmoji,
 	lockButtonRow,
 	log,
+	sendAlertMessage,
 	summarizeTicketTitle,
 	ticketContainerData,
 	ticketMenuRow,
@@ -121,21 +123,22 @@ const createTicketModal: BotComponent = {
 			}
 
 			await interaction.editReply({
-				content: `# ${emoji.id ? `<:${emoji.name}:${emoji.id}>` : emoji} Created <#${thread.id}>\nNow, you can talk about your issue with our staff members.`,
+				components: [
+					containerTemplate({
+						tag: "Created Ticket",
+						title: `${emoji.id ? `<:${emoji.name}:${emoji.id}>` : emoji} Created <#${thread.id}>`,
+						description: `Now, you can talk about your issue with our staff members.`,
+					}),
+				],
 			});
 		} catch (error) {
 			log("error", "Failed to create ticket:", error);
 
-			if (!interaction.deferred && !interaction.replied) {
-				await interaction.reply({
-					content: `${getEmoji("error")} Failed to create ticket. Please try again.`,
-					flags: MessageFlags.Ephemeral,
-				});
-			} else if (interaction.deferred && !interaction.replied) {
-				await interaction.editReply({
-					content: `${getEmoji("error")} Failed to create ticket. Please try again.`,
-				});
-			}
+			return sendAlertMessage({
+				interaction,
+				content: "Failed to create ticket",
+				type: "error",
+			});
 		}
 	},
 };

@@ -13,7 +13,12 @@ import {
 } from "discord.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
 import { getEmoji } from "../../utils/emojis.js";
-import { lockButtonRow, sendAlertMessage, ticketMenuRow } from "../../utils/export.js";
+import {
+	containerTemplate,
+	lockButtonRow,
+	sendAlertMessage,
+	ticketMenuRow,
+} from "../../utils/export.js";
 
 const quickTicket: BotCommand = {
 	data: new ContextMenuCommandBuilder()
@@ -77,11 +82,16 @@ const quickTicket: BotCommand = {
 
 		await thread.send({
 			components: [
-				new ContainerBuilder().addTextDisplayComponents(
-					new TextDisplayBuilder().setContent(
-						`## ${getEmoji("ticket.create")} <../${interaction.user.id}>, you have opened a quick-action for this message\n> ${message.content}\n> -# Jump to [message](${message.url})\n> -# ———————————————\n- Message sent by __../${message.author?.username ?? "Unknown"}__`,
-					),
-				),
+				containerTemplate({
+					tag: "Quick Ticket",
+					description: [
+						`<@${interaction.user.id}>, you have opened a quick-action for this message`,
+						`> ${message.content}`,
+						`> -# Jump to [message](${message.url})`,
+						`- Message sent by __@${message.author?.username ?? "Unknown"}__`,
+					],
+					title: `${getEmoji("ticket.create")} Quick-Ticket Created`,
+				}),
 				ticketMenuRow,
 				lockButtonRow,
 			],

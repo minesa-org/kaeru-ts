@@ -11,7 +11,7 @@ import {
 	ThumbnailBuilder,
 } from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
-import { sendAlertMessage } from "../../utils/error&containerMessage.js";
+import { containerTemplate, sendAlertMessage } from "../../utils/error&containerMessage.js";
 
 export const vcKickButton: BotComponent = {
 	customId: /^vc-kick-\d+$/,
@@ -61,24 +61,12 @@ export const vcKickButton: BotComponent = {
 
 			const row = new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(selectMenu);
 
-			const container = new ContainerBuilder()
-				.addTextDisplayComponents(
-					new TextDisplayBuilder().setContent(`-# Kicking Member Out of Channel`),
-				)
-				.addSeparatorComponents(new SeparatorBuilder().setDivider(true))
-				.addSectionComponents(
-					new SectionBuilder()
-						.addTextDisplayComponents(
-							new TextDisplayBuilder().setContent(
-								"Select members from menu to **kick** and **blacklist** for this private chat",
-							),
-						)
-						.setThumbnailAccessory(
-							new ThumbnailBuilder().setURL(
-								"https://media.discordapp.net/attachments/736571695170584576/1407092130215887040/Frame_15.png?ex=68a4d82a&is=68a386aa&hm=2ea7073543f643e9ce96fd6a54bd9b5bc9005234fe76fbf09fbf4d759fb7a15c&=&width=614&height=610",
-							),
-						),
-				);
+			const container = containerTemplate({
+				tag: "Kicking Member Out of Channel",
+				description: "Select members from menu to **kick** and **blacklist** for this private chat",
+				thumbnail:
+					"https://media.discordapp.net/attachments/736571695170584576/1407092130215887040/Frame_15.png?ex=68a4d82a&is=68a386aa&hm=2ea7073543f643e9ce96fd6a54bd9b5bc9005234fe76fbf09fbf4d759fb7a15c&=&width=614&height=610",
+			});
 
 			return interaction.reply({
 				components: [container, row],

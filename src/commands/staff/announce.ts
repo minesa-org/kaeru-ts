@@ -19,7 +19,12 @@ import {
 	ChatInputCommandInteraction,
 } from "discord.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
-import { formatMultiline, getEmoji, sendAlertMessage } from "../../utils/export.js";
+import {
+	containerTemplate,
+	formatMultiline,
+	getEmoji,
+	sendAlertMessage,
+} from "../../utils/export.js";
 
 const announce: BotCommand = {
 	data: new SlashCommandBuilder()
@@ -329,13 +334,20 @@ const announce: BotCommand = {
 				}
 
 				await interaction.editReply({
-					content: italic(
-						`# ${getEmoji("reactions.kaeru.thumbsup")}\n-# Done! Announcement sent to ${channel}!`,
-					),
+					components: [
+						containerTemplate({
+							tag: "Success",
+							description: `Done! Announcement sent to ${channel}!`,
+							title: getEmoji("reactions.kaeru.thumbsup"),
+						}),
+					],
+					flags: MessageFlags.IsComponentsV2,
 				});
 			} catch (sendError: any) {
 				console.error("Error sending announcement:", sendError);
-				await interaction.editReply({
+
+				return sendAlertMessage({
+					interaction,
 					content: `${getEmoji("error")} There was an error sending the announcement: ${sendError.message}`,
 				});
 			} finally {

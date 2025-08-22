@@ -1,13 +1,5 @@
-import {
-	time,
-	TextDisplayBuilder,
-	SeparatorSpacingSize,
-	SeparatorBuilder,
-	MessageFlags,
-	ModalSubmitInteraction,
-	PermissionFlagsBits,
-} from "discord.js";
-import { getEmoji, sendAlertMessage } from "../../utils/export.js";
+import { time, MessageFlags, ModalSubmitInteraction, PermissionFlagsBits } from "discord.js";
+import { containerTemplate, getEmoji, sendAlertMessage } from "../../utils/export.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
 
 const createTicketModal: BotComponent = {
@@ -32,13 +24,16 @@ const createTicketModal: BotComponent = {
 
 		await interaction.editReply({
 			components: [
-				new TextDisplayBuilder().setContent(`# ${getEmoji("ticket.bubble.close")}`),
-				new TextDisplayBuilder().setContent(
-					`-# **<@!${interaction.user.id}>** has __force closed__ the thread as completed ${formattedTime}`,
-				),
-				new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Large).setDivider(false),
-				new TextDisplayBuilder().setContent(["### Comment", `>>> ${closeReason}`].join("\n")),
-				new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(true),
+				containerTemplate({
+					tag: "Thread Force Closing",
+					description: [
+						`-# **<@!${interaction.user.id}>** has __force closed__ the thread as completed ${formattedTime}`,
+						``,
+						`### Comment`,
+						`>>> ${closeReason}`,
+					],
+					title: getEmoji("ticket.bubble.close"),
+				}),
 			],
 			flags: MessageFlags.IsComponentsV2,
 			allowedMentions: {

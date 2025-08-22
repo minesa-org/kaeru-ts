@@ -5,7 +5,7 @@ import {
 	TextDisplayBuilder,
 } from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
-import { sendAlertMessage } from "../../utils/error&containerMessage.js";
+import { containerTemplate, sendAlertMessage } from "../../utils/error&containerMessage.js";
 import { getEmoji } from "../../utils/emojis.js";
 
 const vcLimitModal: BotComponent = {
@@ -46,12 +46,15 @@ const vcLimitModal: BotComponent = {
 		}
 
 		await channel.setUserLimit(limit);
-		const text = new TextDisplayBuilder().setContent(
-			`# ${getEmoji("number_point")} Updated user limit\nUser limit set to ${limit === 0 ? "unlimited" : limit}.`,
-		);
 
-		await interaction.reply({
-			components: [text],
+		return interaction.reply({
+			components: [
+				containerTemplate({
+					tag: "Voice Chat Member Limit",
+					title: `${getEmoji("number_point")} Updated user limit`,
+					description: `User limit set to ${limit === 0 ? "unlimited" : limit}.`,
+				}),
+			],
 			flags: [MessageFlags.Ephemeral, MessageFlags.IsComponentsV2],
 		});
 	},

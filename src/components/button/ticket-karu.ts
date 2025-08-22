@@ -1,6 +1,6 @@
 import { ButtonInteraction, PermissionFlagsBits, MessageFlags } from "discord.js";
 import type { BotComponent } from "../../interfaces/botTypes.js";
-import { getEmoji, sendAlertMessage } from "../../utils/export.js";
+import { containerTemplate, getEmoji, sendAlertMessage } from "../../utils/export.js";
 
 const ticketKaruButton: BotComponent = {
 	customId: "ticket-karu-button",
@@ -28,18 +28,23 @@ const ticketKaruButton: BotComponent = {
 
 		if (currentName.startsWith(aiEmoji)) {
 			newName = currentName.substring(aiEmoji.length);
-			actionMessage = `# ${getEmoji("info")}\n-# AI support has been **disabled** for this ticket.`;
+			actionMessage = `AI support has been **disabled** for this ticket.`;
 		} else {
 			newName = aiEmoji + currentName;
-			actionMessage = `# ${getEmoji("info")}\n-# AI support has been **enabled** for this ticket.`;
+			actionMessage = `AI support has been **enabled** for this ticket.`;
 		}
 
 		try {
 			await thread.setName(newName);
 
 			await interaction.reply({
-				content: actionMessage,
-				flags: MessageFlags.Ephemeral,
+				components: [
+					containerTemplate({
+						tag: `${getEmoji("intelligence")} Karu Support`,
+						description: actionMessage,
+					}),
+				],
+				flags: [MessageFlags.Ephemeral, MessageFlags.IsComponentsV2],
 			});
 		} catch (error) {
 			console.error("Error updating thread name:", error);

@@ -1,11 +1,6 @@
-import {
-	ButtonInteraction,
-	MessageFlags,
-	PermissionFlagsBits,
-	TextDisplayBuilder,
-} from "discord.js";
+import { ButtonInteraction, MessageFlags, PermissionFlagsBits } from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
-import { sendAlertMessage } from "../../utils/error&containerMessage.js";
+import { containerTemplate, sendAlertMessage } from "../../utils/error&containerMessage.js";
 import { getEmoji } from "../../utils/emojis.js";
 
 const vcLock: BotComponent = {
@@ -42,12 +37,13 @@ const vcLock: BotComponent = {
 			Connect: isLocked ? null : false,
 		});
 
-		const text = new TextDisplayBuilder().setContent(
-			`# ${isLocked ? getEmoji("ticket.bubble.key") : getEmoji("ticket.bubble.lock")}\n### Channel ${isLocked ? "unlocked" : "locked"}.`,
-		);
-
 		await interaction.reply({
-			components: [text],
+			components: [
+				containerTemplate({
+					tag: "Lock Voice Chat",
+					description: `# ${isLocked ? getEmoji("ticket.bubble.key") : getEmoji("ticket.bubble.lock")}\n### Channel ${isLocked ? "unlocked" : "locked"}.`,
+				}),
+			],
 			flags: [MessageFlags.Ephemeral, MessageFlags.IsComponentsV2],
 		});
 	},

@@ -6,7 +6,7 @@ import {
 	PermissionsBitField,
 } from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
-import { getEmoji, sendAlertMessage } from "../../utils/export.js";
+import { containerTemplate, getEmoji, sendAlertMessage } from "../../utils/export.js";
 import { RULE_NAME } from "../../commands/general/focus.js";
 
 const focusClear: BotComponent = {
@@ -41,8 +41,14 @@ const focusClear: BotComponent = {
 
 		await rule?.edit({ triggerMetadata: { keywordFilter: [] } });
 		return await interaction.reply({
-			content: `# ${getEmoji("reactions.kaeru.thumbsup")}\n-# Focus mode cleared for everyone. Happy!`,
-			flags: MessageFlags.Ephemeral,
+			components: [
+				containerTemplate({
+					tag: "Cleared Focused People",
+					description: "Focus mode cleared for everyone. Happy!",
+					title: getEmoji("reactions.kaeru.thumbsdown"),
+				}),
+			],
+			flags: [MessageFlags.Ephemeral, MessageFlags.IsComponentsV2],
 		});
 	},
 };

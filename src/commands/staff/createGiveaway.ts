@@ -12,7 +12,13 @@ import {
 	User,
 } from "discord.js";
 import moment from "moment-timezone";
-import { getEmoji, timezoneChecking, timeChecking, sendAlertMessage } from "../../utils/export.js";
+import {
+	getEmoji,
+	timezoneChecking,
+	timeChecking,
+	sendAlertMessage,
+	containerTemplate,
+} from "../../utils/export.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
 
 const createGiveaway: BotCommand = {
@@ -322,17 +328,36 @@ const createGiveaway: BotCommand = {
 			inviteLink = await giveaway.createInviteURL({ channel: interaction.channelId });
 		} catch (err) {
 			console.error("Error creating invite link:", err);
-			return interaction.editReply({
+
+			return sendAlertMessage({
+				interaction,
 				content: `${getEmoji("danger")} Failed to create invite URL.`,
+				type: "error",
 			});
 		}
 
 		await interaction.editReply({
-			content: `${getEmoji("giftCard")} Creating the giveaway...`,
+			components: [
+				containerTemplate({
+					tag: "Giveaway System",
+					description: `${getEmoji("giftCard")} Creating the giveaway...`,
+				}),
+			],
+			flags: [MessageFlags.IsComponentsV2],
 		});
 
 		await interaction.editReply({
-			content: `# ${getEmoji("giftCard")} Giveaway Created: ${underline(giveawayName)}\nGiveaway will be triggered when the time arrives. Winner will be revealed automatically.\n> Invite Link: ${inviteLink}`,
+			components: [
+				containerTemplate({
+					tag: "Giveaway System",
+					description: [
+						`Giveaway will be triggered when the time arrives. Winner will be revealed automatically.`,
+						`> Invite Link: ${inviteLink}`,
+					],
+					title: `${getEmoji("giftCard")} Giveaway Created: ${underline(giveawayName)}`,
+				}),
+			],
+			flags: [MessageFlags.IsComponentsV2],
 		});
 
 		setTimeout(

@@ -3,16 +3,10 @@ import {
 	ButtonBuilder,
 	ButtonStyle,
 	ActionRowBuilder,
-	ContainerBuilder,
-	TextDisplayBuilder,
-	SeparatorBuilder,
-	SectionBuilder,
-	ThumbnailBuilder,
 	MessageFlags,
-	SeparatorSpacingSize,
 } from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
-import { sendAlertMessage } from "../../utils/error&containerMessage.js";
+import { containerTemplate, sendAlertMessage } from "../../utils/error&containerMessage.js";
 import { emojis, getEmoji } from "../../utils/emojis.js";
 
 const collabSelectMenu: BotComponent = {
@@ -49,42 +43,15 @@ const collabSelectMenu: BotComponent = {
 				.setEmoji(emojis.eye),
 		];
 
-		const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(buttons);
-
-		const container = new ContainerBuilder()
-			.addTextDisplayComponents(
-				new TextDisplayBuilder().setContent(`-# ${getEmoji("people")} Collaboration+`),
-			)
-			.addSeparatorComponents(new SeparatorBuilder().setDivider(true))
-			.addSectionComponents(
-				new SectionBuilder()
-					.addTextDisplayComponents(
-						new TextDisplayBuilder().setContent(
-							[
-								`## Collaboration Setup Complete!`,
-								`File shared by <@${fileData.owner}>.`,
-								`### File:\n\`${fileData.name}\``,
-								`### Viewable by everyone:\n${fileData.isViewable ? "Yes" : "No"}`,
-								`### Collaborators:\n${collaboratorMentions}`,
-								``,
-								fileData.isViewable
-									? `-# ${getEmoji("reactions.user.emphasize")} Everyone can view this file, but only collaborators can edit it.`
-									: `-# ${getEmoji("reactions.user.emphasize")} Only collaborators can view and edit this file.`,
-							].join("\n"),
-						),
-					)
-					.setThumbnailAccessory(
-						new ThumbnailBuilder().setURL(
-							"https://media.discordapp.net/attachments/736571695170584576/1407664558323007518/Frame_15.png?ex=68a6ed47&is=68a59bc7&hm=40e37f945a9bbbb7d65870c2010648548b25bd552ea182b8065162386945e8b6&=&format=webp&quality=lossless&width=614&height=610",
-						),
-					),
-			);
+		const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(buttons);
 
 		await interaction.update({
 			components: [
-				new TextDisplayBuilder().setContent(
-					`# ${getEmoji("reactions.kaeru.heart")}\n-# ${getEmoji("document")} Collaboration thread created for **${fileData.name}** file.`,
-				),
+				containerTemplate({
+					tag: "",
+					title: getEmoji("reactions.kaeru.heart"),
+					description: `${getEmoji("document")} Collaboration thread created for **${fileData.name}** file!`,
+				}),
 			],
 		});
 
@@ -107,7 +74,25 @@ const collabSelectMenu: BotComponent = {
 		}
 
 		const followUpMessage = await interaction.followUp({
-			components: [container, actionRow],
+			components: [
+				containerTemplate({
+					tag: `${getEmoji("people")} Collaboration+`,
+					description: [
+						`## Collaboration Setup Complete!`,
+						`File shared by <@${fileData.owner}>.`,
+						`### File:\n\`${fileData.name}\``,
+						`### Viewable by everyone:\n${fileData.isViewable ? "Yes" : "No"}`,
+						`### Collaborators:\n${collaboratorMentions}`,
+						``,
+						fileData.isViewable
+							? `-# ${getEmoji("reactions.user.emphasize")} Everyone can view this file, but only collaborators can edit it.`
+							: `-# ${getEmoji("reactions.user.emphasize")} Only collaborators can view and edit this file.`,
+					],
+					thumbnail:
+						"https://media.discordapp.net/attachments/736571695170584576/1407664558323007518/Frame_15.png?ex=68a6ed47&is=68a59bc7&hm=40e37f945a9bbbb7d65870c2010648548b25bd552ea182b8065162386945e8b6&=&format=webp&quality=lossless&width=614&height=610",
+				}),
+				buttonRow,
+			],
 			flags: MessageFlags.IsComponentsV2,
 			allowedMentions: {
 				parse: [],
@@ -134,11 +119,10 @@ const collabSelectMenu: BotComponent = {
 
 		await thread.send({
 			components: [
-				new TextDisplayBuilder().setContent(`-# All file changes will be logged here.`),
-				new SeparatorBuilder().setDivider(true).setSpacing(SeparatorSpacingSize.Large),
-				new TextDisplayBuilder().setContent(
-					`## ${getEmoji("banner")} Collaboration logs starts at here for **${fileData.name}**!`,
-				),
+				containerTemplate({
+					tag: `${getEmoji("banner")} Changelog`,
+					description: `Collaboration logs starts at here for **${fileData.name}**!`,
+				}),
 			],
 			flags: MessageFlags.IsComponentsV2,
 		});

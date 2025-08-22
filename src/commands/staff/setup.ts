@@ -367,15 +367,26 @@ const setup: BotCommand = {
 			await saveStaffRoleId(interaction.guild!.id, staffRole);
 
 			await interaction.editReply({
-				content: `${getEmoji("ticket.create")} Created the ticket system successfully in ${sendingChannel}.`,
+				components: [
+					containerTemplate({
+						tag: "System Created",
+						title: `${getEmoji("ticket.create")} Created the ticket system successfully in ${sendingChannel}.`,
+						description: [
+							`- Users can create tickets as thread with selecting label`,
+							`- It will auto-name the thread for their issue.`,
+							`- Experience PRO ticket handling.`,
+						].join("\n"),
+					}),
+				],
+				flags: [MessageFlags.IsComponentsV2],
 			});
 
 			if (!interaction.guild!.members.me?.permissions.has(PermissionFlagsBits.ManageMessages)) {
-				await interaction.followUp({
+				return sendAlertMessage({
+					interaction,
 					content: `## ${getEmoji("danger") + " " + underline("Recommending")}\nIf Kaeru has ${bold(
 						"Manage Messages",
 					)} permission, it will be very easy to reach the first message with pinned messages for staff members.`,
-					flags: MessageFlags.Ephemeral,
 				});
 			}
 		};
@@ -418,7 +429,6 @@ const setup: BotCommand = {
 								`- Only media content will be allowed`,
 								`- Automatic threads will be created for posts`,
 							].join("\n"),
-							
 						}),
 					],
 					flags: [MessageFlags.IsComponentsV2],
@@ -441,7 +451,17 @@ const setup: BotCommand = {
 			await setHubChannel(guild!.id, channelOption!.id);
 
 			return interaction.editReply({
-				content: `${getEmoji("reactions.user.thumbsup")} Created the voice hub system successfully.`,
+				components: [
+					containerTemplate({
+						tag: "System Created",
+						title: `${getEmoji("up")} Voice Hub channel system created successfully!`,
+						description: [
+							`- Users can create their vc`,
+							`- It is ultra-private — so only admins can join`,
+						].join("\n"),
+					}),
+				],
+				flags: [MessageFlags.IsComponentsV2],
 			});
 		};
 

@@ -17,7 +17,7 @@ import {
 	PermissionFlagsBits,
 } from "discord.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
-import { getEmoji, getEmojiURL, sendAlertMessage } from "../../utils/export.js";
+import { containerTemplate, getEmoji, getEmojiURL, sendAlertMessage } from "../../utils/export.js";
 
 export const RULE_NAME = "Focused People";
 
@@ -175,10 +175,14 @@ const focusMode: BotCommand = {
 				});
 
 				return await interaction.reply({
-					content: enable
-						? `# ${getEmoji("reactions.kaeru.emphasize")}\n-# Focus mode __activated__.`
-						: `# ${getEmoji("reactions.kaeru.emphasize")}\n-# Focus mode __disabled__.`,
-					flags: MessageFlags.Ephemeral,
+					components: [
+						containerTemplate({
+							tag: "Focus System",
+							title: getEmoji("reactions.kaeru.emphasize"),
+							description: enable ? "Focus mode __activated__." : "Focus mode __disabled__.",
+						}),
+					],
+					flags: [MessageFlags.Ephemeral, MessageFlags.IsComponentsV2],
 				});
 
 			case "list":
@@ -213,7 +217,16 @@ const focusMode: BotCommand = {
 					.setAccentColor(0x5e5cde);
 
 				return await interaction.reply({
-					components: [container],
+					components: [
+						container,
+						containerTemplate({
+							tag: "Focus System",
+							title: "Focused Users",
+							description: usersList,
+							thumbnail:
+								"https://media.discordapp.net/attachments/736571695170584576/1408569663046029414/DND.png?ex=68aa3839&is=68a8e6b9&hm=8c6c123d4d1fa7e158c6cada574a70751992b6b456bec971267d33f1f0033272&=&format=webp&quality=lossless&width=706&height=706",
+						}),
+					],
 					flags: MessageFlags.IsComponentsV2,
 					allowedMentions: {
 						parse: [],

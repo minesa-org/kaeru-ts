@@ -1,17 +1,6 @@
-import {
-	SlashCommandBuilder,
-	ChatInputCommandInteraction,
-	MediaGalleryBuilder,
-	MediaGalleryItemBuilder,
-} from "discord.js";
+import { SlashCommandBuilder, ChatInputCommandInteraction } from "discord.js";
 import type { BotCommand } from "../../interfaces/botTypes.js";
-import {
-	containerTemplate,
-	EmojiSize,
-	getEmoji,
-	getEmojiURL,
-	sendAlertMessage,
-} from "../../utils/export.js";
+import { containerTemplate, EmojiSize, getEmojiURL, sendAlertMessage } from "../../utils/export.js";
 
 const emojiURL: BotCommand = {
 	data: new SlashCommandBuilder()

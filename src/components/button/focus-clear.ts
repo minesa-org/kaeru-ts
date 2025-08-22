@@ -16,9 +16,10 @@ const focusClear: BotComponent = {
 		const { member, guild } = interaction;
 
 		if (!guild || !member) {
-			return await interaction.reply({
-				content: `${getEmoji("error")}`,
-				flags: MessageFlags.Ephemeral,
+			return await sendAlertMessage({
+				interaction,
+				content: getEmoji("error"),
+				tag: "???",
 			});
 		}
 

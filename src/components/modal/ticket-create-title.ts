@@ -49,10 +49,11 @@ const createTicketModal: BotComponent = {
 			await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
 			if (!interaction.channel || interaction.channel.type !== ChannelType.GuildText) {
-				await interaction.editReply({
-					content: `${getEmoji("info")} This command can be used only in text channels.`,
+				return sendAlertMessage({
+					interaction,
+					content: `This command can be used only in text channels.`,
+					alertReaction: "info",
 				});
-				return;
 			}
 
 			const thread = await interaction.channel.threads.create({

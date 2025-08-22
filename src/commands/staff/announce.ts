@@ -359,8 +359,10 @@ const announce: BotCommand = {
 			}
 		} catch (createError: any) {
 			console.error("Error creating webhook:", createError);
-			await interaction.editReply({
-				content: `# ${getEmoji("error")}\n-# There was an error creating the webhook: ${createError.message}`,
+
+			return sendAlertMessage({
+				interaction,
+				content: `${getEmoji("error")} There was an error sending the announcement: ${createError.message}`,
 			});
 		}
 	},

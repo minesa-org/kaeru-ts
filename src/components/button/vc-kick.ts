@@ -74,10 +74,8 @@ export const vcKickButton: BotComponent = {
 			});
 		} catch (err) {
 			console.error("vcKickButton error:", err);
-			return interaction.reply({
-				content: "An error occurred.",
-				flags: MessageFlags.Ephemeral,
-			});
+			
+			return sendAlertMessage({ interaction, content: "An error occured." });
 		}
 	},
 };

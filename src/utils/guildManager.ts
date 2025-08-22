@@ -8,13 +8,13 @@ import { Guild } from "../models/guild.model.js";
  * @param {string} channelId - The ID of the channel to set as the hub.
  * @returns {Promise<import("../models/guild.model.js").IGuild>} The updated or newly created guild document.
  */
-export async function setHubChannel(
+async function setHubChannel(
 	guildId: string,
 	channelId: string,
 ): Promise<import("../models/guild.model.js").IGuild> {
 	let guild = await Guild.findOne({ guildId });
 	if (!guild) {
-		guild = new Guild({ guildId, hubChannelId: channelId, warnings: new Map() });
+		guild = new Guild({ guildId, hubChannelId: channelId });
 	} else {
 		guild.hubChannelId = channelId;
 	}
@@ -28,56 +28,63 @@ export async function setHubChannel(
  * @param {string} guildId - The ID of the guild.
  * @returns {Promise<string | null>} The hub channel ID, or null if not set.
  */
-export async function getHubChannel(guildId: string): Promise<string | null> {
+async function getHubChannel(guildId: string): Promise<string | null> {
 	const guild = await Guild.findOne({ guildId });
 	return guild?.hubChannelId || null;
 }
 
 /**
- * Save the logging channel ID for a guild
- * @param guildId The guild ID
- * @param channelId The channel ID
+ * Saves the logging channel ID for a guild.
+ *
+ * @param {string} guildId - The guild ID.
+ * @param {string} channelId - The channel ID to save as logging channel.
+ * @returns {Promise<void>} Resolves when the operation is complete.
  */
-export async function setupLoggingChannel(guildId: string, channelId: string): Promise<void> {
+async function setupLoggingChannel(guildId: string, channelId: string): Promise<void> {
 	await Guild.findOneAndUpdate({ guildId }, { loggingChannelId: channelId }, { upsert: true });
 }
 
 /**
- * Get the logging channel ID for a guild
- * @param guildId The guild ID
- * @returns The channel ID
+ * Retrieves the logging channel ID for a guild.
+ *
+ * @param {string} guildId - The guild ID.
+ * @returns {Promise<string | null>} The channel ID, or null if not set.
  */
-export async function checkLoggingChannel(guildId: string): Promise<string | null> {
+async function checkLoggingChannel(guildId: string): Promise<string | null> {
 	const guild = await Guild.findOne({ guildId });
 	return guild?.loggingChannelId ?? null;
 }
 
 /**
- * Save the staff role ID for a guild
- * @param guildId The guild ID
- * @param roleId The role ID
+ * Saves the staff role ID for a guild.
+ *
+ * @param {string} guildId - The guild ID.
+ * @param {string} roleId - The role ID to save.
+ * @returns {Promise<void>} Resolves when the operation is complete.
  */
-export async function saveStaffRoleId(guildId: string, roleId: string): Promise<void> {
+async function saveStaffRoleId(guildId: string, roleId: string): Promise<void> {
 	await Guild.findOneAndUpdate({ guildId }, { staffRoleId: roleId }, { upsert: true });
 }
 
 /**
- * Get the staff role ID for a guild
- * @param guildId The guild ID
- * @returns The role ID
+ * Retrieves the staff role ID for a guild.
+ *
+ * @param {string} guildId - The guild ID.
+ * @returns {Promise<string | null>} The role ID, or null if not set.
  */
-export async function getStaffRoleId(guildId: string): Promise<string | null> {
+async function getStaffRoleId(guildId: string): Promise<string | null> {
 	const guild = await Guild.findOne({ guildId });
 	return guild?.staffRoleId ?? null;
 }
 
 /**
- * Add a warning to a user
- * @param guildId The guild ID
- * @param userId The user ID
- * @returns The number of warnings the user has
+ * Adds a warning to a user in the guild.
+ *
+ * @param {string} guildId - The guild ID.
+ * @param {string} userId - The user ID.
+ * @returns {Promise<number>} The total number of warnings the user has after increment.
  */
-export async function addWarning(guildId: string, userId: string): Promise<number> {
+async function addWarning(guildId: string, userId: string): Promise<number> {
 	const update = { $inc: { [`warnings.${userId}`]: 1 } };
 
 	const guild = await Guild.findOneAndUpdate({ guildId }, update, {
@@ -89,12 +96,13 @@ export async function addWarning(guildId: string, userId: string): Promise<numbe
 }
 
 /**
- * Check the number of warnings a user has
- * @param guildId The guild ID
- * @param userId The user ID
- * @returns The number of warnings the user has
+ * Retrieves the number of warnings a user has in the guild.
+ *
+ * @param {string} guildId - The guild ID.
+ * @param {string} userId - The user ID.
+ * @returns {Promise<number>} The number of warnings, or 0 if none.
  */
-export async function checkWarnings(guildId: string, userId: string): Promise<number> {
+async function checkWarnings(guildId: string, userId: string): Promise<number> {
 	try {
 		const guild = await Guild.findOne({ guildId });
 		if (!guild || !guild.warnings) return 0;
@@ -104,3 +112,49 @@ export async function checkWarnings(guildId: string, userId: string): Promise<nu
 		return 0;
 	}
 }
+
+/**
+ * Sets the image channel for a guild.
+ * If the guild does not exist in the database, it will be created.
+ *
+ * @param {string} guildId - The guild ID.
+ * @param {string} channelId - The image channel ID.
+ * @returns {Promise<import("../models/guild.model.js").IGuild>} The updated or newly created guild document.
+ */
+async function setImageChannel(
+	guildId: string,
+	channelId: string,
+): Promise<import("../models/guild.model.js").IGuild> {
+	let guild = await Guild.findOne({ guildId });
+	if (!guild) {
+		guild = new Guild({ guildId, imageChannelId: channelId });
+	} else {
+		guild.imageChannelId = channelId;
+	}
+	await guild.save();
+	return guild;
+}
+
+/**
+ * Retrieves the image channel ID for a guild.
+ *
+ * @param {string} guildId - The guild ID.
+ * @returns {Promise<string | null>} The image channel ID, or null if not set.
+ */
+async function getImageChannel(guildId: string): Promise<string | null> {
+	const guild = await Guild.findOne({ guildId });
+	return guild?.imageChannelId || null;
+}
+
+export {
+	addWarning,
+	checkLoggingChannel,
+	checkWarnings,
+	getHubChannel,
+	getImageChannel,
+	getStaffRoleId,
+	saveStaffRoleId,
+	setHubChannel,
+	setImageChannel,
+	setupLoggingChannel,
+};

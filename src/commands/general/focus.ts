@@ -4,20 +4,16 @@ import {
 	AutoModerationRuleEventType,
 	AutoModerationRuleTriggerType,
 	ChatInputCommandInteraction,
-	ContainerBuilder,
 	InteractionContextType,
 	MessageFlags,
 	SlashCommandBuilder,
-	TextDisplayBuilder,
-	SectionBuilder,
-	ThumbnailBuilder,
 	ButtonBuilder,
 	ButtonStyle,
 	ActionRowBuilder,
 	PermissionFlagsBits,
 } from "discord.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
-import { containerTemplate, getEmoji, getEmojiURL, sendAlertMessage } from "../../utils/export.js";
+import { containerTemplate, getEmoji, sendAlertMessage } from "../../utils/export.js";
 
 export const RULE_NAME = "Focused People";
 

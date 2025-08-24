@@ -15,3 +15,4 @@ export * from "./ticketLockandUpdate.js";
 export * from "./ticketMenus.js";
 export * from "./ticketRows.js";
 export * from "./timeChecking.js";
+export * from "./botOwner.js";

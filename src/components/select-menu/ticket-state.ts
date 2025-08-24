@@ -16,6 +16,7 @@ import {
 } from "discord.js";
 import { BotComponent } from "../../interfaces/botTypes.js";
 import { emojis, getEmoji, lockButtonRow, ticketContainerData } from "../../utils/export.js";
+import { recordTicketResolution } from "../../utils/linkedRoleUtil.js";
 
 const menu3 = new StringSelectMenuBuilder()
 	.setCustomId("ticket-select-menu")
@@ -109,6 +110,38 @@ const ticketState: BotComponent = {
 					flags: MessageFlags.IsComponentsV2,
 				});
 
+				let ticketCreatorId = null;
+				try {
+					if (interaction.channel?.isThread()) {
+						const thread = interaction.channel;
+						const threadMembers = await thread.members.fetch();
+
+						for (const [userId, threadMember] of threadMembers) {
+							const user = threadMember.user || (await interaction.client.users.fetch(userId));
+							if (!user.bot) {
+								ticketCreatorId = userId;
+								break;
+							}
+						}
+					}
+				} catch (error) {
+					console.warn("Could not determine ticket creator:", error);
+				}
+
+				if (ticketCreatorId && interaction.guild) {
+					try {
+						await recordTicketResolution(
+							ticketCreatorId,
+							interaction.guild.id,
+							interaction.channel.id,
+							authorId,
+							"completed",
+						);
+					} catch (error) {
+						console.error("Failed to record ticket resolution:", error);
+					}
+				}
+
 				await interaction.channel.send({
 					components: [
 						new TextDisplayBuilder().setContent(`# ${getEmoji("ticket.bubble.done")}`),
@@ -157,6 +190,39 @@ const ticketState: BotComponent = {
 					components: [await ticketContainerData(interaction), row2, lockButtonRow],
 					flags: MessageFlags.IsComponentsV2,
 				});
+
+				let ticketCreatorId = null;
+				try {
+					if (interaction.channel?.isThread()) {
+						const thread = interaction.channel;
+						const threadMembers = await thread.members.fetch();
+
+						for (const [userId, threadMember] of threadMembers) {
+							const user = threadMember.user || (await interaction.client.users.fetch(userId));
+							if (!user.bot) {
+								ticketCreatorId = userId;
+								break;
+							}
+						}
+					}
+				} catch (error) {
+					console.warn("Could not determine ticket creator:", error);
+				}
+
+				if (ticketCreatorId && interaction.guild) {
+					try {
+						await recordTicketResolution(
+							ticketCreatorId,
+							interaction.guild.id,
+							interaction.channel.id,
+							authorId,
+							"duplicate",
+						);
+						console.log(`✅ Recorded duplicate ticket resolution for user ${ticketCreatorId}`);
+					} catch (error) {
+						console.error("Failed to record ticket resolution:", error);
+					}
+				}
 
 				await interaction.channel.send({
 					components: [

@@ -7,10 +7,12 @@ Core features include ticketing, real-time translation, slang normalization, and
 
 ## Key Features
 
-- **Ticket System:** Manage support and requests smoothly with customizable tickets.  
-- **Translation:** Bridge language gaps instantly across multiple languages.  
-- **Slang Fix:** Automatically normalize slang and informal language for clearer communication.  
-- **AI Summarization:** Generate concise summaries and extract key points from lengthy discussions.  
+- **Ticket System:** Manage support and requests smoothly with customizable tickets.
+- **Translation:** Bridge language gaps instantly across multiple languages.
+- **Slang Fix:** Automatically normalize slang and informal language for clearer communication.
+- **AI Summarization:** Generate concise summaries and extract key points from lengthy discussions.
+- **Linked Roles:** Discord connected accounts integration with numeric achievement counters.
+- **Staff Management:** Tools for managing user achievements and linked role qualifications.
 - **Fast & Lightweight:** Built to run efficiently and keep your server responsive.
 
 ---
@@ -20,16 +22,17 @@ Core features include ticketing, real-time translation, slang normalization, and
 Create a `.env` file in your project root with the following variables:
 
 ```env
-DISCORD_CLIENT_ID=  
-DISCORD_CLIENT_TOKEN=  
-DISCORD_CLIENT_SECRET=  
-EMBED_COLOR="#ac8e68"  
-COOKIE_SECRET=  
-REDIRECT_URI=  
-MONGO_URI=  
+DISCORD_CLIENT_ID=
+DISCORD_CLIENT_TOKEN=
+DISCORD_CLIENT_SECRET=
+EMBED_COLOR="#ac8e68"
+COOKIE_SECRET=
+REDIRECT_URI=
+MONGO_URI=
 KARU_API_KEY=
+BOT_OWNER_ID=
+APP_SERVER_URL=
 ```
-
 
 > [!NOTE]  
 > Make sure to fill in each variable with your actual credentials and secrets. Keep this file secure and **do not** commit it to version control.
@@ -40,16 +43,16 @@ KARU_API_KEY=
 
 The main npm scripts you’ll use:
 
-| Script       | Description                                 |
-|--------------|---------------------------------------------|
-| `clean`      | Removes the `dist` directory                 |
-| `build`      | Cleans and compiles TypeScript to `dist`    |
-| `start`      | Runs the compiled bot from the `dist` folder |
+| Script  | Description                                  |
+| ------- | -------------------------------------------- |
+| `clean` | Removes the `dist` directory                 |
+| `build` | Cleans and compiles TypeScript to `dist`     |
+| `start` | Runs the compiled bot from the `dist` folder |
 
 Example commands:
 
 ```sh
-npm run build  
+npm run build
 npm start
 ```
 
@@ -57,9 +60,9 @@ npm start
 
 ## Dependencies & Requirements
 
-- Requires **Node.js v18+**  
-- Uses [discord.js](https://discord.js.org/) for Discord API interaction  
-- AI features powered by `@google/generative-ai`  
+- Requires **Node.js v18+**
+- Uses [discord.js](https://discord.js.org/) for Discord API interaction
+- AI features powered by `@google/generative-ai`
 - MongoDB used for persistence (`MONGO_URI` required)
 
 ---

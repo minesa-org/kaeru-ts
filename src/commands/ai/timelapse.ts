@@ -1,12 +1,10 @@
 import {
 	ApplicationIntegrationType,
 	ChatInputCommandInteraction,
-	ContainerBuilder,
 	InteractionContextType,
 	MessageFlags,
 	SlashCommandBuilder,
 	TextChannel,
-	TextDisplayBuilder,
 	ThreadChannel,
 } from "discord.js";
 import { BotCommand } from "../../interfaces/botTypes.js";
@@ -18,7 +16,7 @@ const timelapse: BotCommand = {
 		.setContexts(InteractionContextType.Guild)
 		.setIntegrationTypes(ApplicationIntegrationType.GuildInstall)
 		.setName("timelapse")
-		.setDescription("See channel's summary")
+		.setDescription("See channel's summary using AI")
 		.setNameLocalizations({
 			tr: "zamanatlaması",
 			ru: "таймлапс",
@@ -28,12 +26,12 @@ const timelapse: BotCommand = {
 			"pt-BR": "timelapse",
 		})
 		.setDescriptionLocalizations({
-			tr: "Kanalın özetini gör",
-			ru: "Посмотреть сводку канала",
-			de: "Siehe die Zusammenfassung des Kanals",
-			it: "Vedi il riepilogo del canale",
-			"zh-CN": "查看频道摘要",
-			"pt-BR": "Veja o resumo do canal",
+			tr: "YZ kullanarak kanalın özetini gör",
+			ru: "Посмотреть сводку канала с помощью ИИ",
+			de: "Siehe die Zusammenfassung des Kanals mit KI",
+			it: "Vedi il riepilogo del canale usando l'IA",
+			"zh-CN": "使用AI查看频道摘要",
+			"pt-BR": "Veja o resumo do canal usando IA",
 		}),
 
 	execute: async (interaction: ChatInputCommandInteraction) => {
